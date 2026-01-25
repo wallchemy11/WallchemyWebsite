@@ -7,6 +7,8 @@ import { contactPage } from "./schemas/contactPage";
 import { collection } from "./schemas/collection";
 import { project } from "./schemas/project";
 import { seo } from "./schemas/seo";
+import { heroMedia } from "./schemas/heroMedia";
+import { siteSettings } from "./schemas/siteSettings";
 
 export const schemaTypes = [
   homePage,
@@ -17,5 +19,7 @@ export const schemaTypes = [
   contactPage,
   collection,
   project,
-  seo
+  seo,
+  heroMedia,
+  siteSettings
 ];

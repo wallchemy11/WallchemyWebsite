@@ -24,7 +24,8 @@ export default async function HomePage() {
         headline={home.heroHeadline}
         subheadline={home.heroSubheadline}
         videoSrc={home.heroVideo}
-        poster="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=2000&q=80"
+        mobileVideoSrc={home.heroVideoMobile}
+        poster={home.heroPoster}
       />
       <section className="bg-ink py-20">
         <div className="mx-auto max-w-6xl px-6">

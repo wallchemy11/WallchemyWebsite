@@ -17,8 +17,9 @@ export default async function TexturesPage() {
       <VideoHero
         headline="Textures / Collections"
         subheadline={textures.intro}
-        videoSrc="https://media.w3.org/2010/05/bunny/trailer.mp4"
-        poster="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=2000&q=80"
+        videoSrc={textures.heroVideo}
+        mobileVideoSrc={textures.heroVideoMobile}
+        poster={textures.heroPoster}
       />
       <CinematicDivider
         image="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=2000&q=80"

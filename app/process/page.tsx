@@ -17,8 +17,9 @@ export default async function ProcessPage() {
       <VideoHero
         headline="How We Work"
         subheadline={processPage.intro}
-        videoSrc="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
-        poster="https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=2000&q=80"
+        videoSrc={processPage.heroVideo}
+        mobileVideoSrc={processPage.heroVideoMobile}
+        poster={processPage.heroPoster}
       />
       <CinematicDivider
         image="https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=2000&q=80"

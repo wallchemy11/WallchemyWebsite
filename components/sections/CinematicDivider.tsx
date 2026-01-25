@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,12 +24,14 @@ export default function CinematicDivider({
   const sectionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
+  const { shouldAnimate } = useMotionPrefs();
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const imageEl = imageRef.current;
     const textEl = textRef.current;
     if (!section || !imageEl || !textEl) return;
+    if (!shouldAnimate) return;
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
@@ -54,7 +57,7 @@ export default function CinematicDivider({
     }, section);
 
     return () => ctx.revert();
-  }, []);
+  }, [shouldAnimate]);
 
   return (
     <section ref={sectionRef} className="bg-ink py-20 md:py-24">

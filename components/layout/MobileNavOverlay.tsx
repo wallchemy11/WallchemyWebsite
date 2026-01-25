@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { getWhatsAppNumber, toWhatsAppHref } from "@/lib/whatsapp";
+import BrandIcon from "@/components/ui/BrandIcon";
 
 type NavItem = { label: string; href: string };
 
@@ -12,7 +12,7 @@ function Icon({
   name,
   className
 }: {
-  name: "x" | "chat" | "instagram" | "behance" | "linkedin" | "youtube";
+  name: "x";
   className?: string;
 }) {
   const common = {
@@ -34,94 +34,6 @@ function Icon({
           />
         </svg>
       );
-    case "chat":
-      return (
-        <svg {...common}>
-          <path
-            d="M20 12c0 3.866-3.582 7-8 7a9.3 9.3 0 0 1-2.6-.36L4 20l1.37-3.42A6.4 6.4 0 0 1 4 12c0-3.866 3.582-7 8-7s8 3.134 8 7Z"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M8.2 12h.01M12 12h.01M15.8 12h.01"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-    case "instagram":
-      return (
-        <svg {...common}>
-          <path
-            d="M7.5 3.8h9A3.7 3.7 0 0 1 20.2 7.5v9a3.7 3.7 0 0 1-3.7 3.7h-9A3.7 3.7 0 0 1 3.8 16.5v-9A3.7 3.7 0 0 1 7.5 3.8Z"
-            stroke="currentColor"
-            strokeWidth="1.6"
-          />
-          <path
-            d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z"
-            stroke="currentColor"
-            strokeWidth="1.6"
-          />
-          <path
-            d="M17.2 6.8h.01"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-    case "behance":
-      return (
-        <svg {...common}>
-          <path
-            d="M8.2 11.6h4a2.2 2.2 0 0 1 0 4.4h-4V7.9h3.6a2.05 2.05 0 0 1 0 4.1H8.2"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M14.4 10.2h5.1M15.4 7.2h3.3"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-          />
-          <path
-            d="M15.2 14.1c.2 1.1 1.1 1.9 2.3 1.9 1 0 1.8-.5 2.2-1.2"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-    case "linkedin":
-      return (
-        <svg {...common}>
-          <path
-            d="M6.6 9.6v8.2M6.6 6.6v.2M10.2 9.6v8.2m0-4.6c0-2 1.1-3.6 3.2-3.6 2 0 3.1 1.3 3.1 3.5v4.7"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      );
-    case "youtube":
-      return (
-        <svg {...common}>
-          <path
-            d="M20 12s0-3.2-.4-4.2c-.2-.6-.7-1.1-1.3-1.3C17.2 6 12 6 12 6s-5.2 0-6.3.5c-.6.2-1.1.7-1.3 1.3C4 8.8 4 12 4 12s0 3.2.4 4.2c.2.6.7 1.1 1.3 1.3C6.8 18 12 18 12 18s5.2 0 6.3-.5c.6-.2 1.1-.7 1.3-1.3.4-1 .4-4.2.4-4.2Z"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M10.5 9.8v4.4l4-2.2-4-2.2Z"
-            fill="currentColor"
-          />
-        </svg>
-      );
   }
 }
 
@@ -129,12 +41,21 @@ type MobileNavOverlayProps = {
   isOpen: boolean;
   onClose: (restoreFocus?: boolean) => void;
   items: NavItem[];
+  whatsappHref: string;
+  socialLinks?: {
+    instagram?: string;
+    behance?: string;
+    linkedin?: string;
+    youtube?: string;
+  };
 };
 
 export default function MobileNavOverlay({
   isOpen,
   onClose,
-  items
+  items,
+  whatsappHref,
+  socialLinks
 }: MobileNavOverlayProps) {
   const pathname = usePathname();
 
@@ -142,10 +63,10 @@ export default function MobileNavOverlay({
   const [rendered, setRendered] = useState(false);
   const [visible, setVisible] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const whatsappHref = toWhatsAppHref(
-    getWhatsAppNumber(),
-    "Hi Wallchemy, I'd like to connect about textures and finishes."
-  );
+  const instagramHref = socialLinks?.instagram;
+  const behanceHref = socialLinks?.behance;
+  const linkedinHref = socialLinks?.linkedin;
+  const youtubeHref = socialLinks?.youtube;
 
   useEffect(() => setMounted(true), []);
 
@@ -242,11 +163,11 @@ export default function MobileNavOverlay({
             href={whatsappHref}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-ink text-alabaster"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-ink text-alabaster transition-transform duration-200 ease-out hover:scale-[1.03] active:scale-[0.98]"
             onClick={() => onClose(false)}
             aria-label="WhatsApp"
           >
-            <Icon name="chat" className="h-5 w-5" />
+            <BrandIcon name="whatsapp" className="h-5 w-5" />
           </a>
         </div>
 
@@ -266,34 +187,54 @@ export default function MobileNavOverlay({
         </nav>
 
         <div className="mt-8 flex items-center justify-center gap-3 pb-[calc(env(safe-area-inset-bottom)+6px)]">
-          <a
-            href="#"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-ink/5 text-ink"
-            aria-label="Instagram"
-          >
-            <Icon name="instagram" />
-          </a>
-          <a
-            href="#"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-ink/5 text-ink"
-            aria-label="Behance"
-          >
-            <Icon name="behance" />
-          </a>
-          <a
-            href="#"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-ink/5 text-ink"
-            aria-label="LinkedIn"
-          >
-            <Icon name="linkedin" />
-          </a>
-          <a
-            href="#"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-ink/5 text-ink"
-            aria-label="YouTube"
-          >
-            <Icon name="youtube" />
-          </a>
+          {instagramHref ? (
+            <a
+              href={instagramHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/10 bg-ink/5 text-ink transition-colors hover:bg-ink/10"
+              aria-label="Instagram"
+              onClick={() => onClose(false)}
+            >
+              <BrandIcon name="instagram" className="h-5 w-5" />
+            </a>
+          ) : null}
+          {behanceHref ? (
+            <a
+              href={behanceHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/10 bg-ink/5 text-ink transition-colors hover:bg-ink/10"
+              aria-label="Behance"
+              onClick={() => onClose(false)}
+            >
+              <BrandIcon name="behance" className="h-5 w-5" />
+            </a>
+          ) : null}
+          {linkedinHref ? (
+            <a
+              href={linkedinHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/10 bg-ink/5 text-ink transition-colors hover:bg-ink/10"
+              aria-label="LinkedIn"
+              onClick={() => onClose(false)}
+            >
+              <BrandIcon name="linkedin" className="h-5 w-5" />
+            </a>
+          ) : null}
+          {youtubeHref ? (
+            <a
+              href={youtubeHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/10 bg-ink/5 text-ink transition-colors hover:bg-ink/10"
+              aria-label="YouTube"
+              onClick={() => onClose(false)}
+            >
+              <BrandIcon name="youtube" className="h-5 w-5" />
+            </a>
+          ) : null}
         </div>
       </div>
     </div>,

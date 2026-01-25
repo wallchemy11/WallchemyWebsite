@@ -4,7 +4,7 @@ import "./globals.css";
 import PageTransition from "@/components/animations/PageTransition";
 import SmoothScroll from "@/components/animations/SmoothScroll";
 import SiteFooter from "@/components/layout/SiteFooter";
-import SiteHeader from "@/components/layout/SiteHeader";
+import SiteHeaderServer from "@/components/layout/SiteHeaderServer";
 
 const displayFont = Playfair_Display({
   subsets: ["latin"],
@@ -34,7 +34,7 @@ export default function RootLayout({
       <body className="bg-ink text-alabaster antialiased">
         <SmoothScroll />
         <PageTransition />
-        <SiteHeader />
+        <SiteHeaderServer />
         <main className="min-h-screen">{children}</main>
         <SiteFooter />
       </body>

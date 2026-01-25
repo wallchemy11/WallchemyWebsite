@@ -16,7 +16,8 @@
     "next": "14.2.5",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "sanity": "^3.99.0"
+    "sanity": "^3.99.0",
+    "simple-icons": "^16.6.1"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",

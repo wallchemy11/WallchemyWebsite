@@ -2,7 +2,9 @@ export const homePageQuery = `*[_type == "homePage"][0]{
   title,
   heroHeadline,
   heroSubheadline,
-  "heroVideo": heroVideo.asset->url,
+  "heroVideo": hero.video.asset->url,
+  "heroVideoMobile": hero.videoMobile.asset->url,
+  "heroPoster": hero.poster.asset->url,
   philosophy,
   textureHighlights[]->{
     title,
@@ -28,12 +30,18 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   narrative,
   founderNote,
   studioValues,
+  "heroVideo": hero.video.asset->url,
+  "heroVideoMobile": hero.videoMobile.asset->url,
+  "heroPoster": hero.poster.asset->url,
   seo
 }`;
 
 export const texturesPageQuery = `*[_type == "texturesPage"][0]{
   title,
   intro,
+  "heroVideo": hero.video.asset->url,
+  "heroVideoMobile": hero.videoMobile.asset->url,
+  "heroPoster": hero.poster.asset->url,
   collections[]->{
     title,
     slug,
@@ -48,6 +56,9 @@ export const texturesPageQuery = `*[_type == "texturesPage"][0]{
 export const processPageQuery = `*[_type == "processPage"][0]{
   title,
   intro,
+  "heroVideo": hero.video.asset->url,
+  "heroVideoMobile": hero.videoMobile.asset->url,
+  "heroPoster": hero.poster.asset->url,
   steps,
   seo
 }`;
@@ -55,6 +66,9 @@ export const processPageQuery = `*[_type == "processPage"][0]{
 export const projectsPageQuery = `*[_type == "projectsPage"][0]{
   title,
   intro,
+  "heroVideo": hero.video.asset->url,
+  "heroVideoMobile": hero.videoMobile.asset->url,
+  "heroPoster": hero.poster.asset->url,
   projects[]->{
     title,
     slug,
@@ -73,5 +87,19 @@ export const contactPageQuery = `*[_type == "contactPage"][0]{
   whatsappNumber,
   studioAddress,
   email,
+  "heroVideo": hero.video.asset->url,
+  "heroVideoMobile": hero.videoMobile.asset->url,
+  "heroPoster": hero.poster.asset->url,
   seo
+}`;
+
+export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
+  whatsappNumber,
+  whatsappMessage,
+  social{
+    instagram,
+    behance,
+    linkedin,
+    youtube
+  }
 }`;

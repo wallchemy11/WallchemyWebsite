@@ -18,8 +18,9 @@ export default async function AboutPage() {
       <VideoHero
         headline="About Wallchemy"
         subheadline={about.intro}
-        videoSrc="https://www.w3schools.com/html/mov_bbb.mp4"
-        poster="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=2000&q=80"
+        videoSrc={about.heroVideo}
+        mobileVideoSrc={about.heroVideoMobile}
+        poster={about.heroPoster}
       />
       <CinematicDivider
         image="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=2000&q=80"

@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
+import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 
 type HeroRevealProps = {
   children: React.ReactNode;
@@ -9,10 +10,12 @@ type HeroRevealProps = {
 
 export default function HeroReveal({ children }: HeroRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { shouldAnimate } = useMotionPrefs();
 
   useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    if (!shouldAnimate) return;
 
     const ctx = gsap.context(() => {
       const items = gsap.utils.toArray<HTMLElement>(
@@ -31,7 +34,7 @@ export default function HeroReveal({ children }: HeroRevealProps) {
     }, container);
 
     return () => ctx.revert();
-  }, []);
+  }, [shouldAnimate]);
 
   return <div ref={containerRef}>{children}</div>;
 }

@@ -17,9 +17,9 @@ export const homePage = defineType({
       type: "string"
     }),
     defineField({
-      name: "heroVideo",
-      title: "Hero Video",
-      type: "file"
+      name: "hero",
+      title: "Hero Media",
+      type: "heroMedia"
     }),
     defineField({
       name: "philosophy",

@@ -4,6 +4,9 @@ export const mockHomePage = {
   heroSubheadline:
     "A premium texture and surface studio crafting immersive environments.",
   heroVideo: "https://media.w3.org/2010/05/sintel/trailer.mp4",
+  heroVideoMobile: "https://media.w3.org/2010/05/sintel/trailer.mp4",
+  heroPoster:
+    "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=2000&q=80",
   philosophy:
     "We treat surfaces as emotional architecture—layering light, mineral, and touch into spaces that linger.",
   textureHighlights: [
@@ -64,6 +67,10 @@ export const mockAboutPage = {
   title: "About Wallchemy",
   intro:
     "Founded in 2026, Wallchemy is a boutique surface studio blending artisanal craft with architectural precision.",
+  heroVideo: "https://www.w3schools.com/html/mov_bbb.mp4",
+  heroVideoMobile: "https://www.w3schools.com/html/mov_bbb.mp4",
+  heroPoster:
+    "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=2000&q=80",
   narrative:
     "Our work is led by material research, slow experimentation, and the belief that walls can shift perception.",
   founderNote:
@@ -84,6 +91,10 @@ export const mockTexturesPage = {
   title: "Textures & Collections",
   intro:
     "A curated library of mineral-rich finishes, designed to elevate space through atmosphere.",
+  heroVideo: "https://media.w3.org/2010/05/bunny/trailer.mp4",
+  heroVideoMobile: "https://media.w3.org/2010/05/bunny/trailer.mp4",
+  heroPoster:
+    "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=2000&q=80",
   collections: mockHomePage.textureHighlights,
   seo: {
     title: "Wallchemy Textures",
@@ -96,6 +107,12 @@ export const mockProcessPage = {
   title: "How We Work",
   intro:
     "A considered sequence of collaboration and craft, tailored to each project.",
+  heroVideo:
+    "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  heroVideoMobile:
+    "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  heroPoster:
+    "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=2000&q=80",
   steps: [
     "Consultation",
     "Site visit",
@@ -115,6 +132,10 @@ export const mockProjectsPage = {
   title: "Selected Projects",
   intro:
     "Large-scale environments where texture becomes memory, light, and ritual.",
+  heroVideo: "https://media.w3.org/2010/05/video/movie_300.mp4",
+  heroVideoMobile: "https://media.w3.org/2010/05/video/movie_300.mp4",
+  heroPoster:
+    "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80",
   projects: mockHomePage.selectedProjects.map((project) => ({
     ...project,
     atmosphereNote:
@@ -130,6 +151,10 @@ export const mockProjectsPage = {
 export const mockContactPage = {
   title: "Contact",
   intro: "Start a conversation about bespoke surfaces and immersive finishes.",
+  heroVideo: "https://media.w3.org/2010/05/sintel/trailer.mp4",
+  heroVideoMobile: "https://media.w3.org/2010/05/sintel/trailer.mp4",
+  heroPoster:
+    "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=2000&q=80",
   enquiryCta: "Send an enquiry",
   whatsappNumber: "+91 00000 00000",
   studioAddress: "Luxury Studio, Panipat · New Delhi",
@@ -137,5 +162,16 @@ export const mockContactPage = {
   seo: {
     title: "Contact Wallchemy",
     description: "Begin your bespoke surface collaboration with Wallchemy."
+  }
+};
+
+export const mockSiteSettings = {
+  whatsappNumber: "+91 00000 00000",
+  whatsappMessage: "Hi Wallchemy, I'd like to connect about textures and finishes.",
+  social: {
+    instagram: "",
+    behance: "",
+    linkedin: "",
+    youtube: ""
   }
 };

@@ -5,7 +5,8 @@ import {
   mockHomePage,
   mockProcessPage,
   mockProjectsPage,
-  mockTexturesPage
+  mockTexturesPage,
+  mockSiteSettings
 } from "./mock-data";
 import { sanityClient, isSanityConfigured } from "./sanity.client";
 import {
@@ -14,6 +15,7 @@ import {
   homePageQuery,
   processPageQuery,
   projectsPageQuery,
+  siteSettingsQuery,
   texturesPageQuery
 } from "./queries";
 
@@ -75,4 +77,14 @@ export async function getContactPage() {
     { next: { revalidate: 60 } }
   );
   return data || mockContactPage;
+}
+
+export async function getSiteSettings() {
+  if (!isSanityConfigured) return mockSiteSettings;
+  const data = await sanityClient.fetch(
+    siteSettingsQuery,
+    {},
+    { next: { revalidate: 60 } }
+  );
+  return data || mockSiteSettings;
 }

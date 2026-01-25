@@ -5,6 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,10 +23,12 @@ type SelectedProjectsProps = {
 
 export default function SelectedProjects({ projects }: SelectedProjectsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { shouldAnimate } = useMotionPrefs();
 
   useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    if (!shouldAnimate) return;
 
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray<HTMLElement>(
@@ -85,11 +88,11 @@ export default function SelectedProjects({ projects }: SelectedProjectsProps) {
     }, container);
 
     return () => ctx.revert();
-  }, []);
+  }, [shouldAnimate]);
 
   return (
     <section className="bg-ink py-24">
-      <div ref={containerRef} className="mx-auto max-w-6xl px-6">
+      <div className="mx-auto max-w-6xl px-6">
         <SectionHeading
           eyebrow="Selected Projects"
           title="Spaces shaped by light, scale, and surface."

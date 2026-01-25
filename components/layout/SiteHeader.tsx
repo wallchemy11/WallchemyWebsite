@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import Link from "next/link";
 import MobileNavOverlay from "./MobileNavOverlay";
-import { getWhatsAppNumber, toWhatsAppHref } from "@/lib/whatsapp";
+import BrandIcon from "@/components/ui/BrandIcon";
 
 const navItems = [
   { label: "About", href: "/about" },
@@ -13,13 +13,22 @@ const navItems = [
   { label: "Contact", href: "/contact" }
 ];
 
-export default function SiteHeader() {
+type SocialLinks = {
+  instagram?: string;
+  behance?: string;
+  linkedin?: string;
+  youtube?: string;
+};
+
+export default function SiteHeader({
+  whatsappHref,
+  socialLinks
+}: {
+  whatsappHref: string;
+  socialLinks?: SocialLinks;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const whatsappHref = toWhatsAppHref(
-    getWhatsAppNumber(),
-    "Hi Wallchemy, I'd like to connect about textures and finishes."
-  );
 
   const closeMenu = useCallback((restoreFocus: boolean = true) => {
     setIsOpen(false);
@@ -69,10 +78,10 @@ export default function SiteHeader() {
               href={whatsappHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-brass/60 text-brass/90"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-brass/60 text-brass/90 transition-colors hover:bg-brass/10"
               aria-label="WhatsApp"
             >
-              ↗
+              <BrandIcon name="whatsapp" className="h-[18px] w-[18px]" />
             </a>
           </div>
         <nav className="hidden items-center gap-6 text-xs uppercase tracking-[0.32em] text-alabaster/70 md:flex">
@@ -96,6 +105,8 @@ export default function SiteHeader() {
         isOpen={isOpen}
         onClose={closeMenu}
         items={navItems}
+        whatsappHref={whatsappHref}
+        socialLinks={socialLinks}
       />
     </header>
   );
