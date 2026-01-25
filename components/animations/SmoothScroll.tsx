@@ -11,8 +11,7 @@ export default function SmoothScroll() {
   useEffect(() => {
     const lenis = new Lenis({
       lerp: 0.08,
-      smoothWheel: true,
-      smoothTouch: false
+      smoothWheel: true
     });
 
     lenis.on("scroll", ScrollTrigger.update);
