@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #0b0a09;
+  color: #f2ede4;
+  font-family: var(--font-sans);
+  letter-spacing: 0.012em;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
+
+.mask-reveal {
+  clip-path: inset(0 0 100% 0);
+}
+
+.mask-reveal.is-visible {
+  clip-path: inset(0 0 0 0);
+}
+
+.text-shadow-soft {
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+[data-reveal] {
+  will-change: transform, opacity, clip-path;
+}
+
+.split-word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+img,
+video {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
