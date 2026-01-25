@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -24,7 +24,7 @@ export default function CinematicDivider({
   const imageRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const section = sectionRef.current;
     const imageEl = imageRef.current;
     const textEl = textRef.current;
@@ -57,7 +57,7 @@ export default function CinematicDivider({
   }, []);
 
   return (
-    <section ref={sectionRef} className="bg-ink py-24">
+    <section ref={sectionRef} className="bg-ink py-20 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div ref={imageRef} className="overflow-hidden">
           <Image
@@ -67,22 +67,22 @@ export default function CinematicDivider({
             height={900}
             sizes="(max-width: 768px) 100vw, 1200px"
             quality={70}
-            className="h-[420px] w-full object-cover md:h-[520px]"
+            className="h-[260px] w-full object-cover sm:h-[360px] md:h-[520px]"
           />
         </div>
         <div
           ref={textRef}
-          className="mt-10 grid gap-6 md:grid-cols-[1.2fr_1fr]"
+          className="mt-8 grid gap-6 md:mt-10 md:grid-cols-[1.2fr_1fr]"
         >
           <div>
-            <p className="text-xs uppercase tracking-[0.45em] text-brass">
+            <p className="text-[10px] uppercase tracking-[0.36em] text-brass sm:text-xs sm:tracking-[0.45em]">
               {eyebrow}
             </p>
-            <h2 className="font-display mt-4 text-3xl md:text-5xl">
+            <h2 className="font-display mt-3 text-2xl sm:text-3xl md:text-5xl">
               {title}
             </h2>
           </div>
-          <p className="text-sm uppercase tracking-[0.2em] text-alabaster/70">
+          <p className="text-xs uppercase tracking-[0.18em] text-alabaster/70 sm:text-sm md:tracking-[0.2em]">
             {subtitle}
           </p>
         </div>

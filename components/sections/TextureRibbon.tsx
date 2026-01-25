@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -21,32 +21,39 @@ export default function TextureRibbon({ items }: TextureRibbonProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const ribbonItems = useMemo(() => [...items, ...items], [items]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const section = sectionRef.current;
     const track = trackRef.current;
     if (!section || !track) return;
 
     const ctx = gsap.context(() => {
-      const getDistance = () =>
-        Math.max(200, track.scrollWidth - section.offsetWidth);
+      ScrollTrigger.matchMedia({
+        "(min-width: 768px)": () => {
+          const getDistance = () =>
+            Math.max(200, track.scrollWidth - section.offsetWidth);
 
-      const scrollDistance = getDistance();
-      gsap.fromTo(
-        track,
-        { x: -scrollDistance },
-        {
-          x: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-          end: () => `+=${getDistance() * 0.8}`,
-          scrub: 0.9,
-            pin: true,
-            invalidateOnRefresh: true
-          }
+          const scrollDistance = getDistance();
+          gsap.fromTo(
+            track,
+            { x: -scrollDistance },
+            {
+              x: 0,
+              ease: "none",
+              scrollTrigger: {
+                trigger: section,
+                start: "top top",
+                end: () => `+=${getDistance() * 0.8}`,
+                scrub: 0.9,
+                pin: true,
+                invalidateOnRefresh: true
+              }
+            }
+          );
+        },
+        "(max-width: 767px)": () => {
+          gsap.set(track, { clearProps: "all" });
         }
-      );
+      });
     }, section);
 
     return () => ctx.revert();
@@ -62,13 +69,16 @@ export default function TextureRibbon({ items }: TextureRibbonProps) {
           A continuous ribbon of curated finishes.
         </h2>
       </div>
-      <div className="mt-12">
+      <div className="mt-8 overflow-x-auto md:mt-12 md:overflow-visible">
         <div
           ref={trackRef}
-          className="flex w-max items-center gap-10 px-6 pb-12"
+          className="flex w-max items-center gap-6 px-6 pb-10 md:gap-10 md:pb-12"
         >
           {ribbonItems.map((item, index) => (
-            <div key={`${item.title}-${index}`} className="w-[320px] md:w-[420px]">
+            <div
+              key={`${item.title}-${index}`}
+              className="w-[240px] sm:w-[300px] md:w-[420px]"
+            >
               <div className="overflow-hidden">
                 <Image
                   src={item.heroImage}
@@ -77,10 +87,10 @@ export default function TextureRibbon({ items }: TextureRibbonProps) {
                   height={800}
                   sizes="(max-width: 768px) 80vw, 420px"
                   quality={70}
-                  className="h-[460px] w-full object-cover"
+                  className="h-[300px] w-full object-cover sm:h-[360px] md:h-[460px]"
                 />
               </div>
-              <p className="mt-4 text-xs uppercase tracking-[0.35em] text-brass">
+              <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-brass sm:text-xs sm:tracking-[0.35em]">
                 {item.title}
               </p>
             </div>

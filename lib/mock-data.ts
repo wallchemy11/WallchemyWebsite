@@ -50,8 +50,8 @@ export const mockHomePage = {
     }
   ],
   primaryCtas: [
-    { label: "Book a Meeting", href: "/contact" },
-    { label: "Visit Our Store", href: "/contact" }
+    { label: "Book a Meeting", href: "/contact#enquiry" },
+    { label: "WhatsApp Us", href: "https://wa.me/910000000000?text=Hi%20Wallchemy%2C%20I%27d%20like%20to%20connect%20about%20textures%20and%20finishes." }
   ],
   seo: {
     title: "Wallchemy — Luxury Texture Studio",

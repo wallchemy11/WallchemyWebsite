@@ -11,7 +11,7 @@ type Collection = {
 
 type TextureCollectionsProps = {
   title: string;
-  intro: string;
+  intro?: string;
   collections: Collection[];
 };
 
@@ -29,7 +29,7 @@ export default function TextureCollections({
             title={title}
             subtitle={intro}
           />
-          <div className="mt-12 grid gap-12">
+          <div className="mt-12 grid gap-10 md:gap-12">
             {collections.map((collection) => (
               <article
                 key={collection.slug}
@@ -45,10 +45,10 @@ export default function TextureCollections({
                   />
                 </div>
                 <div data-reveal className="space-y-4">
-                  <h3 className="font-display text-2xl uppercase tracking-[0.2em]">
+                  <h3 className="font-display text-xl uppercase tracking-[0.18em] sm:text-2xl md:tracking-[0.2em]">
                     {collection.title}
                   </h3>
-                  <p className="text-sm text-alabaster/70">
+                  <p className="text-xs text-alabaster/70 sm:text-sm">
                     {collection.shortDescription}
                   </p>
                 </div>

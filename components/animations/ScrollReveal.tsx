@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,10 +19,12 @@ export default function ScrollReveal({
   y = 60
 }: ScrollRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { shouldAnimate } = useMotionPrefs();
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    if (!shouldAnimate) return;
 
     const ctx = gsap.context(() => {
       const items = gsap.utils.toArray<HTMLElement>(
@@ -91,7 +94,7 @@ export default function ScrollReveal({
     }, container);
 
     return () => ctx.revert();
-  }, [selector, y]);
+  }, [selector, y, shouldAnimate]);
 
   return <div ref={containerRef}>{children}</div>;
 }

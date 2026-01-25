@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
@@ -17,18 +17,22 @@ export default function EditorialManifesto({
   const containerRef = useRef<HTMLDivElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     const pin = pinRef.current;
     if (!container || !pin) return;
 
     const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: container,
-        start: "top top",
-        end: "bottom bottom",
-        pin,
-        pinSpacing: true
+      ScrollTrigger.matchMedia({
+        "(min-width: 768px)": () => {
+          ScrollTrigger.create({
+            trigger: container,
+            start: "top top",
+            end: "bottom bottom",
+            pin,
+            pinSpacing: true
+          });
+        }
       });
 
       const items = gsap.utils.toArray<HTMLElement>(

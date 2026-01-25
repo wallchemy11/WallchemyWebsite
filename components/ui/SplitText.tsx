@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,10 +14,12 @@ type SplitTextProps = {
 
 export default function SplitText({ text, className }: SplitTextProps) {
   const textRef = useRef<HTMLParagraphElement>(null);
+  const { shouldAnimate, isMobile } = useMotionPrefs();
 
   useEffect(() => {
     const element = textRef.current;
     if (!element) return;
+    if (!shouldAnimate) return;
 
     const words = element.querySelectorAll(".split-word");
 
@@ -39,15 +42,17 @@ export default function SplitText({ text, className }: SplitTextProps) {
     }, element);
 
     return () => ctx.revert();
-  }, []);
+  }, [shouldAnimate]);
 
   return (
     <p ref={textRef} className={className}>
-      {text.split(" ").map((word, index) => (
-        <span key={`${word}-${index}`} className="split-word">
-          {word}&nbsp;
-        </span>
-      ))}
+      {isMobile
+        ? text
+        : text.split(" ").map((word, index) => (
+            <span key={`${word}-${index}`} className="split-word">
+              {word}&nbsp;
+            </span>
+          ))}
     </p>
   );
 }

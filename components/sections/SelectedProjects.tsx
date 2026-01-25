@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -23,7 +23,7 @@ type SelectedProjectsProps = {
 export default function SelectedProjects({ projects }: SelectedProjectsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
@@ -100,7 +100,7 @@ export default function SelectedProjects({ projects }: SelectedProjectsProps) {
         {projects.map((project, index) => (
             <article
               key={project.slug}
-              className="project-card relative min-h-[520px] overflow-hidden md:min-h-[640px]"
+            className="project-card relative min-h-[420px] overflow-hidden md:min-h-[640px]"
             >
               <Image
                 src={project.heroImage}
@@ -112,7 +112,7 @@ export default function SelectedProjects({ projects }: SelectedProjectsProps) {
                 className="project-image absolute inset-0 h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-ink/30 via-ink/40 to-ink/80" />
-            <div className="relative z-10 mx-auto flex h-full max-w-6xl items-end px-6 pb-14">
+            <div className="relative z-10 mx-auto flex h-full max-w-6xl items-end px-6 pb-10 md:pb-14">
               <div
                 className={`project-text max-w-xl space-y-6 ${
                   index % 2 === 0
@@ -120,13 +120,13 @@ export default function SelectedProjects({ projects }: SelectedProjectsProps) {
                     : "text-right md:ml-auto"
                 }`}
               >
-                  <p className="text-xs uppercase tracking-[0.42em] text-brass/90">
+                <p className="text-[10px] uppercase tracking-[0.32em] text-brass/90 sm:text-xs sm:tracking-[0.42em]">
                     {project.location}
                   </p>
-                <h3 className="font-display text-4xl uppercase tracking-[0.2em] md:text-6xl">
+                <h3 className="font-display text-2xl uppercase tracking-[0.18em] sm:text-3xl md:text-6xl">
                     {project.title}
                   </h3>
-                  <p className="text-base uppercase tracking-[0.28em] text-alabaster/70">
+                <p className="text-xs uppercase tracking-[0.2em] text-alabaster/70 sm:text-sm md:text-base md:tracking-[0.28em]">
                     {project.areaSqFt.toLocaleString()} sq. ft. · Crafted
                     atmosphere at scale.
                   </p>

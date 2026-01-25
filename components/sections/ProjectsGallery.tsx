@@ -13,7 +13,7 @@ type Project = {
 
 type ProjectsGalleryProps = {
   title: string;
-  intro: string;
+  intro?: string;
   projects: Project[];
 };
 
@@ -42,25 +42,25 @@ export default function ProjectsGallery({
                     height={800}
                   sizes="(max-width: 768px) 100vw, 70vw"
                   quality={70}
-                    className="h-[420px] w-full object-cover"
+                    className="h-[260px] w-full object-cover sm:h-[360px] md:h-[420px]"
                   />
                 </div>
-                <div data-reveal className="mt-6 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div data-reveal className="mt-5 flex flex-col gap-2 md:mt-6 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.35em] text-brass">
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-brass sm:text-xs sm:tracking-[0.35em]">
                       {project.location}
                     </p>
-                    <h3 className="font-display text-2xl uppercase tracking-[0.18em]">
+                    <h3 className="font-display text-xl uppercase tracking-[0.16em] sm:text-2xl md:tracking-[0.18em]">
                       {project.title}
                     </h3>
                   </div>
-                  <p className="text-sm text-alabaster/70">
+                  <p className="text-xs text-alabaster/70 sm:text-sm">
                     {project.areaSqFt.toLocaleString()} sq. ft.
                   </p>
                 </div>
                 <p
                   data-reveal
-                  className="mt-4 max-w-3xl text-sm uppercase tracking-[0.2em] text-alabaster/70"
+                  className="mt-3 max-w-3xl text-xs uppercase tracking-[0.18em] text-alabaster/70 sm:text-sm md:tracking-[0.2em]"
                 >
                   {project.atmosphereNote}
                 </p>

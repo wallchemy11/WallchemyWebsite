@@ -3,7 +3,7 @@ import SectionHeading from "@/components/ui/SectionHeading";
 
 type ContactPanelProps = {
   title: string;
-  intro: string;
+  intro?: string;
   enquiryCta: string;
   whatsappNumber: string;
   studioAddress: string;
@@ -21,53 +21,53 @@ export default function ContactPanel({
   return (
     <section className="bg-ink py-24">
       <ScrollReveal>
-        <div className="mx-auto grid max-w-6xl gap-12 px-6 md:grid-cols-[1fr_1.2fr]">
+        <div className="mx-auto grid max-w-6xl gap-10 px-6 md:gap-12 md:grid-cols-[1fr_1.2fr]">
           <div>
             <SectionHeading
               eyebrow="Contact"
               title={title}
               subtitle={intro}
             />
-            <div data-reveal className="mt-10 space-y-3 text-sm text-alabaster/70">
+            <div data-reveal className="mt-8 space-y-3 text-xs text-alabaster/70 sm:text-sm md:mt-10">
               <p>{studioAddress}</p>
               <p>{email}</p>
               <p>WhatsApp: {whatsappNumber}</p>
             </div>
           </div>
-          <div data-reveal className="rounded-none border border-alabaster/10 p-8">
+          <div id="enquiry" data-reveal className="scroll-mt-28 rounded-none border border-alabaster/10 p-6 sm:p-8">
             <form className="space-y-6">
               <div data-reveal>
-                <label className="text-xs uppercase tracking-[0.3em] text-alabaster/70">
+                <label className="text-[10px] uppercase tracking-[0.28em] text-alabaster/70 sm:text-xs sm:tracking-[0.3em]">
                   Name
                 </label>
                 <input
                   type="text"
-                  className="mt-2 w-full border border-alabaster/10 bg-transparent px-4 py-3 text-sm text-alabaster outline-none focus:border-brass"
-                  placeholder="Your full name"
+                  className="mt-2 w-full border border-alabaster/10 bg-transparent px-4 py-3 text-sm text-alabaster placeholder:text-alabaster/40 outline-none focus:border-brass"
+                  placeholder="Full name"
                 />
               </div>
               <div data-reveal>
-                <label className="text-xs uppercase tracking-[0.3em] text-alabaster/70">
+                <label className="text-[10px] uppercase tracking-[0.28em] text-alabaster/70 sm:text-xs sm:tracking-[0.3em]">
                   Email
                 </label>
                 <input
                   type="email"
-                  className="mt-2 w-full border border-alabaster/10 bg-transparent px-4 py-3 text-sm text-alabaster outline-none focus:border-brass"
-                  placeholder="you@studio.com"
+                  className="mt-2 w-full border border-alabaster/10 bg-transparent px-4 py-3 text-sm text-alabaster placeholder:text-alabaster/40 outline-none focus:border-brass"
+                  placeholder="Email address"
                 />
               </div>
               <div data-reveal>
-                <label className="text-xs uppercase tracking-[0.3em] text-alabaster/70">
+                <label className="text-[10px] uppercase tracking-[0.28em] text-alabaster/70 sm:text-xs sm:tracking-[0.3em]">
                   Project Summary
                 </label>
                 <textarea
-                  className="mt-2 h-32 w-full border border-alabaster/10 bg-transparent px-4 py-3 text-sm text-alabaster outline-none focus:border-brass"
-                  placeholder="Tell us about the space, scale, and intent."
+                  className="mt-2 h-32 w-full border border-alabaster/10 bg-transparent px-4 py-3 text-sm text-alabaster placeholder:text-alabaster/40 outline-none focus:border-brass"
+                  placeholder="Tell us about the space, scale, timeline, and desired finish."
                 />
               </div>
               <button
                 type="submit"
-                className="w-full border border-brass px-6 py-3 text-xs uppercase tracking-[0.35em] text-brass"
+                className="w-full border border-brass px-6 py-3 text-[10px] uppercase tracking-[0.32em] text-brass sm:text-xs sm:tracking-[0.35em]"
               >
                 {enquiryCta}
               </button>
