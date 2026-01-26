@@ -1,5 +1,13 @@
 import { getDb } from "./index";
 
+async function queryRows<T = any>(text: string, params: any[] = []) {
+  const db = getDb();
+  const result: any = await db.query(text, params);
+  if (Array.isArray(result)) return result as T[];
+  if (Array.isArray(result?.rows)) return result.rows as T[];
+  return [];
+}
+
 // Helper to handle JSON
 function jsonStringify(value: any) {
   return JSON.stringify(value);
@@ -7,8 +15,7 @@ function jsonStringify(value: any) {
 
 // Pages
 export async function getPage(slug: string) {
-  const db = getDb();
-  const result = await db.query("SELECT * FROM pages WHERE slug = $1 LIMIT 1", [slug]);
+  const result = await queryRows("SELECT * FROM pages WHERE slug = $1 LIMIT 1", [slug]);
   return result[0] || null;
 }
 
@@ -29,13 +36,11 @@ export async function savePage(slug: string, title: string, content: any, seo: a
 
 // Projects
 export async function getAllProjects() {
-  const db = getDb();
-  return await db.query("SELECT * FROM projects ORDER BY display_order ASC, created_at DESC", []);
+  return await queryRows("SELECT * FROM projects ORDER BY display_order ASC, created_at DESC", []);
 }
 
 export async function getFeaturedProjects() {
-  const db = getDb();
-  return await db.query(
+  return await queryRows(
     `SELECT p.* FROM projects p
      INNER JOIN home_featured_projects hfp ON p.id = hfp.project_id
      ORDER BY hfp.display_order ASC`,
@@ -44,14 +49,12 @@ export async function getFeaturedProjects() {
 }
 
 export async function getProject(slug: string) {
-  const db = getDb();
-  const result = await db.query("SELECT * FROM projects WHERE slug = $1 LIMIT 1", [slug]);
+  const result = await queryRows("SELECT * FROM projects WHERE slug = $1 LIMIT 1", [slug]);
   return result[0] || null;
 }
 
 export async function getProjectIdBySlug(slug: string) {
-  const db = getDb();
-  const result = await db.query("SELECT id FROM projects WHERE slug = $1 LIMIT 1", [slug]);
+  const result = await queryRows<{ id: number }>("SELECT id FROM projects WHERE slug = $1 LIMIT 1", [slug]);
   return result[0]?.id || null;
 }
 
@@ -87,8 +90,7 @@ export async function saveProject(data: {
     );
     return data.id;
   } else {
-    const db = getDb();
-    const result = await db.query(
+    const result = await queryRows<{ id: number }>(
       `INSERT INTO projects (title, slug, location, area_sq_ft, hero_image_url, atmosphere_note, display_order, is_featured)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING id`,
@@ -125,13 +127,11 @@ export async function setFeaturedProjects(projectIds: number[]) {
 
 // Collections
 export async function getAllCollections() {
-  const db = getDb();
-  return await db.query("SELECT * FROM collections ORDER BY display_order ASC, created_at DESC", []);
+  return await queryRows("SELECT * FROM collections ORDER BY display_order ASC, created_at DESC", []);
 }
 
 export async function getFeaturedCollections() {
-  const db = getDb();
-  return await db.query(
+  return await queryRows(
     `SELECT c.* FROM collections c
      INNER JOIN home_featured_collections hfc ON c.id = hfc.collection_id
      ORDER BY hfc.display_order ASC`,
@@ -140,14 +140,12 @@ export async function getFeaturedCollections() {
 }
 
 export async function getCollection(slug: string) {
-  const db = getDb();
-  const result = await db.query("SELECT * FROM collections WHERE slug = $1 LIMIT 1", [slug]);
+  const result = await queryRows("SELECT * FROM collections WHERE slug = $1 LIMIT 1", [slug]);
   return result[0] || null;
 }
 
 export async function getCollectionIdBySlug(slug: string) {
-  const db = getDb();
-  const result = await db.query("SELECT id FROM collections WHERE slug = $1 LIMIT 1", [slug]);
+  const result = await queryRows<{ id: number }>("SELECT id FROM collections WHERE slug = $1 LIMIT 1", [slug]);
   return result[0]?.id || null;
 }
 
@@ -176,8 +174,7 @@ export async function saveCollection(data: {
     );
     return data.id;
   } else {
-    const db = getDb();
-    const result = await db.query(
+    const result = await queryRows<{ id: number }>(
       `INSERT INTO collections (title, slug, hero_image_url, short_description, display_order)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING id`,
@@ -205,8 +202,7 @@ export async function setFeaturedCollections(collectionIds: number[]) {
 
 // Site Settings
 export async function getSiteSettings() {
-  const db = getDb();
-  const result = await db.query("SELECT * FROM site_settings WHERE id = 1 LIMIT 1", []);
+  const result = await queryRows("SELECT * FROM site_settings WHERE id = 1 LIMIT 1", []);
   if (result[0]) {
     return {
       palette: result[0].palette || {}
