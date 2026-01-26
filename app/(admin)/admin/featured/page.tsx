@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default function FeaturedContentPage() {
   const router = useRouter();
   const [projects, setProjects] = useState<any[]>([]);

@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default function CollectionsPage() {
   const router = useRouter();
   const [collections, setCollections] = useState<any[]>([]);
