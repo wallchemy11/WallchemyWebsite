@@ -1,3 +1,22 @@
+const mockFeaturedProjects = [
+  {
+    title: "Khurana Jewellers",
+    slug: "khurana-jewellers",
+    location: "New Delhi",
+    areaSqFt: 18000,
+    heroImage:
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=2000&q=80"
+  },
+  {
+    title: "Panipat Handlooms",
+    slug: "panipat-handlooms",
+    location: "Panipat",
+    areaSqFt: 12000,
+    heroImage:
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80"
+  }
+];
+
 export const mockHomePage = {
   title: "Wallchemy",
   heroHeadline: "Turning Walls into Experiences",
@@ -7,8 +26,32 @@ export const mockHomePage = {
   heroVideoMobile: "https://media.w3.org/2010/05/sintel/trailer.mp4",
   heroPoster:
     "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=2000&q=80",
-  philosophy:
-    "We treat surfaces as emotional architecture—layering light, mineral, and touch into spaces that linger.",
+  introText:
+    "Wallchemy crafts mineral-rich finishes for spaces that are felt before they are seen.",
+  manifesto: {
+    eyebrow: "Manifesto",
+    title: "A cinematic approach to surface craft.",
+    subtitle: "Editorial, architectural, and quietly bold.",
+    items: [
+      {
+        eyebrow: "Material Poetics",
+        text: "We treat surfaces as emotional architecture—layering light, mineral, and touch into spaces that linger."
+      },
+      {
+        eyebrow: "Studio Method",
+        text: "Every finish is developed in-house, guided by material science and editorial sensibility."
+      },
+      {
+        eyebrow: "Signature Touch",
+        text: "Each finish is bespoke, calibrated to light, scale, and the emotional pacing of the room."
+      }
+    ]
+  },
+  studioDivider: {
+    eyebrow: "Studio Craft",
+    title: "Surfaces shaped by light, silence, and touch.",
+    subtitle: "A refined collaboration with designers, architects, and hospitality leaders."
+  },
   textureHighlights: [
     {
       title: "Lime Plaster",
@@ -32,26 +75,23 @@ export const mockHomePage = {
       shortDescription: "Expressive surfaces tailored to narrative-driven spaces."
     }
   ],
-  whyWallchemy:
-    "Every finish is developed in-house, guided by material science and editorial sensibility.",
-  selectedProjects: [
-    {
-      title: "Khurana Jewellers",
-      slug: "khurana-jewellers",
-      location: "New Delhi",
-      areaSqFt: 18000,
-      heroImage:
-        "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=2000&q=80"
-    },
-    {
-      title: "Panipat Handlooms",
-      slug: "panipat-handlooms",
-      location: "Panipat",
-      areaSqFt: 12000,
-      heroImage:
-        "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80"
-    }
-  ],
+  ctaIntro:
+    "Ready to craft a surface story? Our team curates bespoke finishes for hospitality, retail, and private residences.",
+  ribbonHeading: {
+    eyebrow: "Material Library",
+    title: "A continuous ribbon of curated finishes."
+  },
+  selectedDivider: {
+    eyebrow: "Selected Work",
+    title: "Spaces where surface becomes atmosphere.",
+    subtitle: "Minimal metadata, maximal emotion, and a tactile sense of scale."
+  },
+  selectedHeading: {
+    eyebrow: "Selected Projects",
+    title: "Spaces shaped by light, scale, and surface.",
+    subtitle: "Minimal metadata, maximum atmosphere."
+  },
+  selectedProjects: mockFeaturedProjects,
   primaryCtas: [
     { label: "Book a Meeting", href: "/contact#enquiry" },
     { label: "WhatsApp Us", href: "https://wa.me/910000000000?text=Hi%20Wallchemy%2C%20I%27d%20like%20to%20connect%20about%20textures%20and%20finishes." }
@@ -71,10 +111,28 @@ export const mockAboutPage = {
   heroVideoMobile: "https://www.w3schools.com/html/mov_bbb.mp4",
   heroPoster:
     "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=2000&q=80",
+  studioDividerImage:
+    "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=2000&q=80",
+  valuesDividerImage:
+    "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=2000&q=80",
+  studioDivider: {
+    eyebrow: "Studio Ethos",
+    title: "Material intelligence over trend.",
+    subtitle: "A discreet collective guided by finish expertise."
+  },
   narrative:
     "Our work is led by material research, slow experimentation, and the belief that walls can shift perception.",
+  narrativeHeading: {
+    eyebrow: "About",
+    title: "A studio built on material intelligence.",
+    subtitle: "Founded 2026 · Boutique surface studio"
+  },
   founderNote:
     "A discreet collective of artisans and designers guided by decades of finish expertise.",
+  valuesHeading: {
+    eyebrow: "Studio Values",
+    title: "Crafted with restraint, driven by atmosphere."
+  },
   studioValues: [
     "Material intelligence over trend.",
     "Tactile luxury with restraint.",
@@ -95,6 +153,17 @@ export const mockTexturesPage = {
   heroVideoMobile: "https://media.w3.org/2010/05/bunny/trailer.mp4",
   heroPoster:
     "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=2000&q=80",
+  dividerImage:
+    "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=2000&q=80",
+  divider: {
+    eyebrow: "Material Library",
+    title: "Curated finishes with mineral depth.",
+    subtitle: "Macro textures and architectural visuals designed for immersive interiors."
+  },
+  collectionsHeading: {
+    eyebrow: "Collections",
+    subtitle: "A curated library of mineral-rich finishes."
+  },
   collections: mockHomePage.textureHighlights,
   seo: {
     title: "Wallchemy Textures",
@@ -113,13 +182,43 @@ export const mockProcessPage = {
     "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
   heroPoster:
     "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=2000&q=80",
+  dividerImage:
+    "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=2000&q=80",
+  divider: {
+    eyebrow: "Process",
+    title: "A slow, considered sequence of craft.",
+    subtitle: "From consultation to execution, each step is guided by material integrity."
+  },
+  narrativeHeading: {
+    eyebrow: "Process",
+    title: "How the studio works.",
+    subtitle: "Consultation through execution, with a calm, precise cadence."
+  },
   steps: [
-    "Consultation",
-    "Site visit",
-    "Sampling (3 complimentary samples)",
-    "Customisation",
-    "Execution",
-    "Supervision & quality control"
+    {
+      title: "Consultation",
+      body: "We begin with intent, space, and desired atmosphere."
+    },
+    {
+      title: "Site visit",
+      body: "Light, scale, and material context are reviewed on-site."
+    },
+    {
+      title: "Sampling (3 complimentary samples)",
+      body: "Curated sample boards tailored to the project."
+    },
+    {
+      title: "Customisation",
+      body: "Final textures tuned for depth and tonal balance."
+    },
+    {
+      title: "Execution",
+      body: "Crafted on-site with controlled pacing and fidelity."
+    },
+    {
+      title: "Supervision & quality control",
+      body: "Finish integrity and detail alignment confirmed."
+    }
   ],
   seo: {
     title: "Wallchemy Process",
@@ -136,7 +235,18 @@ export const mockProjectsPage = {
   heroVideoMobile: "https://media.w3.org/2010/05/video/movie_300.mp4",
   heroPoster:
     "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80",
-  projects: mockHomePage.selectedProjects.map((project) => ({
+  selectedDivider: {
+    eyebrow: "Selected Work",
+    title: "Surface, scale, and atmosphere.",
+    subtitle: "Large-format projects shaped by light, finish, and spatial narrative."
+  },
+  selectedHeading: {
+    eyebrow: "Selected Projects",
+    title: "Spaces shaped by light, scale, and surface.",
+    subtitle: "Minimal metadata, maximum atmosphere."
+  },
+  featuredProjects: mockFeaturedProjects,
+  projects: mockFeaturedProjects.map((project) => ({
     ...project,
     atmosphereNote:
       "A crafted surface story designed for scale, finish, and atmosphere."
@@ -156,7 +266,28 @@ export const mockContactPage = {
   heroPoster:
     "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=2000&q=80",
   enquiryCta: "Send an enquiry",
+  dividerImage:
+    "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=2000&q=80",
+  divider: {
+    eyebrow: "Enquiry",
+    title: "Begin the conversation.",
+    subtitle: "Share the scale, intent, and atmosphere you want to create."
+  },
+  panelEyebrow: "Contact",
+  meetingEyebrow: "Book a Meeting",
+  meetingTitle: "Book a meeting",
+  meetingSubtitle:
+    "Schedule a discovery call to align on scale, intent, and finish direction.",
+  meetingCtaLabel: "Schedule a call",
+  meetingLink: "/contact#meeting",
   whatsappNumber: "+91 00000 00000",
+  whatsappMessage: "Hi Wallchemy, I'd like to connect about textures and finishes.",
+  social: {
+    instagram: "",
+    behance: "",
+    linkedin: "",
+    youtube: ""
+  },
   studioAddress: "Luxury Studio, Panipat · New Delhi",
   email: "studio@wallchemy.com",
   seo: {
@@ -166,12 +297,11 @@ export const mockContactPage = {
 };
 
 export const mockSiteSettings = {
-  whatsappNumber: "+91 00000 00000",
-  whatsappMessage: "Hi Wallchemy, I'd like to connect about textures and finishes.",
-  social: {
-    instagram: "",
-    behance: "",
-    linkedin: "",
-    youtube: ""
+  palette: {
+    ink: "#0b0a09",
+    alabaster: "#f2ede4",
+    brass: "#c9a66b",
+    smoke: "#8c877f",
+    ember: "#a5744f"
   }
 };

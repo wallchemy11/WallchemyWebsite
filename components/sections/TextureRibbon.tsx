@@ -2,10 +2,8 @@
 
 import { useLayoutEffect, useMemo, useRef } from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
+import { loadGsap } from "@/components/animations/loadGsap";
 
 type TextureRibbonItem = {
   title: string;
@@ -14,59 +12,76 @@ type TextureRibbonItem = {
 
 type TextureRibbonProps = {
   items: TextureRibbonItem[];
+  eyebrow: string;
+  title: string;
 };
 
-export default function TextureRibbon({ items }: TextureRibbonProps) {
+export default function TextureRibbon({ items, eyebrow, title }: TextureRibbonProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const ribbonItems = useMemo(() => [...items, ...items], [items]);
+  const { shouldAnimate } = useMotionPrefs();
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const track = trackRef.current;
     if (!section || !track) return;
+    if (!shouldAnimate) return;
 
-    const ctx = gsap.context(() => {
-      ScrollTrigger.matchMedia({
-        "(min-width: 768px)": () => {
-          const getDistance = () =>
-            Math.max(200, track.scrollWidth - section.offsetWidth);
+    let mounted = true;
+    let cleanup: (() => void) | undefined;
 
-          const scrollDistance = getDistance();
-          gsap.fromTo(
-            track,
-            { x: -scrollDistance },
-            {
-              x: 0,
-              ease: "none",
-              scrollTrigger: {
-                trigger: section,
-                start: "top top",
-                end: () => `+=${getDistance() * 0.8}`,
-                scrub: 0.9,
-                pin: true,
-                invalidateOnRefresh: true
+    (async () => {
+      const { gsap, ScrollTrigger } = await loadGsap();
+      if (!mounted) return;
+
+      const ctx = gsap.context(() => {
+        ScrollTrigger.matchMedia({
+          "(min-width: 768px)": () => {
+            const getDistance = () =>
+              Math.max(200, track.scrollWidth - section.offsetWidth);
+
+            const scrollDistance = getDistance();
+            gsap.fromTo(
+              track,
+              { x: -scrollDistance },
+              {
+                x: 0,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: section,
+                  start: "top top",
+                  end: () => `+=${getDistance() * 0.8}`,
+                  scrub: 0.9,
+                  pin: true,
+                  invalidateOnRefresh: true
+                }
               }
-            }
-          );
-        },
-        "(max-width: 767px)": () => {
-          gsap.set(track, { clearProps: "all" });
-        }
-      });
-    }, section);
+            );
+          },
+          "(max-width: 767px)": () => {
+            gsap.set(track, { clearProps: "all" });
+          }
+        });
+      }, section);
 
-    return () => ctx.revert();
-  }, []);
+      cleanup = () => ctx.revert();
+    })();
+
+    return () => {
+      mounted = false;
+      cleanup?.();
+    };
+  }, [shouldAnimate]);
 
   return (
     <section ref={sectionRef} className="relative overflow-hidden bg-ink py-16">
       <div className="mx-auto max-w-6xl px-6">
         <p className="text-xs uppercase tracking-[0.45em] text-brass">
-          Material Library
+          {eyebrow}
         </p>
         <h2 className="font-display mt-4 text-3xl md:text-5xl">
-          A continuous ribbon of curated finishes.
+          {title}
         </h2>
       </div>
       <div className="mt-8 overflow-x-auto md:mt-12 md:overflow-visible">

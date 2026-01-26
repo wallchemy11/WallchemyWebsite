@@ -2,11 +2,8 @@
 
 import Image from "next/image";
 import { useLayoutEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
-
-gsap.registerPlugin(ScrollTrigger);
+import { loadGsap } from "@/components/animations/loadGsap";
 
 type ParallaxImageProps = {
   src: string;
@@ -31,24 +28,37 @@ export default function ParallaxImage({
     if (!element) return;
     if (!shouldAnimate) return;
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        element,
-        { y: -40 },
-        {
-          y: 40,
-          ease: "none",
-          scrollTrigger: {
-            trigger: element,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true
-          }
-        }
-      );
-    }, element);
+    let mounted = true;
+    let cleanup: (() => void) | undefined;
 
-    return () => ctx.revert();
+    (async () => {
+      const { gsap } = await loadGsap();
+      if (!mounted) return;
+
+      const ctx = gsap.context(() => {
+        gsap.fromTo(
+          element,
+          { y: -40 },
+          {
+            y: 40,
+            ease: "none",
+            scrollTrigger: {
+              trigger: element,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true
+            }
+          }
+        );
+      }, element);
+
+      cleanup = () => ctx.revert();
+    })();
+
+    return () => {
+      mounted = false;
+      cleanup?.();
+    };
   }, [shouldAnimate]);
 
   return (

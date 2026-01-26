@@ -2,17 +2,19 @@ import ScrollReveal from "@/components/animations/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 
 type StudioValuesProps = {
+  eyebrow: string;
+  title: string;
   values: string[];
 };
 
-export default function StudioValues({ values }: StudioValuesProps) {
+export default function StudioValues({ values, eyebrow, title }: StudioValuesProps) {
   return (
     <section className="bg-ink py-24">
       <div className="mx-auto max-w-6xl px-6">
         <ScrollReveal>
           <SectionHeading
-            eyebrow="Studio Values"
-            title="Crafted with restraint, driven by atmosphere."
+            eyebrow={eyebrow}
+            title={title}
           />
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {values.map((value) => (

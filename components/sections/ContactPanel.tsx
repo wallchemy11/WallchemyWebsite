@@ -4,6 +4,7 @@ import SectionHeading from "@/components/ui/SectionHeading";
 type ContactPanelProps = {
   title: string;
   intro?: string;
+  eyebrow?: string;
   enquiryCta: string;
   whatsappNumber: string;
   studioAddress: string;
@@ -13,6 +14,7 @@ type ContactPanelProps = {
 export default function ContactPanel({
   title,
   intro,
+  eyebrow,
   enquiryCta,
   whatsappNumber,
   studioAddress,
@@ -24,7 +26,7 @@ export default function ContactPanel({
         <div className="mx-auto grid max-w-6xl gap-10 px-6 md:gap-12 md:grid-cols-[1fr_1.2fr]">
           <div>
             <SectionHeading
-              eyebrow="Contact"
+              eyebrow={eyebrow || "Contact"}
               title={title}
               subtitle={intro}
             />

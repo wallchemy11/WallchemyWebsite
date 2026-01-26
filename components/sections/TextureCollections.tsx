@@ -10,12 +10,14 @@ type Collection = {
 };
 
 type TextureCollectionsProps = {
+  eyebrow: string;
   title: string;
   intro?: string;
   collections: Collection[];
 };
 
 export default function TextureCollections({
+  eyebrow,
   title,
   intro,
   collections
@@ -25,7 +27,7 @@ export default function TextureCollections({
       <div className="mx-auto max-w-6xl px-6">
         <ScrollReveal>
           <SectionHeading
-            eyebrow="Collections"
+            eyebrow={eyebrow}
             title={title}
             subtitle={intro}
           />

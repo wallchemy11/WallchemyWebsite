@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
-
-gsap.registerPlugin(ScrollTrigger);
+import { loadGsap } from "@/components/animations/loadGsap";
 
 type MaskedTextProps = {
   text: string;
@@ -21,23 +18,36 @@ export default function MaskedText({ text, className }: MaskedTextProps) {
     if (!element) return;
     if (!shouldAnimate) return;
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        element,
-        { clipPath: "inset(0 0 100% 0)" },
-        {
-          clipPath: "inset(0 0 0 0)",
-          duration: 1.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: element,
-            start: "top 80%"
-          }
-        }
-      );
-    }, element);
+    let mounted = true;
+    let cleanup: (() => void) | undefined;
 
-    return () => ctx.revert();
+    (async () => {
+      const { gsap } = await loadGsap();
+      if (!mounted) return;
+
+      const ctx = gsap.context(() => {
+        gsap.fromTo(
+          element,
+          { clipPath: "inset(0 0 100% 0)" },
+          {
+            clipPath: "inset(0 0 0 0)",
+            duration: 1.2,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: element,
+              start: "top 80%"
+            }
+          }
+        );
+      }, element);
+
+      cleanup = () => ctx.revert();
+    })();
+
+    return () => {
+      mounted = false;
+      cleanup?.();
+    };
   }, [shouldAnimate]);
 
   return (

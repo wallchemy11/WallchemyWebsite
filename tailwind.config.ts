@@ -5,11 +5,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#0b0a09",
-        alabaster: "#f2ede4",
-        brass: "#c9a66b",
-        smoke: "#8c877f",
-        ember: "#a5744f"
+        ink: "rgb(var(--color-ink) / <alpha-value>)",
+        alabaster: "rgb(var(--color-alabaster) / <alpha-value>)",
+        brass: "rgb(var(--color-brass) / <alpha-value>)",
+        smoke: "rgb(var(--color-smoke) / <alpha-value>)",
+        ember: "rgb(var(--color-ember) / <alpha-value>)"
       },
       fontFamily: {
         display: ["var(--font-display)", "serif"],

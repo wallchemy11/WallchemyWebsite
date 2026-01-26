@@ -2,22 +2,31 @@
   "name": "wallchemy-website",
   "private": true,
   "version": "0.1.0",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "dev": "next dev",
+    "predev": "node scripts/ensure-next-manifests.mjs",
+    "dev": "node scripts/dev.mjs",
+    "dev:turbo": "next dev --turbo",
+    "prebuild": "node scripts/ensure-next-manifests.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:init": "node scripts/migrate-to-neon.mjs --init",
+    "db:migrate": "node scripts/migrate-to-neon.mjs"
   },
   "dependencies": {
-    "@sanity/client": "^6.21.0",
-    "@sanity/image-url": "^1.0.2",
+    "@neondatabase/serverless": "^1.0.2",
+    "@tabler/icons-react": "^3.36.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@vercel/blob": "^2.0.1",
+    "bcryptjs": "^3.0.3",
     "gsap": "^3.12.5",
     "lenis": "^1.0.45",
-    "next": "14.2.5",
+    "next": "^14.2.35",
     "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "sanity": "^3.99.0",
-    "simple-icons": "^16.6.1"
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",

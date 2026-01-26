@@ -2,12 +2,9 @@
 
 import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
-
-gsap.registerPlugin(ScrollTrigger);
+import { loadGsap } from "@/components/animations/loadGsap";
 
 type Project = {
   title: string;
@@ -19,9 +16,17 @@ type Project = {
 
 type SelectedProjectsProps = {
   projects: Project[];
+  eyebrow: string;
+  title: string;
+  subtitle: string;
 };
 
-export default function SelectedProjects({ projects }: SelectedProjectsProps) {
+export default function SelectedProjects({
+  projects,
+  eyebrow,
+  title,
+  subtitle
+}: SelectedProjectsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { shouldAnimate } = useMotionPrefs();
 
@@ -30,73 +35,86 @@ export default function SelectedProjects({ projects }: SelectedProjectsProps) {
     if (!container) return;
     if (!shouldAnimate) return;
 
-    const ctx = gsap.context(() => {
-      const cards = gsap.utils.toArray<HTMLElement>(
-        container.querySelectorAll(".project-card")
-      );
+    let mounted = true;
+    let cleanup: (() => void) | undefined;
 
-      cards.forEach((card) => {
-        const image = card.querySelector(".project-image");
-        const text = card.querySelector(".project-text");
+    (async () => {
+      const { gsap } = await loadGsap();
+      if (!mounted) return;
 
-        if (image) {
-          gsap.fromTo(
-            image,
-            { y: 40, opacity: 0, scale: 1.06 },
-            {
-              y: 0,
-              opacity: 1,
-              scale: 1,
-              duration: 1.4,
-              ease: "power4.out",
+      const ctx = gsap.context(() => {
+        const cards = gsap.utils.toArray<HTMLElement>(
+          container.querySelectorAll(".project-card")
+        );
+
+        cards.forEach((card) => {
+          const image = card.querySelector(".project-image");
+          const text = card.querySelector(".project-text");
+
+          if (image) {
+            gsap.fromTo(
+              image,
+              { y: 40, opacity: 0, scale: 1.06 },
+              {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                duration: 1.4,
+                ease: "power4.out",
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top 80%"
+                }
+              }
+            );
+
+            gsap.to(image, {
+              y: -30,
+              ease: "none",
               scrollTrigger: {
                 trigger: card,
-                start: "top 80%"
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.6
               }
-            }
-          );
+            });
+          }
 
-          gsap.to(image, {
-            y: -30,
-            ease: "none",
-            scrollTrigger: {
-              trigger: card,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 0.6
-            }
-          });
-        }
-
-        if (text) {
-          gsap.fromTo(
-            text,
-            { y: 30, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 1.1,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: card,
-                start: "top 80%"
+          if (text) {
+            gsap.fromTo(
+              text,
+              { y: 30, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 1.1,
+                ease: "power3.out",
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top 80%"
+                }
               }
-            }
-          );
-        }
-      });
-    }, container);
+            );
+          }
+        });
+      }, container);
 
-    return () => ctx.revert();
+      cleanup = () => ctx.revert();
+    })();
+
+    return () => {
+      mounted = false;
+      cleanup?.();
+    };
   }, [shouldAnimate]);
 
   return (
     <section className="bg-ink py-24">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeading
-          eyebrow="Selected Projects"
-          title="Spaces shaped by light, scale, and surface."
-          subtitle="Minimal metadata, maximum atmosphere."
+          eyebrow={eyebrow}
+          title={title}
+          subtitle={subtitle}
         />
       </div>
       <div ref={containerRef} className="mt-16 space-y-24">

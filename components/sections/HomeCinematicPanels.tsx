@@ -2,10 +2,8 @@
 
 import { useLayoutEffect, useMemo, useRef } from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
+import { loadGsap } from "@/components/animations/loadGsap";
 
 type Panel = {
   title: string;
@@ -22,67 +20,82 @@ export default function HomeCinematicPanels({
 }: HomeCinematicPanelsProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const panelRefs = useRef<HTMLDivElement[]>([]);
+  const { shouldAnimate } = useMotionPrefs();
 
   const items = useMemo(() => panels.slice(0, 3), [panels]);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
     if (!section || panelRefs.current.length === 0) return;
+    if (!shouldAnimate) return;
 
-    const ctx = gsap.context(() => {
-      ScrollTrigger.matchMedia({
-        "(min-width: 768px)": () => {
-          const segment = 1.6;
-          const timeline = gsap.timeline({
-            scrollTrigger: {
-              trigger: section,
-              start: "top top",
-              end: () => `+=${items.length * 900}`,
-              scrub: 0.8,
-              pin: true,
-              anticipatePin: 1
-            }
-          });
+    let mounted = true;
+    let cleanup: (() => void) | undefined;
 
-          panelRefs.current.forEach((panel, index) => {
-            if (index === 0) {
-              gsap.set(panel, { autoAlpha: 1 });
-            } else {
-              gsap.set(panel, { autoAlpha: 0 });
-            }
-          });
+    (async () => {
+      const { gsap, ScrollTrigger } = await loadGsap();
+      if (!mounted) return;
 
-          panelRefs.current.forEach((panel, index) => {
-            if (index === 0) {
-              timeline.addLabel(`panel-${index}`, 0);
-              return;
-            }
+      const ctx = gsap.context(() => {
+        ScrollTrigger.matchMedia({
+          "(min-width: 768px)": () => {
+            const segment = 1.6;
+            const timeline = gsap.timeline({
+              scrollTrigger: {
+                trigger: section,
+                start: "top top",
+                end: () => `+=${items.length * 900}`,
+                scrub: 0.8,
+                pin: true,
+                anticipatePin: 1
+              }
+            });
 
-            timeline
-              .addLabel(`panel-${index}`, index * segment)
-              .to(
-                panelRefs.current[index - 1],
-                { autoAlpha: 0, duration: 0.8, ease: "power2.out" },
-                `panel-${index}`
-              )
-              .fromTo(
-                panel,
-                { autoAlpha: 0 },
-                { autoAlpha: 1, duration: 1.1, ease: "power2.out" },
-                `panel-${index}+=0.2`
-              );
-          });
-        },
-        "(max-width: 767px)": () => {
-          panelRefs.current.forEach((panel) => {
-            gsap.set(panel, { clearProps: "all", autoAlpha: 1 });
-          });
-        }
-      });
-    }, section);
+            panelRefs.current.forEach((panel, index) => {
+              if (index === 0) {
+                gsap.set(panel, { autoAlpha: 1 });
+              } else {
+                gsap.set(panel, { autoAlpha: 0 });
+              }
+            });
 
-    return () => ctx.revert();
-  }, []);
+            panelRefs.current.forEach((panel, index) => {
+              if (index === 0) {
+                timeline.addLabel(`panel-${index}`, 0);
+                return;
+              }
+
+              timeline
+                .addLabel(`panel-${index}`, index * segment)
+                .to(
+                  panelRefs.current[index - 1],
+                  { autoAlpha: 0, duration: 0.8, ease: "power2.out" },
+                  `panel-${index}`
+                )
+                .fromTo(
+                  panel,
+                  { autoAlpha: 0 },
+                  { autoAlpha: 1, duration: 1.1, ease: "power2.out" },
+                  `panel-${index}+=0.2`
+                );
+            });
+          },
+          "(max-width: 767px)": () => {
+            panelRefs.current.forEach((panel) => {
+              gsap.set(panel, { clearProps: "all", autoAlpha: 1 });
+            });
+          }
+        });
+      }, section);
+
+      cleanup = () => ctx.revert();
+    })();
+
+    return () => {
+      mounted = false;
+      cleanup?.();
+    };
+  }, [shouldAnimate, items.length]);
 
   return (
     <section ref={sectionRef} className="relative bg-ink">

@@ -22,10 +22,14 @@ type SocialLinks = {
 
 export default function SiteHeader({
   whatsappHref,
-  socialLinks
+  socialLinks,
+  meetingLabel,
+  meetingHref
 }: {
   whatsappHref: string;
   socialLinks?: SocialLinks;
+  meetingLabel?: string;
+  meetingHref?: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -93,10 +97,10 @@ export default function SiteHeader({
         </nav>
         <div className="hidden md:block">
           <Link
-            href="/contact#enquiry"
+            href={meetingHref || "/contact#meeting"}
             className="rounded-full border border-brass/60 px-4 py-2 text-xs uppercase tracking-[0.32em] text-brass/90"
           >
-            Book a Meeting
+            {meetingLabel || "Book a Meeting"}
           </Link>
         </div>
         </div>
@@ -107,6 +111,8 @@ export default function SiteHeader({
         items={navItems}
         whatsappHref={whatsappHref}
         socialLinks={socialLinks}
+        meetingLabel={meetingLabel}
+        meetingHref={meetingHref}
       />
     </header>
   );

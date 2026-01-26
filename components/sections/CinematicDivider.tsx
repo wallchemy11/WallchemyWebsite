@@ -2,11 +2,8 @@
 
 import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
-
-gsap.registerPlugin(ScrollTrigger);
+import { loadGsap } from "@/components/animations/loadGsap";
 
 type CinematicDividerProps = {
   image: string;
@@ -33,30 +30,43 @@ export default function CinematicDivider({
     if (!section || !imageEl || !textEl) return;
     if (!shouldAnimate) return;
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: "top 80%",
-          end: "bottom 30%",
-          scrub: 0.8
-        }
-      });
+    let mounted = true;
+    let cleanup: (() => void) | undefined;
 
-      tl.fromTo(
-        imageEl,
-        { scale: 1.18 },
-        { scale: 1, ease: "none" },
-        0
-      ).fromTo(
-        textEl,
-        { y: 60, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.2, ease: "power4.out" },
-        0
-      );
-    }, section);
+    (async () => {
+      const { gsap } = await loadGsap();
+      if (!mounted) return;
 
-    return () => ctx.revert();
+      const ctx = gsap.context(() => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top 80%",
+            end: "bottom 30%",
+            scrub: 0.8
+          }
+        });
+
+        tl.fromTo(
+          imageEl,
+          { scale: 1.18 },
+          { scale: 1, ease: "none" },
+          0
+        ).fromTo(
+          textEl,
+          { y: 60, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1.2, ease: "power4.out" },
+          0
+        );
+      }, section);
+
+      cleanup = () => ctx.revert();
+    })();
+
+    return () => {
+      mounted = false;
+      cleanup?.();
+    };
   }, [shouldAnimate]);
 
   return (

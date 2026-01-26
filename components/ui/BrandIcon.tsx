@@ -1,14 +1,17 @@
-import { siBehance, siInstagram, siLinkedin, siWhatsapp, siYoutube } from "simple-icons";
+import {
+  IconBrandBehance,
+  IconBrandInstagram,
+  IconBrandLinkedin,
+  IconBrandWhatsapp,
+  IconBrandYoutube
+} from "@tabler/icons-react";
 
-const ICONS = {
-  whatsapp: siWhatsapp,
-  instagram: siInstagram,
-  behance: siBehance,
-  linkedin: siLinkedin,
-  youtube: siYoutube
-} as const;
-
-export type BrandIconName = keyof typeof ICONS;
+export type BrandIconName =
+  | "whatsapp"
+  | "instagram"
+  | "behance"
+  | "linkedin"
+  | "youtube";
 
 export default function BrandIcon({
   name,
@@ -17,17 +20,22 @@ export default function BrandIcon({
   name: BrandIconName;
   className?: string;
 }) {
-  const icon = ICONS[name];
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className={className || "h-5 w-5"}
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d={icon.path} />
-    </svg>
-  );
+  const props = {
+    className: className || "h-5 w-5",
+    stroke: 1.65
+  } as const;
+
+  switch (name) {
+    case "whatsapp":
+      return <IconBrandWhatsapp {...props} aria-hidden="true" />;
+    case "instagram":
+      return <IconBrandInstagram {...props} aria-hidden="true" />;
+    case "behance":
+      return <IconBrandBehance {...props} aria-hidden="true" />;
+    case "linkedin":
+      return <IconBrandLinkedin {...props} aria-hidden="true" />;
+    case "youtube":
+      return <IconBrandYoutube {...props} aria-hidden="true" />;
+  }
 }
 

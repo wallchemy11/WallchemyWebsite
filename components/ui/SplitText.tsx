@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
-
-gsap.registerPlugin(ScrollTrigger);
+import { loadGsap } from "@/components/animations/loadGsap";
 
 type SplitTextProps = {
   text: string;
@@ -23,25 +20,38 @@ export default function SplitText({ text, className }: SplitTextProps) {
 
     const words = element.querySelectorAll(".split-word");
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        words,
-        { y: 36, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.4,
-          ease: "power4.out",
-          stagger: 0.04,
-          scrollTrigger: {
-            trigger: element,
-            start: "top 80%"
-          }
-        }
-      );
-    }, element);
+    let mounted = true;
+    let cleanup: (() => void) | undefined;
 
-    return () => ctx.revert();
+    (async () => {
+      const { gsap } = await loadGsap();
+      if (!mounted) return;
+
+      const ctx = gsap.context(() => {
+        gsap.fromTo(
+          words,
+          { y: 36, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.4,
+            ease: "power4.out",
+            stagger: 0.04,
+            scrollTrigger: {
+              trigger: element,
+              start: "top 80%"
+            }
+          }
+        );
+      }, element);
+
+      cleanup = () => ctx.revert();
+    })();
+
+    return () => {
+      mounted = false;
+      cleanup?.();
+    };
   }, [shouldAnimate]);
 
   return (

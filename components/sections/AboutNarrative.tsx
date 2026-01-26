@@ -2,11 +2,17 @@ import ScrollReveal from "@/components/animations/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 
 type AboutNarrativeProps = {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
   narrative: string;
   founderNote: string;
 };
 
 export default function AboutNarrative({
+  eyebrow,
+  title,
+  subtitle,
   narrative,
   founderNote
 }: AboutNarrativeProps) {
@@ -15,9 +21,9 @@ export default function AboutNarrative({
       <div className="mx-auto max-w-6xl px-6">
         <ScrollReveal>
           <SectionHeading
-            eyebrow="About"
-            title="A studio built on material intelligence."
-            subtitle="Founded 2026 · Boutique surface studio"
+            eyebrow={eyebrow}
+            title={title}
+            subtitle={subtitle}
           />
           <p
             data-reveal

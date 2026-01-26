@@ -1,0 +1,40 @@
+import { NextRequest, NextResponse } from "next/server";
+import { verifyAuth } from "@/lib/auth";
+import { getAllCollections, saveCollection, deleteCollection } from "@/lib/cms";
+
+export async function GET() {
+  if (!(await verifyAuth())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const collections = await getAllCollections();
+  return NextResponse.json(collections);
+}
+
+export async function POST(req: NextRequest) {
+  if (!(await verifyAuth())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const data = await req.json();
+  const slug = data.slug || `collection-${Date.now()}`;
+  const success = await saveCollection(slug, data);
+  if (success) {
+    return NextResponse.json({ success: true });
+  }
+  return NextResponse.json({ error: "Failed to save" }, { status: 500 });
+}
+
+export async function DELETE(req: NextRequest) {
+  if (!(await verifyAuth())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const searchParams = req.nextUrl.searchParams;
+  const id = searchParams.get("id");
+  if (!id) {
+    return NextResponse.json({ error: "ID required" }, { status: 400 });
+  }
+  const success = await deleteCollection(id);
+  if (success) {
+    return NextResponse.json({ success: true });
+  }
+  return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
+}

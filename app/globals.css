@@ -4,6 +4,11 @@
 
 :root {
   color-scheme: light;
+  --color-ink: 11 10 9;
+  --color-alabaster: 242 237 228;
+  --color-brass: 201 166 107;
+  --color-smoke: 140 135 127;
+  --color-ember: 165 116 79;
 }
 
 html {
@@ -11,8 +16,8 @@ html {
 }
 
 body {
-  background: #0b0a09;
-  color: #f2ede4;
+  background: rgb(var(--color-ink));
+  color: rgb(var(--color-alabaster));
   font-family: var(--font-sans);
   letter-spacing: 0.012em;
 }

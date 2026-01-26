@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
-
-gsap.registerPlugin(ScrollTrigger);
+import { loadGsap } from "@/components/animations/loadGsap";
 
 type ScrollRevealProps = {
   children: React.ReactNode;
@@ -26,74 +23,87 @@ export default function ScrollReveal({
     if (!container) return;
     if (!shouldAnimate) return;
 
-    const ctx = gsap.context(() => {
-      const items = gsap.utils.toArray<HTMLElement>(
-        container.querySelectorAll(selector)
-      );
+    let mounted = true;
+    let cleanup: (() => void) | undefined;
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container,
-          start: "top 75%",
-          end: "bottom 60%",
-          toggleActions: "play none none reverse"
-        }
-      });
+    (async () => {
+      const { gsap } = await loadGsap();
+      if (!mounted) return;
 
-      items.forEach((item, index) => {
-        const type = item.dataset.reveal;
-
-        if (type === "image") {
-          tl.fromTo(
-            item,
-            {
-              y: y + 20,
-              opacity: 0,
-              scale: 1.04
-            },
-            {
-              y: 0,
-              opacity: 1,
-              scale: 1,
-              duration: 1.4,
-              ease: "power4.out"
-            },
-            index === 0 ? 0 : "<0.12"
-          );
-          return;
-        }
-
-        if (type === "mask") {
-          tl.fromTo(
-            item,
-            { y: 20, opacity: 0, clipPath: "inset(0 0 100% 0)" },
-            {
-              y: 0,
-              opacity: 1,
-              clipPath: "inset(0 0 0 0)",
-              duration: 1.4,
-              ease: "power4.out"
-            },
-            index === 0 ? 0 : "<0.1"
-          );
-          return;
-        }
-
-        tl.fromTo(
-          item,
-          { y, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 1.2,
-            ease: "power4.out"
-          },
-          index === 0 ? 0 : "<0.08"
+      const ctx = gsap.context(() => {
+        const items = gsap.utils.toArray<HTMLElement>(
+          container.querySelectorAll(selector)
         );
-      });
-    }, container);
 
-    return () => ctx.revert();
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: container,
+            start: "top 75%",
+            end: "bottom 60%",
+            toggleActions: "play none none reverse"
+          }
+        });
+
+        items.forEach((item, index) => {
+          const type = item.dataset.reveal;
+
+          if (type === "image") {
+            tl.fromTo(
+              item,
+              {
+                y: y + 20,
+                opacity: 0,
+                scale: 1.04
+              },
+              {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                duration: 1.4,
+                ease: "power4.out"
+              },
+              index === 0 ? 0 : "<0.12"
+            );
+            return;
+          }
+
+          if (type === "mask") {
+            tl.fromTo(
+              item,
+              { y: 20, opacity: 0, clipPath: "inset(0 0 100% 0)" },
+              {
+                y: 0,
+                opacity: 1,
+                clipPath: "inset(0 0 0 0)",
+                duration: 1.4,
+                ease: "power4.out"
+              },
+              index === 0 ? 0 : "<0.1"
+            );
+            return;
+          }
+
+          tl.fromTo(
+            item,
+            { y, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 1.2,
+              ease: "power4.out"
+            },
+            index === 0 ? 0 : "<0.08"
+          );
+        });
+      }, container);
+
+      cleanup = () => ctx.revert();
+    })();
+
+    return () => {
+      mounted = false;
+      cleanup?.();
+    };
   }, [selector, y, shouldAnimate]);
 
   return <div ref={containerRef}>{children}</div>;

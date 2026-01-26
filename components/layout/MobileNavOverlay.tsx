@@ -48,6 +48,8 @@ type MobileNavOverlayProps = {
     linkedin?: string;
     youtube?: string;
   };
+  meetingLabel?: string;
+  meetingHref?: string;
 };
 
 export default function MobileNavOverlay({
@@ -55,7 +57,9 @@ export default function MobileNavOverlay({
   onClose,
   items,
   whatsappHref,
-  socialLinks
+  socialLinks,
+  meetingLabel,
+  meetingHref
 }: MobileNavOverlayProps) {
   const pathname = usePathname();
 
@@ -183,6 +187,15 @@ export default function MobileNavOverlay({
                 {item.label}
               </Link>
             ))}
+          </div>
+          <div className="mt-10 flex justify-center">
+            <Link
+              href={meetingHref || "/contact#meeting"}
+              className="rounded-full border border-ink/20 px-6 py-3 text-xs uppercase tracking-[0.32em] text-ink"
+              onClick={() => onClose(false)}
+            >
+              {meetingLabel || "Book a Meeting"}
+            </Link>
           </div>
         </nav>
 

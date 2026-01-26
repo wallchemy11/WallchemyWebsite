@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import gsap from "gsap";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
+import { loadGsap } from "@/components/animations/loadGsap";
 
 export default function PageTransition() {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -15,16 +15,25 @@ export default function PageTransition() {
     if (!overlay) return;
     if (!shouldAnimate) return;
 
-    gsap.fromTo(
-      overlay,
-      { scaleY: 1 },
-      {
-        scaleY: 0,
-        transformOrigin: "top",
-        duration: 1,
-        ease: "power3.out"
-      }
-    );
+    let mounted = true;
+    (async () => {
+      const { gsap } = await loadGsap();
+      if (!mounted) return;
+      gsap.fromTo(
+        overlay,
+        { scaleY: 1 },
+        {
+          scaleY: 0,
+          transformOrigin: "top",
+          duration: 1,
+          ease: "power3.out"
+        }
+      );
+    })();
+
+    return () => {
+      mounted = false;
+    };
   }, [pathname, shouldAnimate]);
 
   return (
