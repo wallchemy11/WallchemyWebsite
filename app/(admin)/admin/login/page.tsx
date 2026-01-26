@@ -41,7 +41,7 @@ export default function AdminLoginPage({
   const next = searchParams?.next || "/admin";
 
   return (
-    <div className="relative min-h-[100dvh] overflow-hidden bg-ink text-alabaster">
+    <div className="admin-light relative min-h-[100dvh] overflow-hidden bg-ink text-alabaster">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(197,167,107,0.12),transparent_55%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-[0.35] [background:linear-gradient(90deg,rgba(242,237,228,0.06)_1px,transparent_1px),linear-gradient(0deg,rgba(242,237,228,0.06)_1px,transparent_1px)] [background-size:36px_36px]" />
 

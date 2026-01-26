@@ -1,13 +1,14 @@
 import VideoHero from "@/components/ui/VideoHero";
 import EditorialManifesto from "@/components/sections/EditorialManifesto";
 import SelectedProjects from "@/components/sections/SelectedProjects";
+import SelectedWorkGallery from "@/components/sections/SelectedWorkGallery";
 import HomeCtas from "@/components/sections/HomeCtas";
-import MaskedText from "@/components/ui/MaskedText";
 import SplitText from "@/components/ui/SplitText";
 import TextureRibbon from "@/components/sections/TextureRibbon";
 import CinematicDivider from "@/components/sections/CinematicDivider";
 import HomeCinematicPanels from "@/components/sections/HomeCinematicPanels";
 import { getContactPage, getHomePage } from "@/lib/cms";
+import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
 import { toWhatsAppHref } from "@/lib/whatsapp";
 
@@ -29,9 +30,20 @@ export default async function HomePage() {
     return <div className="min-h-screen bg-ink text-alabaster p-8">Loading...</div>;
   }
 
-  const studioCraftImage = home.textureHighlights?.[0]?.heroImage;
-  const selectedWorkImage = home.selectedProjects?.[0]?.heroImage;
+  const hasTextureHighlights = (home.textureHighlights || []).length > 0;
+  const hasSelectedWork = (home.selectedWork || []).length > 0;
+  const hasMaterialLibrary = (home.materialLibrary || []).length > 0;
+  const hasFeaturedProjects = (home.selectedProjects || []).length > 0;
+  const studioCraftImage = hasTextureHighlights
+    ? resolveImage(home.textureHighlights?.[0]?.heroImage, home.heroPoster)
+    : "";
+  const selectedWorkImage = hasSelectedWork
+    ? resolveImage(home.selectedWork?.[0]?.heroImage, home.heroPoster)
+    : "";
   const manifestoItems = home.manifesto?.items || [];
+  const selectedWorkDivider = home.selectedWorkDivider || home.selectedDivider;
+  const selectedWorkHeading = home.selectedWorkHeading || home.selectedHeading;
+  const featuredProjectsHeading = home.featuredProjectsHeading || home.selectedHeading;
 
   const whatsappHref = toWhatsAppHref(
     contact?.whatsappNumber || "+91 00000 00000",
@@ -85,25 +97,35 @@ export default async function HomePage() {
       ) : null}
       <HomeCinematicPanels panels={home.textureHighlights || []} />
       <HomeCtas intro={home.ctaIntro} ctas={normalizedCtas} />
-      <TextureRibbon
-        items={home.textureHighlights || []}
-        eyebrow={home.ribbonHeading?.eyebrow}
-        title={home.ribbonHeading?.title}
-      />
+      {hasMaterialLibrary ? (
+        <TextureRibbon
+          items={home.materialLibrary || []}
+          eyebrow={home.ribbonHeading?.eyebrow}
+          title={home.ribbonHeading?.title}
+        />
+      ) : null}
       {selectedWorkImage ? (
         <CinematicDivider
           image={selectedWorkImage}
-          eyebrow={home.selectedDivider?.eyebrow}
-          title={home.selectedDivider?.title}
-          subtitle={home.selectedDivider?.subtitle}
+          eyebrow={selectedWorkDivider?.eyebrow}
+          title={selectedWorkDivider?.title}
+          subtitle={selectedWorkDivider?.subtitle}
         />
       ) : null}
-      <SelectedProjects
-        projects={home.selectedProjects}
-        eyebrow={home.selectedHeading?.eyebrow}
-        title={home.selectedHeading?.title}
-        subtitle={home.selectedHeading?.subtitle}
+      <SelectedWorkGallery
+        items={home.selectedWork || []}
+        eyebrow={selectedWorkHeading?.eyebrow}
+        title={selectedWorkHeading?.title}
+        subtitle={selectedWorkHeading?.subtitle}
       />
+      {hasFeaturedProjects ? (
+        <SelectedProjects
+          projects={home.selectedProjects}
+          eyebrow={featuredProjectsHeading?.eyebrow}
+          title={featuredProjectsHeading?.title}
+          subtitle={featuredProjectsHeading?.subtitle}
+        />
+      ) : null}
     </>
   );
 }

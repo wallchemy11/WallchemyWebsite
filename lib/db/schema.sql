@@ -38,6 +38,30 @@ CREATE TABLE IF NOT EXISTS collections (
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
+-- Selected Work table
+CREATE TABLE IF NOT EXISTS selected_work (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  slug VARCHAR(255) UNIQUE NOT NULL,
+  hero_image_url TEXT,
+  description TEXT,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Material Library table
+CREATE TABLE IF NOT EXISTS material_library (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  slug VARCHAR(255) UNIQUE NOT NULL,
+  hero_image_url TEXT,
+  description TEXT,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
 -- Site settings (singleton)
 CREATE TABLE IF NOT EXISTS site_settings (
   id INTEGER PRIMARY KEY DEFAULT 1,
@@ -61,8 +85,24 @@ CREATE TABLE IF NOT EXISTS home_featured_collections (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS home_featured_selected_work (
+  id SERIAL PRIMARY KEY,
+  selected_work_id INTEGER REFERENCES selected_work(id) ON DELETE CASCADE,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS home_featured_material_library (
+  id SERIAL PRIMARY KEY,
+  material_library_id INTEGER REFERENCES material_library(id) ON DELETE CASCADE,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_projects_slug ON projects(slug);
 CREATE INDEX IF NOT EXISTS idx_projects_featured ON projects(is_featured);
 CREATE INDEX IF NOT EXISTS idx_collections_slug ON collections(slug);
+CREATE INDEX IF NOT EXISTS idx_selected_work_slug ON selected_work(slug);
+CREATE INDEX IF NOT EXISTS idx_material_library_slug ON material_library(slug);
 CREATE INDEX IF NOT EXISTS idx_pages_slug ON pages(slug);

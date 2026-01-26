@@ -7,7 +7,7 @@ A clean, intuitive content management system built specifically for Wallchemy. A
 - ✅ **Simple File-Based Storage** - No database required, works immediately
 - ✅ **Intuitive Interface** - Clear labels and descriptions for every field
 - ✅ **Array Management** - Easy management of projects, collections, CTAs, steps
-- ✅ **Relationship Management** - Link projects and collections to homepage
+- ✅ **Relationship Management** - Curate what appears on homepage
 - ✅ **R2 Video Support** - Paste R2 URLs directly (no code changes needed)
 - ✅ **Ready for Database** - Can migrate to Neon Postgres when ready
 
@@ -20,7 +20,7 @@ A clean, intuitive content management system built specifically for Wallchemy. A
 ## Content Structure
 
 ### Pages
-- **Home Page** - Hero, philosophy, featured projects & collections
+- **Home Page** - Hero, manifesto, featured sections
 - **About Page** - Studio narrative, values, founder note
 - **Textures Page** - All texture collections
 - **Process Page** - How we work, process steps
@@ -29,17 +29,17 @@ A clean, intuitive content management system built specifically for Wallchemy. A
 - **Site Settings** - WhatsApp, social media links
 
 ### Content Management
+- **Selected Work** - Curated work entries (title, description, image)
 - **Projects** - Individual project entries (title, location, area, images)
 - **Collections** - Texture collections (title, description, images)
-- **Featured Content** - Select which projects/collections appear on homepage
+- **Material Library** - Ribbon items for homepage
 
 ## How It Works
 
-### Projects & Collections
-1. Create projects in **Projects Management** (`/admin/projects`)
-2. Create collections in **Collections Management** (`/admin/collections`)
-3. Select featured items in **Featured Content** (`/admin/featured`)
-4. They automatically appear on the homepage and respective pages
+### Projects, Collections, Selected Work, Material Library
+1. Create items in their respective management pages
+2. Curate homepage selections in **Home Page** editor
+3. Projects and collections appear on their respective pages automatically
 
 ### Page Content
 1. Go to any page editor (e.g., `/admin/edit?page=home`)
@@ -81,6 +81,10 @@ DATABASE_URL=postgresql://...  # Neon Postgres connection string
     project-slug.json  # Individual projects
   /collections
     collection-slug.json  # Individual collections
+  /selected-work
+    work-slug.json        # Selected work entries
+  /material-library
+    material-slug.json    # Material library items
 ```
 
 ## Future: Database Migration
@@ -96,6 +100,6 @@ When ready to use Neon Postgres:
 
 - **Clear Descriptions**: Every field in the CMS has a description explaining what it controls
 - **Array Fields**: Use the "+ Add Item" button to add new items to arrays
-- **Featured Content**: Use the Featured Content page to easily select what appears on homepage
-- **Projects/Collections**: Create them first, then select which ones to feature
+- **Homepage Selections**: Use the Home Page editor to select what appears on the homepage
+- **Projects/Collections**: Create them first, then feature them from the homepage
 - **Video URLs**: Just paste R2 public URLs - no code changes needed

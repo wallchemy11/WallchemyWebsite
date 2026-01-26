@@ -17,6 +17,49 @@ const mockFeaturedProjects = [
   }
 ];
 
+const mockSelectedWorkItems = [
+  {
+    title: "The Oberoi Atrium",
+    slug: "oberoi-atrium",
+    heroImage:
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=2000&q=80",
+    description:
+      "Bespoke mineral layers, calibrated for warm light and reflective depth."
+  },
+  {
+    title: "The Gallery Suite",
+    slug: "gallery-suite",
+    heroImage:
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80",
+    description:
+      "A restrained palette with tactile gradients designed for intimate scale."
+  }
+];
+
+const mockMaterialLibraryItems = [
+  {
+    title: "Lime Plaster",
+    slug: "lime-plaster",
+    heroImage:
+      "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1600&q=80",
+    description: "Breathable mineral layers with a soft, luminous depth."
+  },
+  {
+    title: "Micro Concrete",
+    slug: "micro-concrete",
+    heroImage:
+      "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=1600&q=80",
+    description: "Monolithic finishes with a refined industrial calm."
+  },
+  {
+    title: "Curated Artistic Textures",
+    slug: "curated-artistic-textures",
+    heroImage:
+      "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1600&q=80",
+    description: "Expressive surfaces tailored to narrative-driven spaces."
+  }
+];
+
 export const mockHomePage = {
   title: "Wallchemy",
   heroHeadline: "Turning Walls into Experiences",
@@ -81,17 +124,24 @@ export const mockHomePage = {
     eyebrow: "Material Library",
     title: "A continuous ribbon of curated finishes."
   },
-  selectedDivider: {
+  selectedWorkDivider: {
     eyebrow: "Selected Work",
     title: "Spaces where surface becomes atmosphere.",
     subtitle: "Minimal metadata, maximal emotion, and a tactile sense of scale."
   },
-  selectedHeading: {
-    eyebrow: "Selected Projects",
+  selectedWorkHeading: {
+    eyebrow: "Selected Work",
+    title: "Atmospheric interiors, distilled.",
+    subtitle: "Curated stories with material depth and quiet precision."
+  },
+  featuredProjectsHeading: {
+    eyebrow: "Featured Projects",
     title: "Spaces shaped by light, scale, and surface.",
     subtitle: "Minimal metadata, maximum atmosphere."
   },
+  selectedWork: mockSelectedWorkItems,
   selectedProjects: mockFeaturedProjects,
+  materialLibrary: mockMaterialLibraryItems,
   primaryCtas: [
     { label: "Book a Meeting", href: "/contact#enquiry" },
     { label: "WhatsApp Us", href: "https://wa.me/910000000000?text=Hi%20Wallchemy%2C%20I%27d%20like%20to%20connect%20about%20textures%20and%20finishes." }
@@ -238,13 +288,14 @@ export const mockProjectsPage = {
   selectedDivider: {
     eyebrow: "Selected Work",
     title: "Surface, scale, and atmosphere.",
-    subtitle: "Large-format projects shaped by light, finish, and spatial narrative."
+    subtitle: "Large-format spaces shaped by light, finish, and material narrative."
   },
   selectedHeading: {
-    eyebrow: "Selected Projects",
-    title: "Spaces shaped by light, scale, and surface.",
-    subtitle: "Minimal metadata, maximum atmosphere."
+    eyebrow: "Selected Work",
+    title: "Atmospheric interiors, distilled.",
+    subtitle: "Curated stories with material depth and quiet precision."
   },
+  selectedWorkItems: mockSelectedWorkItems,
   featuredProjects: mockFeaturedProjects,
   projects: mockFeaturedProjects.map((project) => ({
     ...project,

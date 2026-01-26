@@ -12,14 +12,15 @@
 - ✅ **Page Editors** (`/admin/edit?page=home`) - Edit any page with clear descriptions
 - ✅ **Projects Management** (`/admin/projects`) - Create/edit/delete projects
 - ✅ **Collections Management** (`/admin/collections`) - Create/edit/delete texture collections
-- ✅ **Featured Content** (`/admin/featured`) - Select which projects/collections appear on homepage
+- ✅ **Selected Work** (`/admin/selected-work`) - Create curated work entries
+- ✅ **Material Library** (`/admin/material-library`) - Create ribbon items for homepage
 - ✅ **Clear Labels** - Every field has a description explaining what it controls
 
 ### 3. **Array/List Support**
 - ✅ Projects can be added/edited/deleted individually
 - ✅ Collections can be added/edited/deleted individually
 - ✅ CTAs, steps, values managed as arrays with add/remove
-- ✅ Featured content selection with checkboxes
+- ✅ Homepage selections (projects, collections, selected work, material library)
 
 ### 4. **Proper Authentication**
 - ✅ Working login page at `/admin/login`
@@ -65,9 +66,11 @@ Or add to `~/.zshrc` for automatic switching (see `NODE20_SETUP.md`)
 - Arrays (CTAs, steps) can be added/removed easily
 
 ### Content Management
-- **Projects** - Create individual projects that appear on homepage and projects page
-- **Collections** - Create texture collections that appear on homepage and textures page
-- **Featured Content** - Select which projects/collections appear on homepage
+- **Projects** - Create individual projects (all appear on projects page)
+- **Collections** - Create texture collections (all appear on textures page)
+- **Selected Work** - Create curated work entries (appear on projects page)
+- **Material Library** - Create ribbon items (independent of collections)
+- **Homepage Selections** - Choose what appears on the homepage
 
 ### Video URLs (R2)
 - Upload videos to Cloudflare R2
@@ -91,6 +94,10 @@ Or add to `~/.zshrc` for automatic switching (see `NODE20_SETUP.md`)
     project-slug.json  # Individual projects
   /collections
     collection-slug.json  # Individual collections
+  /selected-work
+    work-slug.json        # Selected work entries
+  /material-library
+    material-slug.json    # Material library items
 ```
 
 ## Next Steps

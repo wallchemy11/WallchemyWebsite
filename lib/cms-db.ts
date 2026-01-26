@@ -9,12 +9,24 @@ import {
   savePage,
   saveProject as saveProjectToDb,
   saveCollection as saveCollectionToDb,
+  saveSelectedWork as saveSelectedWorkToDb,
+  saveMaterialLibraryItem as saveMaterialLibraryItemToDb,
   deleteProject as deleteProjectFromDb,
   deleteCollection as deleteCollectionFromDb,
+  deleteSelectedWork as deleteSelectedWorkFromDb,
+  deleteMaterialLibraryItem as deleteMaterialLibraryItemFromDb,
   setFeaturedProjects,
   setFeaturedCollections,
+  setFeaturedSelectedWork,
+  setFeaturedMaterialLibraryItems,
   getProjectIdBySlug,
   getCollectionIdBySlug,
+  getSelectedWorkIdBySlug,
+  getMaterialLibraryIdBySlug,
+  getAllSelectedWork as getAllSelectedWorkFromDb,
+  getAllMaterialLibraryItems as getAllMaterialLibraryItemsFromDb,
+  getFeaturedSelectedWork,
+  getFeaturedMaterialLibraryItems,
   saveSiteSettings as saveSiteSettingsToDb
 } from "./db/queries";
 import {
@@ -50,6 +62,26 @@ function transformCollection(collection: any) {
   };
 }
 
+function transformSelectedWork(item: any) {
+  return {
+    id: item.id,
+    title: item.title,
+    slug: item.slug,
+    heroImage: item.hero_image_url,
+    description: item.description
+  };
+}
+
+function transformMaterialLibrary(item: any) {
+  return {
+    id: item.id,
+    title: item.title,
+    slug: item.slug,
+    heroImage: item.hero_image_url,
+    description: item.description
+  };
+}
+
 // Home Page
 export async function getHomePage() {
   try {
@@ -57,11 +89,15 @@ export async function getHomePage() {
     if (page && page.content) {
       const featuredProjects = await getFeaturedProjects();
       const featuredCollections = await getFeaturedCollections();
+      const featuredSelectedWork = await getFeaturedSelectedWork();
+      const featuredMaterialLibrary = await getFeaturedMaterialLibraryItems();
       
       return {
         ...page.content,
         selectedProjects: featuredProjects.map(transformProject),
         textureHighlights: featuredCollections.map(transformCollection),
+        selectedWork: featuredSelectedWork.map(transformSelectedWork),
+        materialLibrary: featuredMaterialLibrary.map(transformMaterialLibrary),
         seo: page.seo || {}
       };
     }
@@ -128,18 +164,10 @@ export async function getProjectsPage() {
     if (page && page.content) {
       const allProjects = await getAllProjects();
       const projects = allProjects.map(transformProject);
-      const featuredProjectSlugs = Array.isArray(page.content?.featuredProjectSlugs)
-        ? page.content.featuredProjectSlugs
-        : [];
-      const featuredProjects =
-        featuredProjectSlugs.length > 0
-          ? featuredProjectSlugs
-              .map((slug: string) => projects.find((project) => project.slug === slug))
-              .filter(Boolean)
-          : (await getFeaturedProjects()).map(transformProject);
+      const selectedWorkItems = (await getAllSelectedWork()).map(transformSelectedWork);
       return {
         ...page.content,
-        featuredProjects,
+        selectedWorkItems,
         projects,
         seo: page.seo || {}
       };
@@ -201,6 +229,22 @@ export async function saveHomePage(data: any) {
     }
     await setFeaturedCollections(ids);
   }
+  if (Array.isArray(data?.selectedWorkSlugs)) {
+    const ids: number[] = [];
+    for (const slug of data.selectedWorkSlugs) {
+      const id = await getSelectedWorkIdBySlug(slug);
+      if (id) ids.push(id);
+    }
+    await setFeaturedSelectedWork(ids);
+  }
+  if (Array.isArray(data?.materialLibrarySlugs)) {
+    const ids: number[] = [];
+    for (const slug of data.materialLibrarySlugs) {
+      const id = await getMaterialLibraryIdBySlug(slug);
+      if (id) ids.push(id);
+    }
+    await setFeaturedMaterialLibraryItems(ids);
+  }
   return true;
 }
 
@@ -247,6 +291,14 @@ export async function getAllCollections() {
   return getAllCollectionsFromDb();
 }
 
+export async function getAllSelectedWork() {
+  return getAllSelectedWorkFromDb();
+}
+
+export async function getAllMaterialLibraryItems() {
+  return getAllMaterialLibraryItemsFromDb();
+}
+
 export async function saveProject(slug: string, data: any) {
   await saveProjectToDb({
     id: data.id,
@@ -271,6 +323,30 @@ export async function saveCollection(slug: string, data: any) {
   return true;
 }
 
+export async function saveSelectedWork(slug: string, data: any) {
+  await saveSelectedWorkToDb({
+    id: data.id,
+    title: data.title,
+    slug,
+    heroImageUrl: data.heroImageUrl,
+    description: data.description,
+    displayOrder: data.displayOrder || 0
+  });
+  return true;
+}
+
+export async function saveMaterialLibraryItem(slug: string, data: any) {
+  await saveMaterialLibraryItemToDb({
+    id: data.id,
+    title: data.title,
+    slug,
+    heroImageUrl: data.heroImageUrl,
+    description: data.description,
+    displayOrder: data.displayOrder || 0
+  });
+  return true;
+}
+
 export async function deleteProject(id: string) {
   await deleteProjectFromDb(Number(id));
   return true;
@@ -278,5 +354,15 @@ export async function deleteProject(id: string) {
 
 export async function deleteCollection(id: string) {
   await deleteCollectionFromDb(Number(id));
+  return true;
+}
+
+export async function deleteSelectedWork(id: string) {
+  await deleteSelectedWorkFromDb(Number(id));
+  return true;
+}
+
+export async function deleteMaterialLibraryItem(id: string) {
+  await deleteMaterialLibraryItemFromDb(Number(id));
   return true;
 }

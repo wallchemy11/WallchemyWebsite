@@ -22,6 +22,75 @@ body {
   letter-spacing: 0.012em;
 }
 
+.admin-light {
+  background: rgb(var(--color-alabaster));
+  color: rgb(var(--color-ink));
+}
+
+.admin-light .bg-ink {
+  background-color: rgb(var(--color-alabaster));
+}
+
+.admin-light .bg-ink\/40 {
+  background-color: rgba(242, 237, 228, 0.7);
+}
+
+.admin-light .bg-ink\/60 {
+  background-color: rgba(242, 237, 228, 0.85);
+}
+
+.admin-light .bg-ink\/75 {
+  background-color: rgba(242, 237, 228, 0.92);
+}
+
+.admin-light .bg-ink\/95 {
+  background-color: rgba(242, 237, 228, 0.95);
+}
+
+.admin-light .bg-alabaster\/5 {
+  background-color: rgba(11, 10, 9, 0.04);
+}
+
+.admin-light .bg-alabaster\/10 {
+  background-color: rgba(11, 10, 9, 0.08);
+}
+
+.admin-light .text-alabaster {
+  color: rgb(var(--color-ink));
+}
+
+.admin-light .text-alabaster\/45 {
+  color: rgba(11, 10, 9, 0.45);
+}
+
+.admin-light .text-alabaster\/30 {
+  color: rgba(11, 10, 9, 0.3);
+}
+
+.admin-light .text-alabaster\/60 {
+  color: rgba(11, 10, 9, 0.6);
+}
+
+.admin-light .text-alabaster\/70 {
+  color: rgba(11, 10, 9, 0.7);
+}
+
+.admin-light .text-alabaster\/80 {
+  color: rgba(11, 10, 9, 0.8);
+}
+
+.admin-light .border-alabaster\/10 {
+  border-color: rgba(11, 10, 9, 0.1);
+}
+
+.admin-light .border-alabaster\/15 {
+  border-color: rgba(11, 10, 9, 0.15);
+}
+
+.admin-light .border-alabaster\/20 {
+  border-color: rgba(11, 10, 9, 0.2);
+}
+
 h1,
 h2,
 h3,

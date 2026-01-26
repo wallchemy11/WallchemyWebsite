@@ -105,7 +105,7 @@ export default function ProjectsPage() {
           <div>
             <h1 className="text-2xl font-bold sm:text-3xl">Projects Management</h1>
             <p className="mt-2 text-sm text-alabaster/60">
-              Manage all projects. Featured projects appear on the homepage.
+              Manage all projects. Featured projects are selected on the Home page editor.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">

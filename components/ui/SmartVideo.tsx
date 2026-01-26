@@ -36,6 +36,7 @@ export default function SmartVideo({
   const { ref: containerRef, inView } = useInView<HTMLDivElement>({
     threshold: 0.35
   });
+  const [shouldLoad, setShouldLoad] = useState(false);
 
   const selectedSrc = useMemo(() => {
     if (typeof window === "undefined") return src;
@@ -44,13 +45,18 @@ export default function SmartVideo({
   }, [src, mobileSrc]);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
     const connection = (navigator as any).connection;
     const saveData = Boolean(connection?.saveData);
+    if (!saveData && inView) {
+      setShouldLoad(true);
+    }
+  }, [inView]);
 
-    if (!inView || saveData) {
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !shouldLoad) return;
+
+    if (!inView) {
       video.pause();
       return;
     }
@@ -61,7 +67,7 @@ export default function SmartVideo({
         // Autoplay can be blocked; we silently ignore and keep poster visible.
       });
     }
-  }, [inView, selectedSrc]);
+  }, [inView, shouldLoad, selectedSrc]);
 
   return (
     <div ref={containerRef} className={className}>
@@ -74,7 +80,7 @@ export default function SmartVideo({
         preload="none"
         poster={poster}
       >
-        <source src={selectedSrc} />
+        {shouldLoad ? <source src={selectedSrc} /> : null}
       </video>
     </div>
   );

@@ -51,6 +51,8 @@ export async function getHomePage() {
   // Resolve featured projects and collections
   const allProjects = await getAllProjects();
   const allCollections = await getAllCollections();
+  const allSelectedWork = await getAllSelectedWork();
+  const allMaterialLibrary = await getAllMaterialLibraryItems();
   
   // If home page has slugs, resolve them
   if (page.selectedProjectSlugs && Array.isArray(page.selectedProjectSlugs) && page.selectedProjectSlugs.length > 0) {
@@ -80,6 +82,34 @@ export async function getHomePage() {
       }));
   } else {
     page.textureHighlights = [];
+  }
+
+  if (page.selectedWorkSlugs && Array.isArray(page.selectedWorkSlugs) && page.selectedWorkSlugs.length > 0) {
+    page.selectedWork = page.selectedWorkSlugs
+      .map((slug: string) => allSelectedWork.find((item: any) => item.slug === slug))
+      .filter(Boolean)
+      .map((item: any) => ({
+        title: item.title,
+        slug: item.slug,
+        heroImage: item.hero_image_url || FALLBACK_IMAGE,
+        description: item.description
+      }));
+  } else {
+    page.selectedWork = [];
+  }
+
+  if (page.materialLibrarySlugs && Array.isArray(page.materialLibrarySlugs) && page.materialLibrarySlugs.length > 0) {
+    page.materialLibrary = page.materialLibrarySlugs
+      .map((slug: string) => allMaterialLibrary.find((item: any) => item.slug === slug))
+      .filter(Boolean)
+      .map((item: any) => ({
+        title: item.title,
+        slug: item.slug,
+        heroImage: item.hero_image_url || FALLBACK_IMAGE,
+        description: item.description
+      }));
+  } else {
+    page.materialLibrary = [];
   }
   
   // Ensure primaryCtas is always an array
@@ -150,7 +180,7 @@ export async function getProjectsPage() {
   const page = readJsonFile<any>("pages/projects.json");
   if (!page) return null;
   const defaultProjectImage = page.defaultProjectImage || FALLBACK_IMAGE;
-  
+
   // Load all projects
   const allProjects = await getAllProjects();
   const projects = allProjects.map((p: any) => ({
@@ -162,14 +192,13 @@ export async function getProjectsPage() {
     atmosphereNote: p.atmosphere_note
   }));
   
-  // Featured projects are configured per Projects page
-  if (page.featuredProjectSlugs && Array.isArray(page.featuredProjectSlugs)) {
-    page.featuredProjects = page.featuredProjectSlugs
-      .map((slug: string) => projects.find((p: any) => p.slug === slug))
-      .filter(Boolean);
-  } else {
-    page.featuredProjects = projects.slice(0, 3); // Default: first 3
-  }
+  const selectedWorkItems = await getAllSelectedWork();
+  page.selectedWorkItems = selectedWorkItems.map((item: any) => ({
+    title: item.title,
+    slug: item.slug,
+    heroImage: item.hero_image_url || FALLBACK_IMAGE,
+    description: item.description
+  }));
   
   page.projects = projects;
   applyHeroDefaults(page);
@@ -258,6 +287,64 @@ export async function getAllCollections() {
   }
 }
 
+// Get all selected work items
+export async function getAllSelectedWork() {
+  try {
+    const selectedWorkDir = path.join(dataDir, "selected-work");
+    if (!fs.existsSync(selectedWorkDir)) return [];
+
+    const files = fs.readdirSync(selectedWorkDir).filter((f) => f.endsWith(".json"));
+    if (files.length === 0) return [];
+
+    const items = files
+      .map((file, idx) => {
+        const data = readJsonFile<any>(`selected-work/${file}`);
+        if (!data) return null;
+        return {
+          id: idx + 1,
+          title: data.title,
+          slug: data.slug || file.replace(".json", ""),
+          hero_image_url: data.heroImageUrl || data.heroImage || FALLBACK_IMAGE,
+          description: data.description
+        };
+      })
+      .filter(Boolean);
+    return items;
+  } catch (error) {
+    console.error("Error loading selected work items:", error);
+    return [];
+  }
+}
+
+// Get all material library items
+export async function getAllMaterialLibraryItems() {
+  try {
+    const materialDir = path.join(dataDir, "material-library");
+    if (!fs.existsSync(materialDir)) return [];
+
+    const files = fs.readdirSync(materialDir).filter((f) => f.endsWith(".json"));
+    if (files.length === 0) return [];
+
+    const items = files
+      .map((file, idx) => {
+        const data = readJsonFile<any>(`material-library/${file}`);
+        if (!data) return null;
+        return {
+          id: idx + 1,
+          title: data.title,
+          slug: data.slug || file.replace(".json", ""),
+          hero_image_url: data.heroImageUrl || data.heroImage || FALLBACK_IMAGE,
+          description: data.description
+        };
+      })
+      .filter(Boolean);
+    return items;
+  } catch (error) {
+    console.error("Error loading material library items:", error);
+    return [];
+  }
+}
+
 // Admin write functions
 export async function saveHomePage(data: any) {
   return writeJsonFile("pages/home.json", data);
@@ -311,6 +398,28 @@ export async function saveCollection(slug: string, data: any) {
   return writeJsonFile(`collections/${data.slug || slug}.json`, collectionData);
 }
 
+export async function saveSelectedWork(slug: string, data: any) {
+  const itemData = {
+    title: data.title,
+    slug: data.slug || slug,
+    heroImageUrl: data.heroImageUrl,
+    heroImage: data.heroImageUrl, // Legacy support
+    description: data.description
+  };
+  return writeJsonFile(`selected-work/${data.slug || slug}.json`, itemData);
+}
+
+export async function saveMaterialLibraryItem(slug: string, data: any) {
+  const itemData = {
+    title: data.title,
+    slug: data.slug || slug,
+    heroImageUrl: data.heroImageUrl,
+    heroImage: data.heroImageUrl, // Legacy support
+    description: data.description
+  };
+  return writeJsonFile(`material-library/${data.slug || slug}.json`, itemData);
+}
+
 export async function deleteProject(id: string | number) {
   try {
     const projects = await getAllProjects();
@@ -343,6 +452,42 @@ export async function deleteCollection(id: string | number) {
     return false;
   } catch (error) {
     console.error("Error deleting collection:", error);
+    return false;
+  }
+}
+
+export async function deleteSelectedWork(id: string | number) {
+  try {
+    const items = await getAllSelectedWork();
+    const item = items.find((entry: any) => entry.id === parseInt(String(id)));
+    if (item) {
+      const filePath = path.join(dataDir, "selected-work", `${item.slug}.json`);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        return true;
+      }
+    }
+    return false;
+  } catch (error) {
+    console.error("Error deleting selected work item:", error);
+    return false;
+  }
+}
+
+export async function deleteMaterialLibraryItem(id: string | number) {
+  try {
+    const items = await getAllMaterialLibraryItems();
+    const item = items.find((entry: any) => entry.id === parseInt(String(id)));
+    if (item) {
+      const filePath = path.join(dataDir, "material-library", `${item.slug}.json`);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        return true;
+      }
+    }
+    return false;
+  } catch (error) {
+    console.error("Error deleting material library item:", error);
     return false;
   }
 }

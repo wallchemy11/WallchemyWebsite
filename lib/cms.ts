@@ -218,3 +218,39 @@ export async function deleteCollection(id: string) {
   if (!cms?.deleteCollection) return false;
   return cms.deleteCollection(id);
 }
+
+export async function getAllSelectedWork() {
+  const cms = await getCmsModule();
+  if (!cms?.getAllSelectedWork) return [];
+  return cms.getAllSelectedWork();
+}
+
+export async function saveSelectedWork(slug: string, data: any) {
+  const cms = await getCmsModule();
+  if (!cms?.saveSelectedWork) return false;
+  return cms.saveSelectedWork(slug, data);
+}
+
+export async function deleteSelectedWork(id: string) {
+  const cms = await getCmsModule();
+  if (!cms?.deleteSelectedWork) return false;
+  return cms.deleteSelectedWork(id);
+}
+
+export async function getAllMaterialLibraryItems() {
+  const cms = await getCmsModule();
+  if (!cms?.getAllMaterialLibraryItems) return [];
+  return cms.getAllMaterialLibraryItems();
+}
+
+export async function saveMaterialLibraryItem(slug: string, data: any) {
+  const cms = await getCmsModule();
+  if (!cms?.saveMaterialLibraryItem) return false;
+  return cms.saveMaterialLibraryItem(slug, data);
+}
+
+export async function deleteMaterialLibraryItem(id: string) {
+  const cms = await getCmsModule();
+  if (!cms?.deleteMaterialLibraryItem) return false;
+  return cms.deleteMaterialLibraryItem(id);
+}

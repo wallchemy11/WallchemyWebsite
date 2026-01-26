@@ -10,6 +10,8 @@ import {
   getSiteSettings,
   getAllProjects,
   getAllCollections,
+  getAllSelectedWork,
+  getAllMaterialLibraryItems,
   saveHomePage,
   saveAboutPage,
   saveTexturesPage,
@@ -61,6 +63,12 @@ export async function GET(req: NextRequest) {
         break;
       case "collections-list":
         data = await getAllCollections();
+        break;
+      case "selected-work-list":
+        data = await getAllSelectedWork();
+        break;
+      case "material-library-list":
+        data = await getAllMaterialLibraryItems();
         break;
       default:
         return NextResponse.json({ error: "Invalid page" }, { status: 400 });

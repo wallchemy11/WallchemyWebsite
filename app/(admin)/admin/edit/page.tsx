@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -112,49 +112,67 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
     {
       key: "ribbonHeading.eyebrow",
       label: "Ribbon Eyebrow",
-      description: "Label above the material ribbon",
+      description: "Label above the Material Library ribbon",
       type: "text"
     },
     {
       key: "ribbonHeading.title",
       label: "Ribbon Title",
-      description: "Heading for the ribbon section",
+      description: "Heading for the Material Library ribbon",
       type: "text"
     },
     {
-      key: "selectedDivider.eyebrow",
+      key: "selectedWorkDivider.eyebrow",
       label: "Selected Work Divider Eyebrow",
-      description: "Label above selected work divider",
+      description: "Label above Selected Work divider",
       type: "text"
     },
     {
-      key: "selectedDivider.title",
+      key: "selectedWorkDivider.title",
       label: "Selected Work Divider Title",
-      description: "Title for selected work divider",
+      description: "Title for Selected Work divider",
       type: "text"
     },
     {
-      key: "selectedDivider.subtitle",
+      key: "selectedWorkDivider.subtitle",
       label: "Selected Work Divider Subtitle",
-      description: "Subtitle for selected work divider",
+      description: "Subtitle for Selected Work divider",
       type: "text"
     },
     {
-      key: "selectedHeading.eyebrow",
-      label: "Selected Projects Eyebrow",
-      description: "Eyebrow for selected projects section",
+      key: "selectedWorkHeading.eyebrow",
+      label: "Selected Work Eyebrow",
+      description: "Eyebrow for Selected Work section",
       type: "text"
     },
     {
-      key: "selectedHeading.title",
-      label: "Selected Projects Title",
-      description: "Title for selected projects section",
+      key: "selectedWorkHeading.title",
+      label: "Selected Work Title",
+      description: "Title for Selected Work section",
       type: "text"
     },
     {
-      key: "selectedHeading.subtitle",
-      label: "Selected Projects Subtitle",
-      description: "Subtitle for selected projects section",
+      key: "selectedWorkHeading.subtitle",
+      label: "Selected Work Subtitle",
+      description: "Subtitle for Selected Work section",
+      type: "text"
+    },
+    {
+      key: "featuredProjectsHeading.eyebrow",
+      label: "Featured Projects Eyebrow",
+      description: "Eyebrow for featured projects section",
+      type: "text"
+    },
+    {
+      key: "featuredProjectsHeading.title",
+      label: "Featured Projects Title",
+      description: "Title for featured projects section",
+      type: "text"
+    },
+    {
+      key: "featuredProjectsHeading.subtitle",
+      label: "Featured Projects Subtitle",
+      description: "Subtitle for featured projects section",
       type: "text"
     }
   ],
@@ -492,38 +510,38 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
     },
     {
       key: "selectedDivider.eyebrow",
-      label: "Selected Divider Eyebrow",
-      description: "Label above selected projects divider",
+      label: "Selected Work Divider Eyebrow",
+      description: "Label above Selected Work divider",
       type: "text"
     },
     {
       key: "selectedDivider.title",
-      label: "Selected Divider Title",
-      description: "Title above selected projects divider",
+      label: "Selected Work Divider Title",
+      description: "Title above Selected Work divider",
       type: "text"
     },
     {
       key: "selectedDivider.subtitle",
-      label: "Selected Divider Subtitle",
-      description: "Subtitle for selected projects divider",
+      label: "Selected Work Divider Subtitle",
+      description: "Subtitle for Selected Work divider",
       type: "text"
     },
     {
       key: "selectedHeading.eyebrow",
-      label: "Selected Projects Eyebrow",
-      description: "Eyebrow for selected projects section",
+      label: "Selected Work Eyebrow",
+      description: "Eyebrow for Selected Work section",
       type: "text"
     },
     {
       key: "selectedHeading.title",
-      label: "Selected Projects Title",
-      description: "Title for selected projects section",
+      label: "Selected Work Title",
+      description: "Title for Selected Work section",
       type: "text"
     },
     {
       key: "selectedHeading.subtitle",
-      label: "Selected Projects Subtitle",
-      description: "Subtitle for selected projects section",
+      label: "Selected Work Subtitle",
+      description: "Subtitle for Selected Work section",
       type: "text"
     }
     
@@ -709,11 +727,14 @@ export default function EditPage() {
   const searchParams = useSearchParams();
   const [page, setPage] = useState<string>(searchParams.get("page") || "home");
   const [data, setData] = useState<any>(null);
+  const [initialData, setInitialData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [projects, setProjects] = useState<any[]>([]);
   const [collections, setCollections] = useState<any[]>([]);
+  const [selectedWorkItems, setSelectedWorkItems] = useState<any[]>([]);
+  const [materialLibraryItems, setMaterialLibraryItems] = useState<any[]>([]);
   const [uploadingField, setUploadingField] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string>("");
   const [editingProject, setEditingProject] = useState<number | null>(null);
@@ -724,6 +745,10 @@ export default function EditPage() {
   const [collectionForm, setCollectionForm] = useState<any>({});
   const [collectionUploading, setCollectionUploading] = useState(false);
   const [collectionUploadError, setCollectionUploadError] = useState("");
+  const hasChanges = useMemo(() => {
+    if (!data || !initialData) return false;
+    return JSON.stringify(data) !== JSON.stringify(initialData);
+  }, [data, initialData]);
 
   useEffect(() => {
     const pageParam = searchParams.get("page");
@@ -737,9 +762,11 @@ export default function EditPage() {
 
   async function loadProjectsAndCollections() {
     try {
-      const [projRes, collRes] = await Promise.all([
+      const [projRes, collRes, workRes, materialRes] = await Promise.all([
         fetch("/api/admin/data?page=projects-list"),
-        fetch("/api/admin/data?page=collections-list")
+        fetch("/api/admin/data?page=collections-list"),
+        fetch("/api/admin/data?page=selected-work-list"),
+        fetch("/api/admin/data?page=material-library-list")
       ]);
       if (projRes.ok) {
         const projData = await projRes.json();
@@ -749,8 +776,16 @@ export default function EditPage() {
         const collData = await collRes.json();
         setCollections(Array.isArray(collData) ? collData : []);
       }
+      if (workRes.ok) {
+        const workData = await workRes.json();
+        setSelectedWorkItems(Array.isArray(workData) ? workData : []);
+      }
+      if (materialRes.ok) {
+        const materialData = await materialRes.json();
+        setMaterialLibraryItems(Array.isArray(materialData) ? materialData : []);
+      }
     } catch (error) {
-      console.error("Error loading projects/collections:", error);
+      console.error("Error loading CMS lists:", error);
     }
   }
 
@@ -860,7 +895,20 @@ export default function EditPage() {
       const res = await fetch(`/api/admin/data?page=${page}`);
       if (res.ok) {
         const json = await res.json();
-        setData(json);
+        const normalized = { ...json };
+        if (page === "home") {
+          if (!normalized.selectedWorkDivider && json.selectedDivider) {
+            normalized.selectedWorkDivider = json.selectedDivider;
+          }
+          if (!normalized.selectedWorkHeading && json.selectedHeading) {
+            normalized.selectedWorkHeading = json.selectedHeading;
+          }
+          if (!normalized.featuredProjectsHeading && json.selectedHeading) {
+            normalized.featuredProjectsHeading = json.selectedHeading;
+          }
+        }
+        setData(normalized);
+        setInitialData(JSON.parse(JSON.stringify(normalized)));
       } else if (res.status === 401) {
         router.push("/admin/login");
       }
@@ -882,6 +930,7 @@ export default function EditPage() {
       });
       if (res.ok) {
         setMessage("Saved successfully!");
+        setInitialData(JSON.parse(JSON.stringify(data)));
         setTimeout(() => setMessage(""), 3000);
       } else {
         const error = await res.json();
@@ -907,7 +956,7 @@ export default function EditPage() {
     });
   }
 
-  function toggleMaterialLibrary(slug: string) {
+  function toggleFeaturedCollections(slug: string) {
     setData((prev: any) => {
       const current = Array.isArray(prev?.textureHighlightSlugs)
         ? prev.textureHighlightSlugs
@@ -919,7 +968,7 @@ export default function EditPage() {
     });
   }
 
-  function toggleSelectedWork(slug: string) {
+  function toggleFeaturedProjects(slug: string) {
     setData((prev: any) => {
       const current = Array.isArray(prev?.selectedProjectSlugs)
         ? prev.selectedProjectSlugs
@@ -931,15 +980,27 @@ export default function EditPage() {
     });
   }
 
-  function toggleFeaturedProjects(slug: string) {
+  function toggleSelectedWork(slug: string) {
     setData((prev: any) => {
-      const current = Array.isArray(prev?.featuredProjectSlugs)
-        ? prev.featuredProjectSlugs
+      const current = Array.isArray(prev?.selectedWorkSlugs)
+        ? prev.selectedWorkSlugs
         : [];
       const next = current.includes(slug)
         ? current.filter((item: string) => item !== slug)
         : [...current, slug];
-      return { ...prev, featuredProjectSlugs: next };
+      return { ...prev, selectedWorkSlugs: next };
+    });
+  }
+
+  function toggleMaterialLibrary(slug: string) {
+    setData((prev: any) => {
+      const current = Array.isArray(prev?.materialLibrarySlugs)
+        ? prev.materialLibrarySlugs
+        : [];
+      const next = current.includes(slug)
+        ? current.filter((item: string) => item !== slug)
+        : [...current, slug];
+      return { ...prev, materialLibrarySlugs: next };
     });
   }
 
@@ -955,9 +1016,10 @@ export default function EditPage() {
       if (key.startsWith("manifesto")) return "Manifesto";
       if (key.startsWith("studioDivider")) return "Studio Divider";
       if (key.startsWith("cta") || key.startsWith("primaryCtas")) return "CTA";
-      if (key.startsWith("ribbon")) return "Ribbon";
-      if (key.startsWith("selectedDivider") || key.startsWith("selectedHeading"))
-        return "Selected Projects";
+      if (key.startsWith("ribbon")) return "Material Library";
+      if (key.startsWith("selectedWorkDivider") || key.startsWith("selectedWorkHeading"))
+        return "Selected Work";
+      if (key.startsWith("featuredProjectsHeading")) return "Featured Projects";
     }
     if (pageKey === "about") {
       if (key.startsWith("hero") || key === "title" || key === "intro") return "Hero";
@@ -1053,7 +1115,7 @@ export default function EditPage() {
                   >
                     Projects Management
                   </button>
-                  . Selected projects will appear here automatically.
+                  . Projects will appear here automatically.
                 </p>
               </div>
             )}
@@ -1067,7 +1129,7 @@ export default function EditPage() {
                   >
                     Collections Management
                   </button>
-                  . Selected collections will appear here automatically.
+                  . Collections will appear here automatically.
                 </p>
               </div>
             )}
@@ -1398,22 +1460,21 @@ export default function EditPage() {
           <div className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-xl font-semibold">Material Library (Homepage)</h2>
+                <h2 className="text-xl font-semibold">Featured Collections (Homepage)</h2>
                 <p className="text-sm text-alabaster/60">
-                  Curate the Material Library shown on the homepage. Collections for the
-                  Textures page are managed separately.
+                  Select which collections appear in the homepage panels and dividers.
                 </p>
               </div>
               <button
-                onClick={() => router.push("/admin/edit?page=textures")}
+                onClick={() => router.push("/admin/collections")}
                 className="rounded border border-alabaster/20 px-4 py-2 text-sm hover:bg-alabaster/10"
               >
-                Manage Collections (Textures)
+                Manage Collections
               </button>
             </div>
             {collections.length === 0 ? (
               <p className="text-sm text-alabaster/60">
-                No materials yet. Add collections first, then curate the Material Library here.
+                No collections yet. Add collections first, then feature them here.
               </p>
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
@@ -1432,7 +1493,55 @@ export default function EditPage() {
                       <input
                         type="checkbox"
                         checked={selected}
-                        onChange={() => toggleMaterialLibrary(collection.slug)}
+                        onChange={() => toggleFeaturedCollections(collection.slug)}
+                        className="h-4 w-4 accent-brass"
+                      />
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {page === "home" && (
+          <div className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
+            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-xl font-semibold">Material Library (Homepage)</h2>
+                <p className="text-sm text-alabaster/60">
+                  Curate the Material Library ribbon. These items are independent of collections.
+                </p>
+              </div>
+              <button
+                onClick={() => router.push("/admin/material-library")}
+                className="rounded border border-alabaster/20 px-4 py-2 text-sm hover:bg-alabaster/10"
+              >
+                Manage Material Library
+              </button>
+            </div>
+            {materialLibraryItems.length === 0 ? (
+              <p className="text-sm text-alabaster/60">
+                No material library items yet. Add items first, then select them here.
+              </p>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {materialLibraryItems.map((item) => {
+                  const selected = (data?.materialLibrarySlugs || []).includes(item.slug);
+                  return (
+                    <label
+                      key={item.id || item.slug}
+                      className={`flex cursor-pointer items-center justify-between rounded border px-4 py-3 text-sm ${
+                        selected
+                          ? "border-brass/60 bg-brass/10 text-alabaster"
+                          : "border-alabaster/15 bg-ink/40 text-alabaster/70"
+                      }`}
+                    >
+                      <span className="font-medium">{item.title}</span>
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        onChange={() => toggleMaterialLibrary(item.slug)}
                         className="h-4 w-4 accent-brass"
                       />
                     </label>
@@ -1449,38 +1558,38 @@ export default function EditPage() {
               <div>
                 <h2 className="text-xl font-semibold">Selected Work (Homepage)</h2>
                 <p className="text-sm text-alabaster/60">
-                  Select which projects appear as Selected Work on the homepage.
+                  Select which Selected Work items appear on the homepage.
                 </p>
               </div>
               <button
-                onClick={() => router.push("/admin/edit?page=projects")}
+                onClick={() => router.push("/admin/selected-work")}
                 className="rounded border border-alabaster/20 px-4 py-2 text-sm hover:bg-alabaster/10"
               >
-                Manage Projects (Projects page)
+                Manage Selected Work
               </button>
             </div>
-            {projects.length === 0 ? (
+            {selectedWorkItems.length === 0 ? (
               <p className="text-sm text-alabaster/60">
-                No projects yet. Add projects first, then select them here.
+                No selected work items yet. Add items first, then select them here.
               </p>
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
-                {projects.map((project) => {
-                  const selected = (data?.selectedProjectSlugs || []).includes(project.slug);
+                {selectedWorkItems.map((item) => {
+                  const selected = (data?.selectedWorkSlugs || []).includes(item.slug);
                   return (
                     <label
-                      key={project.id || project.slug}
+                      key={item.id || item.slug}
                       className={`flex cursor-pointer items-center justify-between rounded border px-4 py-3 text-sm ${
                         selected
                           ? "border-brass/60 bg-brass/10 text-alabaster"
                           : "border-alabaster/15 bg-ink/40 text-alabaster/70"
                       }`}
                     >
-                      <span className="font-medium">{project.title}</span>
+                      <span className="font-medium">{item.title}</span>
                       <input
                         type="checkbox"
                         checked={selected}
-                        onChange={() => toggleSelectedWork(project.slug)}
+                        onChange={() => toggleSelectedWork(item.slug)}
                         className="h-4 w-4 accent-brass"
                       />
                     </label>
@@ -1491,14 +1600,13 @@ export default function EditPage() {
           </div>
         )}
 
-        {page === "projects" && (
+        {page === "home" && (
           <div className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-xl font-semibold">Selected Projects (Projects Page)</h2>
+                <h2 className="text-xl font-semibold">Featured Projects (Homepage)</h2>
                 <p className="text-sm text-alabaster/60">
-                  Curate which projects appear in the Selected Projects section on the
-                  Projects page. This does not affect the homepage.
+                  Select which projects appear in the homepage Featured Projects section.
                 </p>
               </div>
               <button
@@ -1515,7 +1623,7 @@ export default function EditPage() {
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
                 {projects.map((project) => {
-                  const selected = (data?.featuredProjectSlugs || []).includes(project.slug);
+                  const selected = (data?.selectedProjectSlugs || []).includes(project.slug);
                   return (
                     <label
                       key={project.id || project.slug}
@@ -1540,6 +1648,7 @@ export default function EditPage() {
           </div>
         )}
 
+
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2 sm:bottom-8 sm:right-8">
           {message && (
             <div
@@ -1554,8 +1663,8 @@ export default function EditPage() {
           )}
           <button
             onClick={handleSave}
-            disabled={saving}
-            className="rounded-full bg-brass px-6 py-3 text-xs font-semibold uppercase tracking-[0.28em] text-ink shadow-[0_12px_30px_rgba(0,0,0,0.4)] hover:bg-brass/90 disabled:opacity-50"
+            disabled={saving || !hasChanges}
+            className="rounded-full bg-brass px-6 py-3 text-xs font-semibold uppercase tracking-[0.28em] text-ink shadow-[0_12px_30px_rgba(0,0,0,0.4)] hover:bg-brass/90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>

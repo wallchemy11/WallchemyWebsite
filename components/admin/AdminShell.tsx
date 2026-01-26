@@ -6,11 +6,13 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin" },
   { label: "Home", href: "/admin/edit?page=home" },
-  { label: "About", href: "/admin/edit?page=about" },
+  { label: "Selected Work", href: "/admin/selected-work" },
+  { label: "Projects", href: "/admin/projects" },
+  { label: "Collections", href: "/admin/collections" },
+  { label: "Material Library", href: "/admin/material-library" },
   { label: "Textures", href: "/admin/edit?page=textures" },
+  { label: "About", href: "/admin/edit?page=about" },
   { label: "Process", href: "/admin/edit?page=process" },
-  { label: "Projects", href: "/admin/edit?page=projects" },
-  { label: "Featured", href: "/admin/featured" },
   { label: "Contact", href: "/admin/edit?page=contact" },
   { label: "Settings", href: "/admin/edit?page=settings" }
 ];
@@ -62,14 +64,14 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   if (loading || !authorized) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-ink text-alabaster">
+      <div className="admin-light flex min-h-screen items-center justify-center bg-ink text-alabaster">
         <p>Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-ink text-alabaster">
+    <div className="admin-light min-h-screen bg-ink text-alabaster">
       <header className="sticky top-0 z-40 border-b border-alabaster/10 bg-ink/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <div>

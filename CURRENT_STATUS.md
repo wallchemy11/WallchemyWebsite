@@ -12,7 +12,8 @@
 - **Page Editors** (`/admin/edit?page=home`) - Edit any page with clear field descriptions
 - **Projects Management** (`/admin/projects`) - Create/edit/delete projects
 - **Collections Management** (`/admin/collections`) - Create/edit/delete texture collections  
-- **Featured Content** (`/admin/featured`) - Select which projects/collections appear on homepage
+- **Selected Work** (`/admin/selected-work`) - Create curated work entries  
+- **Material Library** (`/admin/material-library`) - Create ribbon items for homepage
 - **Clear Labels** - Every field has a description explaining what it controls
 
 ### 3. Proper Authentication
@@ -24,7 +25,7 @@
 - ✅ Projects can be added/edited/deleted
 - ✅ Collections can be added/edited/deleted
 - ✅ CTAs, steps, values can be managed as arrays
-- ✅ Featured content selection for homepage
+- ✅ Homepage selection for projects, collections, selected work, material library
 
 ### 5. R2 Video Support
 - Video URL fields in all page editors
@@ -60,6 +61,10 @@
     project-slug.json
   /collections
     collection-slug.json
+  /selected-work
+    work-slug.json
+  /material-library
+    material-slug.json
 
 /lib
   cms.ts          # Main CMS interface (tries DB, then files, then mock)
@@ -75,7 +80,8 @@
   /edit           # Page editors
   /projects       # Projects management
   /collections    # Collections management
-  /featured       # Featured content selection
+  /selected-work  # Selected work management
+  /material-library # Material library management
   /login          # Login page
   /api            # API routes
 ```

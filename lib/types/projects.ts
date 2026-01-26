@@ -1,3 +1,5 @@
+import type { SelectedWorkItem } from "./content";
+
 export type Project = {
   title: string;
   slug: string;
@@ -25,6 +27,7 @@ export type ProjectsPageData = {
   };
   featuredProjects?: Project[];
   projects?: Project[];
+  selectedWorkItems?: SelectedWorkItem[];
   seo?: {
     title?: string;
     description?: string;

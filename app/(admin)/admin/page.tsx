@@ -42,17 +42,20 @@ export default function AdminDashboard() {
   }
 
   const pages = [
-    { slug: "home", label: "Home Page", description: "Hero, philosophy, featured content", href: "/admin/edit?page=home" },
+    { slug: "home", label: "Home Page", description: "Hero, manifesto, featured sections", href: "/admin/edit?page=home" },
     { slug: "about", label: "About Page", description: "Studio narrative, values, founder note", href: "/admin/edit?page=about" },
     { slug: "textures", label: "Textures Page", description: "Collections for the Textures page", href: "/admin/edit?page=textures" },
     { slug: "process", label: "Process Page", description: "How we work, steps", href: "/admin/edit?page=process" },
-    { slug: "projects", label: "Projects Page", description: "Featured projects and gallery", href: "/admin/edit?page=projects" },
+    { slug: "projects", label: "Projects Page", description: "Selected Work + project gallery", href: "/admin/edit?page=projects" },
     { slug: "contact", label: "Contact Page", description: "Contact information and form", href: "/admin/edit?page=contact" },
     { slug: "settings", label: "Site Settings", description: "WhatsApp, social links", href: "/admin/edit?page=settings" }
   ];
 
   const managementPages = [
-    { slug: "featured", label: "Featured Content", description: "Curate Material Library + featured projects for the homepage", href: "/admin/featured" }
+    { slug: "selected-work", label: "Selected Work", description: "Create curated work entries", href: "/admin/selected-work" },
+    { slug: "projects", label: "Projects", description: "Manage project details", href: "/admin/projects" },
+    { slug: "collections", label: "Collections", description: "Manage texture collections", href: "/admin/collections" },
+    { slug: "material-library", label: "Material Library", description: "Manage homepage ribbon items", href: "/admin/material-library" }
   ];
 
   return (
@@ -82,7 +85,7 @@ export default function AdminDashboard() {
 
       <div>
         <h2 className="mb-4 text-xl font-semibold sm:text-2xl">Content Management</h2>
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {managementPages.map((page) => (
             <button
               key={page.slug}
@@ -99,8 +102,8 @@ export default function AdminDashboard() {
       <div className="rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
         <h2 className="mb-4 text-lg font-semibold sm:text-xl">How Content Works</h2>
         <p className="text-sm text-alabaster/70">
-          Manage projects inside the Projects page, and collections inside the Textures page.
-          Featured selection controls both homepage and projects page.
+          Manage projects, collections, selected work, and material library entries in their
+          dedicated views. Homepage selections are configured in the Home page editor.
         </p>
       </div>
     </div>

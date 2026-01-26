@@ -200,6 +200,160 @@ export async function setFeaturedCollections(collectionIds: number[]) {
   }
 }
 
+// Selected Work
+export async function getAllSelectedWork() {
+  return await queryRows(
+    "SELECT * FROM selected_work ORDER BY display_order ASC, created_at DESC",
+    []
+  );
+}
+
+export async function getFeaturedSelectedWork() {
+  return await queryRows(
+    `SELECT sw.* FROM selected_work sw
+     INNER JOIN home_featured_selected_work hfsw ON sw.id = hfsw.selected_work_id
+     ORDER BY hfsw.display_order ASC`,
+    []
+  );
+}
+
+export async function getSelectedWorkIdBySlug(slug: string) {
+  const result = await queryRows<{ id: number }>(
+    "SELECT id FROM selected_work WHERE slug = $1 LIMIT 1",
+    [slug]
+  );
+  return result[0]?.id || null;
+}
+
+export async function saveSelectedWork(data: {
+  id?: number;
+  title: string;
+  slug: string;
+  heroImageUrl?: string;
+  description?: string;
+  displayOrder?: number;
+}) {
+  if (data.id) {
+    const db = getDb();
+    await db.query(
+      `UPDATE selected_work SET
+       title = $1, slug = $2, hero_image_url = $3, description = $4,
+       display_order = $5, updated_at = NOW()
+       WHERE id = $6`,
+      [
+        data.title,
+        data.slug,
+        data.heroImageUrl || null,
+        data.description || null,
+        data.displayOrder || 0,
+        data.id
+      ]
+    );
+    return data.id;
+  } else {
+    const result = await queryRows<{ id: number }>(
+      `INSERT INTO selected_work (title, slug, hero_image_url, description, display_order)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id`,
+      [data.title, data.slug, data.heroImageUrl || null, data.description || null, data.displayOrder || 0]
+    );
+    return result[0]?.id;
+  }
+}
+
+export async function deleteSelectedWork(id: number) {
+  const db = getDb();
+  await db.query("DELETE FROM selected_work WHERE id = $1", [id]);
+}
+
+export async function setFeaturedSelectedWork(ids: number[]) {
+  const db = getDb();
+  await db.query("DELETE FROM home_featured_selected_work", []);
+  for (let i = 0; i < ids.length; i++) {
+    await db.query(
+      "INSERT INTO home_featured_selected_work (selected_work_id, display_order) VALUES ($1, $2)",
+      [ids[i], i]
+    );
+  }
+}
+
+// Material Library
+export async function getAllMaterialLibraryItems() {
+  return await queryRows(
+    "SELECT * FROM material_library ORDER BY display_order ASC, created_at DESC",
+    []
+  );
+}
+
+export async function getFeaturedMaterialLibraryItems() {
+  return await queryRows(
+    `SELECT ml.* FROM material_library ml
+     INNER JOIN home_featured_material_library hfml ON ml.id = hfml.material_library_id
+     ORDER BY hfml.display_order ASC`,
+    []
+  );
+}
+
+export async function getMaterialLibraryIdBySlug(slug: string) {
+  const result = await queryRows<{ id: number }>(
+    "SELECT id FROM material_library WHERE slug = $1 LIMIT 1",
+    [slug]
+  );
+  return result[0]?.id || null;
+}
+
+export async function saveMaterialLibraryItem(data: {
+  id?: number;
+  title: string;
+  slug: string;
+  heroImageUrl?: string;
+  description?: string;
+  displayOrder?: number;
+}) {
+  if (data.id) {
+    const db = getDb();
+    await db.query(
+      `UPDATE material_library SET
+       title = $1, slug = $2, hero_image_url = $3, description = $4,
+       display_order = $5, updated_at = NOW()
+       WHERE id = $6`,
+      [
+        data.title,
+        data.slug,
+        data.heroImageUrl || null,
+        data.description || null,
+        data.displayOrder || 0,
+        data.id
+      ]
+    );
+    return data.id;
+  } else {
+    const result = await queryRows<{ id: number }>(
+      `INSERT INTO material_library (title, slug, hero_image_url, description, display_order)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id`,
+      [data.title, data.slug, data.heroImageUrl || null, data.description || null, data.displayOrder || 0]
+    );
+    return result[0]?.id;
+  }
+}
+
+export async function deleteMaterialLibraryItem(id: number) {
+  const db = getDb();
+  await db.query("DELETE FROM material_library WHERE id = $1", [id]);
+}
+
+export async function setFeaturedMaterialLibraryItems(ids: number[]) {
+  const db = getDb();
+  await db.query("DELETE FROM home_featured_material_library", []);
+  for (let i = 0; i < ids.length; i++) {
+    await db.query(
+      "INSERT INTO home_featured_material_library (material_library_id, display_order) VALUES ($1, $2)",
+      [ids[i], i]
+    );
+  }
+}
+
 // Site Settings
 export async function getSiteSettings() {
   const result = await queryRows("SELECT * FROM site_settings WHERE id = 1 LIMIT 1", []);
