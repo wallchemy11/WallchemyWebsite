@@ -1,14 +1,15 @@
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { resolveText } from "@/lib/text";
 
 type ContactPanelProps = {
-  title: string;
+  title?: string;
   intro?: string;
   eyebrow?: string;
-  enquiryCta: string;
-  whatsappNumber: string;
-  studioAddress: string;
-  email: string;
+  enquiryCta?: string;
+  whatsappNumber?: string;
+  studioAddress?: string;
+  email?: string;
 };
 
 export default function ContactPanel({
@@ -20,20 +21,27 @@ export default function ContactPanel({
   studioAddress,
   email
 }: ContactPanelProps) {
+  const safeTitle = resolveText(title);
+  const safeIntro = resolveText(intro);
+  const safeEyebrow = resolveText(eyebrow, "Contact");
+  const safeCta = resolveText(enquiryCta, "Send an enquiry");
+  const safeWhatsapp = resolveText(whatsappNumber);
+  const safeAddress = resolveText(studioAddress);
+  const safeEmail = resolveText(email);
   return (
     <section className="bg-ink py-24">
       <ScrollReveal>
         <div className="mx-auto grid max-w-6xl gap-10 px-6 md:gap-12 md:grid-cols-[1fr_1.2fr]">
           <div>
             <SectionHeading
-              eyebrow={eyebrow || "Contact"}
-              title={title}
-              subtitle={intro}
+              eyebrow={safeEyebrow}
+              title={safeTitle}
+              subtitle={safeIntro}
             />
             <div data-reveal className="mt-8 space-y-3 text-xs text-alabaster/70 sm:text-sm md:mt-10">
-              <p>{studioAddress}</p>
-              <p>{email}</p>
-              <p>WhatsApp: {whatsappNumber}</p>
+              <p>{safeAddress}</p>
+              <p>{safeEmail}</p>
+              <p>WhatsApp: {safeWhatsapp}</p>
             </div>
           </div>
           <div id="enquiry" data-reveal className="scroll-mt-28 rounded-none border border-alabaster/10 p-6 sm:p-8">
@@ -71,7 +79,7 @@ export default function ContactPanel({
                 type="submit"
                 className="w-full border border-brass px-6 py-3 text-[10px] uppercase tracking-[0.32em] text-brass sm:text-xs sm:tracking-[0.35em]"
               >
-                {enquiryCta}
+                {safeCta}
               </button>
             </form>
           </div>

@@ -1,10 +1,11 @@
 import Image from "next/image";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { resolveText } from "@/lib/text";
 import type { Project } from "@/lib/types/projects";
 
 type ProjectsGalleryProps = {
-  title: string;
+  title?: string;
   intro?: string;
   projects: Project[];
 };
@@ -14,14 +15,16 @@ export default function ProjectsGallery({
   intro,
   projects
 }: ProjectsGalleryProps) {
+  const safeTitle = resolveText(title);
+  const safeIntro = resolveText(intro);
   return (
     <section className="bg-ink py-24">
       <div className="mx-auto max-w-6xl px-6">
         <ScrollReveal>
           <SectionHeading
             eyebrow="Portfolio"
-            title={title}
-            subtitle={intro}
+            title={safeTitle}
+            subtitle={safeIntro}
           />
           <div className="mt-12 grid gap-12">
             {projects.map((project) => (

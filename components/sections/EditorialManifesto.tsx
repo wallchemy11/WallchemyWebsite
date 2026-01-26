@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
+import { resolveText } from "@/lib/text";
 
 type ManifestoItem = {
   eyebrow: string;
@@ -10,9 +11,9 @@ type ManifestoItem = {
 };
 
 type EditorialManifestoProps = {
-  eyebrow: string;
-  title: string;
-  subtitle: string;
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
   items: ManifestoItem[];
 };
 
@@ -25,6 +26,9 @@ export default function EditorialManifesto({
   const containerRef = useRef<HTMLDivElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
   const { shouldAnimate } = useMotionPrefs();
+  const safeEyebrow = resolveText(eyebrow);
+  const safeTitle = resolveText(title);
+  const safeSubtitle = resolveText(subtitle);
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -86,13 +90,13 @@ export default function EditorialManifesto({
       <div className="mx-auto grid max-w-6xl gap-12 px-6 md:grid-cols-[0.9fr_1.1fr]">
         <div ref={pinRef} className="space-y-6 self-start">
           <p className="text-xs uppercase tracking-[0.45em] text-brass">
-            {eyebrow}
+            {safeEyebrow}
           </p>
           <h2 className="font-display text-4xl font-medium leading-tight md:text-6xl">
-            {title}
+            {safeTitle}
           </h2>
           <p className="text-base uppercase tracking-[0.18em] text-alabaster/80">
-            {subtitle}
+            {safeSubtitle}
           </p>
         </div>
         <div className="space-y-12">

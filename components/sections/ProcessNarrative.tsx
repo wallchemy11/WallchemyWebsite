@@ -3,11 +3,12 @@
 import { useLayoutEffect, useRef } from "react";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
+import { resolveText } from "@/lib/text";
 
 type ProcessNarrativeProps = {
-  eyebrow: string;
-  title: string;
-  subtitle: string;
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
   steps: { title: string; body: string }[];
 };
 
@@ -20,6 +21,9 @@ export default function ProcessNarrative({
   const containerRef = useRef<HTMLDivElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
   const { shouldAnimate } = useMotionPrefs();
+  const safeEyebrow = resolveText(eyebrow);
+  const safeTitle = resolveText(title);
+  const safeSubtitle = resolveText(subtitle);
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -83,13 +87,13 @@ export default function ProcessNarrative({
       <div className="mx-auto grid max-w-6xl gap-10 px-6 md:gap-12 md:grid-cols-[0.9fr_1.1fr]">
         <div ref={pinRef} className="self-start space-y-8">
           <p className="text-[10px] uppercase tracking-[0.36em] text-brass/90 sm:text-xs sm:tracking-[0.45em]">
-            {eyebrow}
+            {safeEyebrow}
           </p>
           <h2 className="font-display text-3xl font-medium leading-tight sm:text-4xl md:text-6xl">
-            {title}
+            {safeTitle}
           </h2>
           <p className="text-xs uppercase tracking-[0.18em] text-alabaster/70 sm:text-sm md:tracking-[0.2em]">
-            {subtitle}
+            {safeSubtitle}
           </p>
         </div>
         <div className="space-y-10">

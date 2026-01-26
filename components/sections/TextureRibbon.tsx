@@ -4,6 +4,7 @@ import { useLayoutEffect, useMemo, useRef } from "react";
 import Image from "next/image";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
+import { resolveText } from "@/lib/text";
 
 type TextureRibbonItem = {
   title: string;
@@ -12,15 +13,21 @@ type TextureRibbonItem = {
 
 type TextureRibbonProps = {
   items: TextureRibbonItem[];
-  eyebrow: string;
-  title: string;
+  eyebrow?: string;
+  title?: string;
 };
 
-export default function TextureRibbon({ items, eyebrow, title }: TextureRibbonProps) {
+export default function TextureRibbon({
+  items,
+  eyebrow,
+  title
+}: TextureRibbonProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const ribbonItems = useMemo(() => [...items, ...items], [items]);
   const { shouldAnimate } = useMotionPrefs();
+  const safeEyebrow = resolveText(eyebrow);
+  const safeTitle = resolveText(title);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -78,10 +85,10 @@ export default function TextureRibbon({ items, eyebrow, title }: TextureRibbonPr
     <section ref={sectionRef} className="relative overflow-hidden bg-ink py-16">
       <div className="mx-auto max-w-6xl px-6">
         <p className="text-xs uppercase tracking-[0.45em] text-brass">
-          {eyebrow}
+          {safeEyebrow}
         </p>
         <h2 className="font-display mt-4 text-3xl md:text-5xl">
-          {title}
+          {safeTitle}
         </h2>
       </div>
       <div className="mt-8 overflow-x-auto md:mt-12 md:overflow-visible">

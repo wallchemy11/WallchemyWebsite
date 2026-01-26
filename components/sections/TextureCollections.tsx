@@ -1,6 +1,7 @@
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import ParallaxImage from "@/components/animations/ParallaxImage";
+import { resolveText } from "@/lib/text";
 
 type Collection = {
   title: string;
@@ -10,8 +11,8 @@ type Collection = {
 };
 
 type TextureCollectionsProps = {
-  eyebrow: string;
-  title: string;
+  eyebrow?: string;
+  title?: string;
   intro?: string;
   collections: Collection[];
 };
@@ -22,14 +23,17 @@ export default function TextureCollections({
   intro,
   collections
 }: TextureCollectionsProps) {
+  const safeEyebrow = resolveText(eyebrow);
+  const safeTitle = resolveText(title);
+  const safeIntro = resolveText(intro);
   return (
     <section className="bg-ink py-24">
       <div className="mx-auto max-w-6xl px-6">
         <ScrollReveal>
           <SectionHeading
-            eyebrow={eyebrow}
-            title={title}
-            subtitle={intro}
+            eyebrow={safeEyebrow}
+            title={safeTitle}
+            subtitle={safeIntro}
           />
           <div className="mt-12 grid gap-10 md:gap-12">
             {collections.map((collection) => (

@@ -6,12 +6,13 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
 import type { Project } from "@/lib/types/projects";
+import { resolveText } from "@/lib/text";
 
 type SelectedProjectsProps = {
   projects: Project[];
-  eyebrow: string;
-  title: string;
-  subtitle: string;
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
 };
 
 export default function SelectedProjects({
@@ -22,6 +23,9 @@ export default function SelectedProjects({
 }: SelectedProjectsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { shouldAnimate } = useMotionPrefs();
+  const safeEyebrow = resolveText(eyebrow);
+  const safeTitle = resolveText(title);
+  const safeSubtitle = resolveText(subtitle);
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -105,9 +109,9 @@ export default function SelectedProjects({
     <section className="bg-ink py-24">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeading
-          eyebrow={eyebrow}
-          title={title}
-          subtitle={subtitle}
+        eyebrow={safeEyebrow}
+        title={safeTitle}
+        subtitle={safeSubtitle}
         />
       </div>
       <div ref={containerRef} className="mt-16 space-y-24">

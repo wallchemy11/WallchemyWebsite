@@ -4,12 +4,13 @@ import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
+import { resolveText } from "@/lib/text";
 
 type CinematicDividerProps = {
   image: string;
-  eyebrow: string;
-  title: string;
-  subtitle: string;
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
 };
 
 export default function CinematicDivider({
@@ -22,6 +23,9 @@ export default function CinematicDivider({
   const imageRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const { shouldAnimate } = useMotionPrefs();
+  const safeEyebrow = resolveText(eyebrow);
+  const safeTitle = resolveText(title);
+  const safeSubtitle = resolveText(subtitle);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -75,7 +79,7 @@ export default function CinematicDivider({
         <div ref={imageRef} className="overflow-hidden">
           <Image
             src={image}
-            alt={title}
+            alt={safeTitle}
             width={1600}
             height={900}
             sizes="(max-width: 768px) 100vw, 1200px"
@@ -89,14 +93,14 @@ export default function CinematicDivider({
         >
           <div>
             <p className="text-[10px] uppercase tracking-[0.36em] text-brass sm:text-xs sm:tracking-[0.45em]">
-              {eyebrow}
+              {safeEyebrow}
             </p>
             <h2 className="font-display mt-3 text-2xl sm:text-3xl md:text-5xl">
-              {title}
+              {safeTitle}
             </h2>
           </div>
           <p className="text-xs uppercase tracking-[0.18em] text-alabaster/70 sm:text-sm md:tracking-[0.2em]">
-            {subtitle}
+            {safeSubtitle}
           </p>
         </div>
       </div>
