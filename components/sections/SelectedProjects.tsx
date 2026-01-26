@@ -5,14 +5,7 @@ import Image from "next/image";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
-
-type Project = {
-  title: string;
-  slug: string;
-  location: string;
-  areaSqFt: number;
-  heroImage: string;
-};
+import type { Project } from "@/lib/types/projects";
 
 type SelectedProjectsProps = {
   projects: Project[];

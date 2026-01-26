@@ -1,15 +1,7 @@
 import Image from "next/image";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
-
-type Project = {
-  title: string;
-  slug: string;
-  location: string;
-  areaSqFt: number;
-  heroImage: string;
-  atmosphereNote: string;
-};
+import type { Project } from "@/lib/types/projects";
 
 type ProjectsGalleryProps = {
   title: string;

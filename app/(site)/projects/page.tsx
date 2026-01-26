@@ -4,6 +4,7 @@ import ProjectsGallery from "@/components/sections/ProjectsGallery";
 import CinematicDivider from "@/components/sections/CinematicDivider";
 import SelectedProjects from "@/components/sections/SelectedProjects";
 import { buildMetadata } from "@/lib/seo";
+import type { ProjectsPageData } from "@/lib/types/projects";
 
 export async function generateMetadata() {
   const projects = await getProjectsPage();
@@ -11,7 +12,7 @@ export async function generateMetadata() {
 }
 
 export default async function ProjectsPage() {
-  const projects = await getProjectsPage();
+  const projects = (await getProjectsPage()) as ProjectsPageData;
   const featuredSlugs = (projects.featuredProjects || []).map((project) => project.slug);
   const remainingProjects = (projects.projects || []).filter(
     (project) => !featuredSlugs.includes(project.slug)
