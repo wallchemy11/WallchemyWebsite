@@ -7,8 +7,9 @@ import SplitText from "@/components/ui/SplitText";
 import TextureRibbon from "@/components/sections/TextureRibbon";
 import CinematicDivider from "@/components/sections/CinematicDivider";
 import HomeCinematicPanels from "@/components/sections/HomeCinematicPanels";
-import { getHomePage } from "@/lib/cms";
+import { getContactPage, getHomePage } from "@/lib/cms";
 import { buildMetadata } from "@/lib/seo";
+import { toWhatsAppHref } from "@/lib/whatsapp";
 
 export async function generateMetadata() {
   const home = await getHomePage();
@@ -22,7 +23,7 @@ export async function generateMetadata() {
 }
 
 export default async function HomePage() {
-  const home = await getHomePage();
+  const [home, contact] = await Promise.all([getHomePage(), getContactPage()]);
   
   if (!home) {
     return <div className="min-h-screen bg-ink text-alabaster p-8">Loading...</div>;
@@ -31,6 +32,25 @@ export default async function HomePage() {
   const studioCraftImage = home.textureHighlights?.[0]?.heroImage;
   const selectedWorkImage = home.selectedProjects?.[0]?.heroImage;
   const manifestoItems = home.manifesto?.items || [];
+
+  const whatsappHref = toWhatsAppHref(
+    contact?.whatsappNumber || "+91 00000 00000",
+    contact?.whatsappMessage ||
+      "Hi Wallchemy, I'd like to connect about textures and finishes."
+  );
+
+  const normalizedCtas = (home.primaryCtas || []).map((cta: any) => {
+    const label = String(cta?.label || "");
+    const href = String(cta?.href || "");
+    const isWhatsapp =
+      label.toLowerCase().includes("whatsapp") ||
+      href.toLowerCase().includes("wa.me") ||
+      href.toLowerCase().includes("whatsapp");
+    return {
+      ...cta,
+      href: isWhatsapp ? whatsappHref : href
+    };
+  });
 
   return (
     <>
@@ -64,7 +84,7 @@ export default async function HomePage() {
         />
       ) : null}
       <HomeCinematicPanels panels={home.textureHighlights || []} />
-      <HomeCtas intro={home.ctaIntro} ctas={home.primaryCtas || []} />
+      <HomeCtas intro={home.ctaIntro} ctas={normalizedCtas} />
       <TextureRibbon
         items={home.textureHighlights || []}
         eyebrow={home.ribbonHeading?.eyebrow}

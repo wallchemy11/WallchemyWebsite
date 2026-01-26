@@ -8,12 +8,14 @@ type ScrollRevealProps = {
   children: React.ReactNode;
   selector?: string;
   y?: number;
+  start?: string;
 };
 
 export default function ScrollReveal({
   children,
   selector = "[data-reveal]",
-  y = 60
+  y = 60,
+  start = "top 75%"
 }: ScrollRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { shouldAnimate } = useMotionPrefs();
@@ -38,7 +40,7 @@ export default function ScrollReveal({
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: container,
-            start: "top 75%",
+            start,
             end: "bottom 60%",
             toggleActions: "play none none reverse"
           }
@@ -104,7 +106,7 @@ export default function ScrollReveal({
       mounted = false;
       cleanup?.();
     };
-  }, [selector, y, shouldAnimate]);
+  }, [selector, y, start, shouldAnimate]);
 
   return <div ref={containerRef}>{children}</div>;
 }

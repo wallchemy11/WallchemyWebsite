@@ -1,4 +1,5 @@
 import "server-only";
+import { unstable_noStore as noStore } from "next/cache";
 import {
   mockAboutPage,
   mockContactPage,
@@ -42,6 +43,7 @@ async function getCmsModule() {
 }
 
 export async function getHomePage() {
+  noStore();
   const cms = await getCmsModule();
   if (cms) {
     try {
@@ -55,6 +57,7 @@ export async function getHomePage() {
 }
 
 export async function getAboutPage() {
+  noStore();
   const cms = await getCmsModule();
   if (cms) {
     try {
@@ -68,6 +71,7 @@ export async function getAboutPage() {
 }
 
 export async function getTexturesPage() {
+  noStore();
   const cms = await getCmsModule();
   if (cms) {
     try {
@@ -81,6 +85,7 @@ export async function getTexturesPage() {
 }
 
 export async function getProcessPage() {
+  noStore();
   const cms = await getCmsModule();
   if (cms) {
     try {
@@ -94,6 +99,7 @@ export async function getProcessPage() {
 }
 
 export async function getProjectsPage() {
+  noStore();
   const cms = await getCmsModule();
   if (cms) {
     try {
@@ -107,6 +113,7 @@ export async function getProjectsPage() {
 }
 
 export async function getContactPage() {
+  noStore();
   const cms = await getCmsModule();
   if (cms) {
     try {
@@ -120,6 +127,7 @@ export async function getContactPage() {
 }
 
 export async function getSiteSettings() {
+  noStore();
   const cms = await getCmsModule();
   if (cms) {
     try {

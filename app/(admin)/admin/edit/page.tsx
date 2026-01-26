@@ -907,6 +907,18 @@ export default function EditPage() {
     });
   }
 
+  function toggleMaterialLibrary(slug: string) {
+    setData((prev: any) => {
+      const current = Array.isArray(prev?.textureHighlightSlugs)
+        ? prev.textureHighlightSlugs
+        : [];
+      const next = current.includes(slug)
+        ? current.filter((item: string) => item !== slug)
+        : [...current, slug];
+      return { ...prev, textureHighlightSlugs: next };
+    });
+  }
+
   function getNestedValue(obj: any, path: string): any {
     return path.split(".").reduce((current, key) => current?.[key], obj);
   }
@@ -1344,19 +1356,73 @@ export default function EditPage() {
           ))}
         </div>
 
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+        {page === "home" && (
+          <div className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
+            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-xl font-semibold">Material Library (Homepage)</h2>
+                <p className="text-sm text-alabaster/60">
+                  Choose which collections appear in the homepage ribbon.
+                </p>
+              </div>
+              <button
+                onClick={() => router.push("/admin/edit?page=textures")}
+                className="rounded border border-alabaster/20 px-4 py-2 text-sm hover:bg-alabaster/10"
+              >
+                Manage Collections
+              </button>
+            </div>
+            {collections.length === 0 ? (
+              <p className="text-sm text-alabaster/60">
+                No collections yet. Add collections first, then select them here.
+              </p>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {collections.map((collection) => {
+                  const selected = (data?.textureHighlightSlugs || []).includes(collection.slug);
+                  return (
+                    <label
+                      key={collection.id || collection.slug}
+                      className={`flex cursor-pointer items-center justify-between rounded border px-4 py-3 text-sm ${
+                        selected
+                          ? "border-brass/60 bg-brass/10 text-alabaster"
+                          : "border-alabaster/15 bg-ink/40 text-alabaster/70"
+                      }`}
+                    >
+                      <span className="font-medium">{collection.title}</span>
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        onChange={() => toggleMaterialLibrary(collection.slug)}
+                        className="h-4 w-4 accent-brass"
+                      />
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2 sm:bottom-8 sm:right-8">
+          {message && (
+            <div
+              className={`rounded-full border px-4 py-2 text-xs sm:text-sm ${
+                message.includes("success")
+                  ? "border-green-400/40 bg-green-400/10 text-green-300"
+                  : "border-ember/40 bg-ember/10 text-ember"
+              }`}
+            >
+              {message}
+            </div>
+          )}
           <button
             onClick={handleSave}
             disabled={saving}
-            className="rounded bg-brass px-6 py-3 font-semibold text-ink hover:bg-brass/90 disabled:opacity-50"
+            className="rounded-full bg-brass px-6 py-3 text-xs font-semibold uppercase tracking-[0.28em] text-ink shadow-[0_12px_30px_rgba(0,0,0,0.4)] hover:bg-brass/90 disabled:opacity-50"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
-          {message && (
-            <p className={`text-sm ${message.includes("success") ? "text-green-400" : "text-red-400"}`}>
-              {message}
-            </p>
-          )}
         </div>
 
         {page === "textures" && (
