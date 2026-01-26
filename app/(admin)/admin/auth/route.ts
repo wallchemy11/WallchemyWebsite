@@ -2,6 +2,11 @@ import "server-only";
 import { NextResponse } from "next/server";
 import { createSession } from "@/lib/auth";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
 export async function POST(req: Request) {
   const form = await req.formData();
   const username = String(form.get("username") || "");

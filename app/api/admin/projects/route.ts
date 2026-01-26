@@ -37,7 +37,6 @@ export async function DELETE(req: NextRequest) {
   if (!id) {
     return NextResponse.json({ error: "ID required" }, { status: 400 });
   }
-  // Delete project file
   const success = await deleteProject(id);
   if (success) {
     return NextResponse.json({ success: true });
