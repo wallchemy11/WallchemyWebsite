@@ -109,7 +109,7 @@ export default function FeaturedContentPage() {
               Featured Content on Homepage
             </h1>
             <p className="mt-2 text-sm text-alabaster/60">
-              This selection powers "Selected Work" on both the homepage and projects page.
+              This selection powers "Selected Work" on the homepage only.
             </p>
           </div>
           <button
@@ -122,9 +122,10 @@ export default function FeaturedContentPage() {
 
         <div className="space-y-8">
           <div className="rounded-lg border border-alabaster/10 bg-alabaster/5 p-6">
-            <h2 className="mb-4 text-xl font-semibold">Featured Projects</h2>
+            <h2 className="mb-4 text-xl font-semibold">Selected Work (Homepage)</h2>
             <p className="mb-4 text-sm text-alabaster/60">
-              Selected projects appear on the homepage and the projects page.
+              Selected projects appear in the homepage Selected Work section only.
+              Projects page selections are managed separately.
             </p>
             <div className="space-y-2">
               {projects.map((project) => (
@@ -161,9 +162,10 @@ export default function FeaturedContentPage() {
           </div>
 
           <div className="rounded-lg border border-alabaster/10 bg-alabaster/5 p-6">
-            <h2 className="mb-4 text-xl font-semibold">Featured Collections</h2>
+            <h2 className="mb-4 text-xl font-semibold">Material Library (Homepage)</h2>
             <p className="mb-4 text-sm text-alabaster/60">
-              Selected collections appear in panels, ribbon, and dividers on the homepage
+              Curate the Material Library shown on the homepage. Collections for the
+              Textures page are managed separately.
             </p>
             <div className="space-y-2">
               {collections.map((collection) => (

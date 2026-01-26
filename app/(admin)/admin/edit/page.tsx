@@ -931,6 +931,18 @@ export default function EditPage() {
     });
   }
 
+  function toggleFeaturedProjects(slug: string) {
+    setData((prev: any) => {
+      const current = Array.isArray(prev?.featuredProjectSlugs)
+        ? prev.featuredProjectSlugs
+        : [];
+      const next = current.includes(slug)
+        ? current.filter((item: string) => item !== slug)
+        : [...current, slug];
+      return { ...prev, featuredProjectSlugs: next };
+    });
+  }
+
   function getNestedValue(obj: any, path: string): any {
     return path.split(".").reduce((current, key) => current?.[key], obj);
   }
@@ -945,7 +957,7 @@ export default function EditPage() {
       if (key.startsWith("cta") || key.startsWith("primaryCtas")) return "CTA";
       if (key.startsWith("ribbon")) return "Ribbon";
       if (key.startsWith("selectedDivider") || key.startsWith("selectedHeading"))
-        return "Selected Work";
+        return "Selected Projects";
     }
     if (pageKey === "about") {
       if (key.startsWith("hero") || key === "title" || key === "intro") return "Hero";
@@ -1388,19 +1400,20 @@ export default function EditPage() {
               <div>
                 <h2 className="text-xl font-semibold">Material Library (Homepage)</h2>
                 <p className="text-sm text-alabaster/60">
-                  Choose which collections appear in the homepage ribbon.
+                  Curate the Material Library shown on the homepage. Collections for the
+                  Textures page are managed separately.
                 </p>
               </div>
               <button
                 onClick={() => router.push("/admin/edit?page=textures")}
                 className="rounded border border-alabaster/20 px-4 py-2 text-sm hover:bg-alabaster/10"
               >
-                Manage Collections
+                Manage Collections (Textures)
               </button>
             </div>
             {collections.length === 0 ? (
               <p className="text-sm text-alabaster/60">
-                No collections yet. Add collections first, then select them here.
+                No materials yet. Add collections first, then curate the Material Library here.
               </p>
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
@@ -1434,17 +1447,16 @@ export default function EditPage() {
           <div className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-xl font-semibold">Selected Work (Homepage + Projects)</h2>
+                <h2 className="text-xl font-semibold">Selected Work (Homepage)</h2>
                 <p className="text-sm text-alabaster/60">
-                  Select which projects appear as Selected Work on the homepage
-                  and Projects page.
+                  Select which projects appear as Selected Work on the homepage.
                 </p>
               </div>
               <button
                 onClick={() => router.push("/admin/edit?page=projects")}
                 className="rounded border border-alabaster/20 px-4 py-2 text-sm hover:bg-alabaster/10"
               >
-                Manage Projects
+                Manage Projects (Projects page)
               </button>
             </div>
             {projects.length === 0 ? (
@@ -1469,6 +1481,55 @@ export default function EditPage() {
                         type="checkbox"
                         checked={selected}
                         onChange={() => toggleSelectedWork(project.slug)}
+                        className="h-4 w-4 accent-brass"
+                      />
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {page === "projects" && (
+          <div className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
+            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-xl font-semibold">Selected Projects (Projects Page)</h2>
+                <p className="text-sm text-alabaster/60">
+                  Curate which projects appear in the Selected Projects section on the
+                  Projects page. This does not affect the homepage.
+                </p>
+              </div>
+              <button
+                onClick={() => router.push("/admin/projects")}
+                className="rounded border border-alabaster/20 px-4 py-2 text-sm hover:bg-alabaster/10"
+              >
+                Manage Projects
+              </button>
+            </div>
+            {projects.length === 0 ? (
+              <p className="text-sm text-alabaster/60">
+                No projects yet. Add projects first, then select them here.
+              </p>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {projects.map((project) => {
+                  const selected = (data?.featuredProjectSlugs || []).includes(project.slug);
+                  return (
+                    <label
+                      key={project.id || project.slug}
+                      className={`flex cursor-pointer items-center justify-between rounded border px-4 py-3 text-sm ${
+                        selected
+                          ? "border-brass/60 bg-brass/10 text-alabaster"
+                          : "border-alabaster/15 bg-ink/40 text-alabaster/70"
+                      }`}
+                    >
+                      <span className="font-medium">{project.title}</span>
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        onChange={() => toggleFeaturedProjects(project.slug)}
                         className="h-4 w-4 accent-brass"
                       />
                     </label>

@@ -105,7 +105,8 @@ export default function CollectionsPage() {
           <div>
             <h1 className="text-2xl font-bold sm:text-3xl">Collections Management</h1>
             <p className="mt-2 text-sm text-alabaster/60">
-              Manage texture collections. Featured collections appear on the homepage.
+              Manage texture collections for the Textures page. Material Library selections
+              for the homepage are curated separately.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">

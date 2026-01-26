@@ -44,7 +44,7 @@ export default function AdminDashboard() {
   const pages = [
     { slug: "home", label: "Home Page", description: "Hero, philosophy, featured content", href: "/admin/edit?page=home" },
     { slug: "about", label: "About Page", description: "Studio narrative, values, founder note", href: "/admin/edit?page=about" },
-    { slug: "textures", label: "Textures Page", description: "Collections and texture library", href: "/admin/edit?page=textures" },
+    { slug: "textures", label: "Textures Page", description: "Collections for the Textures page", href: "/admin/edit?page=textures" },
     { slug: "process", label: "Process Page", description: "How we work, steps", href: "/admin/edit?page=process" },
     { slug: "projects", label: "Projects Page", description: "Featured projects and gallery", href: "/admin/edit?page=projects" },
     { slug: "contact", label: "Contact Page", description: "Contact information and form", href: "/admin/edit?page=contact" },
@@ -52,7 +52,7 @@ export default function AdminDashboard() {
   ];
 
   const managementPages = [
-    { slug: "featured", label: "Featured Content", description: "Select which projects & collections appear on homepage + projects", href: "/admin/featured" }
+    { slug: "featured", label: "Featured Content", description: "Curate Material Library + featured projects for the homepage", href: "/admin/featured" }
   ];
 
   return (

@@ -126,12 +126,21 @@ export async function getProjectsPage() {
   try {
     const page = await getPage("projects");
     if (page && page.content) {
-      const featuredProjects = await getFeaturedProjects();
       const allProjects = await getAllProjects();
+      const projects = allProjects.map(transformProject);
+      const featuredProjectSlugs = Array.isArray(page.content?.featuredProjectSlugs)
+        ? page.content.featuredProjectSlugs
+        : [];
+      const featuredProjects =
+        featuredProjectSlugs.length > 0
+          ? featuredProjectSlugs
+              .map((slug: string) => projects.find((project) => project.slug === slug))
+              .filter(Boolean)
+          : (await getFeaturedProjects()).map(transformProject);
       return {
         ...page.content,
-        featuredProjects: featuredProjects.map(transformProject),
-        projects: allProjects.map(transformProject),
+        featuredProjects,
+        projects,
         seo: page.seo || {}
       };
     }

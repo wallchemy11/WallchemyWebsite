@@ -150,7 +150,6 @@ export async function getProjectsPage() {
   const page = readJsonFile<any>("pages/projects.json");
   if (!page) return null;
   const defaultProjectImage = page.defaultProjectImage || FALLBACK_IMAGE;
-  const home = readJsonFile<any>("pages/home.json");
   
   // Load all projects
   const allProjects = await getAllProjects();
@@ -163,12 +162,8 @@ export async function getProjectsPage() {
     atmosphereNote: p.atmosphere_note
   }));
   
-  // Featured projects are shared with homepage (Selected Work)
-  if (home?.selectedProjectSlugs && Array.isArray(home.selectedProjectSlugs)) {
-    page.featuredProjects = home.selectedProjectSlugs
-      .map((slug: string) => projects.find((p: any) => p.slug === slug))
-      .filter(Boolean);
-  } else if (page.featuredProjectSlugs && Array.isArray(page.featuredProjectSlugs)) {
+  // Featured projects are configured per Projects page
+  if (page.featuredProjectSlugs && Array.isArray(page.featuredProjectSlugs)) {
     page.featuredProjects = page.featuredProjectSlugs
       .map((slug: string) => projects.find((p: any) => p.slug === slug))
       .filter(Boolean);
