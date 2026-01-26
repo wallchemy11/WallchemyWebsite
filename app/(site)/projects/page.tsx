@@ -3,6 +3,7 @@ import VideoHero from "@/components/ui/VideoHero";
 import ProjectsGallery from "@/components/sections/ProjectsGallery";
 import CinematicDivider from "@/components/sections/CinematicDivider";
 import SelectedProjects from "@/components/sections/SelectedProjects";
+import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
 import type { ProjectsPageData } from "@/lib/types/projects";
 
@@ -17,6 +18,10 @@ export default async function ProjectsPage() {
   const remainingProjects = (projects.projects || []).filter(
     (project) => !featuredSlugs.includes(project.slug)
   );
+  const dividerImage = resolveImage(
+    projects.featuredProjects?.[0]?.heroImage || projects.projects?.[0]?.heroImage,
+    projects.heroPoster
+  );
 
   return (
     <>
@@ -28,7 +33,7 @@ export default async function ProjectsPage() {
         poster={projects.heroPoster}
       />
       <CinematicDivider
-        image={projects.featuredProjects?.[0]?.heroImage || projects.projects?.[0]?.heroImage}
+        image={dividerImage}
         eyebrow={projects.selectedDivider?.eyebrow}
         title={projects.selectedDivider?.title}
         subtitle={projects.selectedDivider?.subtitle}

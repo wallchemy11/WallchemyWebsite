@@ -2,6 +2,7 @@ import { getTexturesPage } from "@/lib/cms";
 import VideoHero from "@/components/ui/VideoHero";
 import TextureCollections from "@/components/sections/TextureCollections";
 import CinematicDivider from "@/components/sections/CinematicDivider";
+import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
 
 export async function generateMetadata() {
@@ -22,7 +23,7 @@ export default async function TexturesPage() {
         poster={textures.heroPoster}
       />
       <CinematicDivider
-        image={textures.dividerImage}
+        image={resolveImage(textures.dividerImage, textures.heroPoster)}
         eyebrow={textures.divider?.eyebrow}
         title={textures.divider?.title}
         subtitle={textures.divider?.subtitle}

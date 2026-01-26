@@ -9,7 +9,7 @@ import {
   mockTexturesPage,
   mockSiteSettings
 } from "./mock-data";
-import { ensureHeroVideo, type HeroVideoPage } from "./hero";
+import { ensureHeroMedia, type HeroVideoPage } from "./hero";
 
 // Try database first, then file-based, then mock data
 let cmsModule: any = null;
@@ -49,12 +49,12 @@ export async function getHomePage(): Promise<HeroVideoPage> {
   if (cms) {
     try {
       const data = await cms.getHomePage();
-      if (data) return ensureHeroVideo(data);
+      if (data) return ensureHeroMedia(data);
     } catch (error) {
       console.error("Error fetching home page:", error);
     }
   }
-  return ensureHeroVideo(mockHomePage);
+  return ensureHeroMedia(mockHomePage);
 }
 
 export async function getAboutPage(): Promise<HeroVideoPage> {
@@ -63,12 +63,12 @@ export async function getAboutPage(): Promise<HeroVideoPage> {
   if (cms) {
     try {
       const data = await cms.getAboutPage();
-      if (data) return ensureHeroVideo(data);
+      if (data) return ensureHeroMedia(data);
     } catch (error) {
       console.error("Error fetching about page:", error);
     }
   }
-  return ensureHeroVideo(mockAboutPage);
+  return ensureHeroMedia(mockAboutPage);
 }
 
 export async function getTexturesPage(): Promise<HeroVideoPage> {
@@ -77,12 +77,12 @@ export async function getTexturesPage(): Promise<HeroVideoPage> {
   if (cms) {
     try {
       const data = await cms.getTexturesPage();
-      if (data) return ensureHeroVideo(data);
+      if (data) return ensureHeroMedia(data);
     } catch (error) {
       console.error("Error fetching textures page:", error);
     }
   }
-  return ensureHeroVideo(mockTexturesPage);
+  return ensureHeroMedia(mockTexturesPage);
 }
 
 export async function getProcessPage(): Promise<HeroVideoPage> {
@@ -91,12 +91,12 @@ export async function getProcessPage(): Promise<HeroVideoPage> {
   if (cms) {
     try {
       const data = await cms.getProcessPage();
-      if (data) return ensureHeroVideo(data);
+      if (data) return ensureHeroMedia(data);
     } catch (error) {
       console.error("Error fetching process page:", error);
     }
   }
-  return ensureHeroVideo(mockProcessPage);
+  return ensureHeroMedia(mockProcessPage);
 }
 
 export async function getProjectsPage(): Promise<HeroVideoPage> {
@@ -105,12 +105,12 @@ export async function getProjectsPage(): Promise<HeroVideoPage> {
   if (cms) {
     try {
       const data = await cms.getProjectsPage();
-      if (data) return ensureHeroVideo(data);
+      if (data) return ensureHeroMedia(data);
     } catch (error) {
       console.error("Error fetching projects page:", error);
     }
   }
-  return ensureHeroVideo(mockProjectsPage);
+  return ensureHeroMedia(mockProjectsPage);
 }
 
 export async function getContactPage(): Promise<HeroVideoPage> {
@@ -119,12 +119,12 @@ export async function getContactPage(): Promise<HeroVideoPage> {
   if (cms) {
     try {
       const data = await cms.getContactPage();
-      if (data) return ensureHeroVideo(data);
+      if (data) return ensureHeroMedia(data);
     } catch (error) {
       console.error("Error fetching contact page:", error);
     }
   }
-  return ensureHeroVideo(mockContactPage);
+  return ensureHeroMedia(mockContactPage);
 }
 
 export async function getSiteSettings() {

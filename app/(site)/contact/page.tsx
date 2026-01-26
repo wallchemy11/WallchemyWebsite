@@ -2,6 +2,7 @@ import { getContactPage } from "@/lib/cms";
 import VideoHero from "@/components/ui/VideoHero";
 import ContactPanel from "@/components/sections/ContactPanel";
 import CinematicDivider from "@/components/sections/CinematicDivider";
+import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
 import { toWhatsAppHref } from "@/lib/whatsapp";
 
@@ -19,7 +20,7 @@ export default async function ContactPage() {
       contact?.whatsappMessage ||
         "Hi Wallchemy, I'd like to connect about textures and finishes."
     );
-  const dividerImage = contact.dividerImage;
+  const dividerImage = resolveImage(contact.dividerImage, contact.heroPoster);
 
   return (
     <>

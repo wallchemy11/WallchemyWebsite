@@ -3,6 +3,7 @@ import VideoHero from "@/components/ui/VideoHero";
 import AboutNarrative from "@/components/sections/AboutNarrative";
 import StudioValues from "@/components/sections/StudioValues";
 import CinematicDivider from "@/components/sections/CinematicDivider";
+import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
 
 export async function generateMetadata() {
@@ -23,7 +24,7 @@ export default async function AboutPage() {
         poster={about.heroPoster}
       />
       <CinematicDivider
-        image={about.studioDividerImage}
+        image={resolveImage(about.studioDividerImage, about.heroPoster)}
         eyebrow={about.studioDivider?.eyebrow}
         title={about.studioDivider?.title}
         subtitle={about.studioDivider?.subtitle}
@@ -36,7 +37,7 @@ export default async function AboutPage() {
         founderNote={about.founderNote}
       />
       <CinematicDivider
-        image={about.valuesDividerImage}
+        image={resolveImage(about.valuesDividerImage, about.heroPoster)}
         eyebrow={about.valuesDivider?.eyebrow}
         title={about.valuesDivider?.title}
         subtitle={about.valuesDivider?.subtitle}

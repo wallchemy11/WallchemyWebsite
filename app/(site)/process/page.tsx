@@ -2,6 +2,7 @@ import { getProcessPage } from "@/lib/cms";
 import VideoHero from "@/components/ui/VideoHero";
 import ProcessNarrative from "@/components/sections/ProcessNarrative";
 import CinematicDivider from "@/components/sections/CinematicDivider";
+import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
 
 export async function generateMetadata() {
@@ -22,7 +23,7 @@ export default async function ProcessPage() {
         poster={processPage.heroPoster}
       />
       <CinematicDivider
-        image={processPage.dividerImage}
+        image={resolveImage(processPage.dividerImage, processPage.heroPoster)}
         eyebrow={processPage.divider?.eyebrow}
         title={processPage.divider?.title}
         subtitle={processPage.divider?.subtitle}

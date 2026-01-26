@@ -1,10 +1,9 @@
 import "server-only";
 import fs from "fs";
 import path from "path";
+import { FALLBACK_IMAGE } from "./hero";
 
 const dataDir = path.join(process.cwd(), "data");
-const FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=2000&q=80";
 
 function readJsonFile<T>(filePath: string): T | null {
   try {
