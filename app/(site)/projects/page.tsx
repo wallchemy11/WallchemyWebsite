@@ -12,6 +12,10 @@ export async function generateMetadata() {
 
 export default async function ProjectsPage() {
   const projects = await getProjectsPage();
+  const featuredSlugs = (projects.featuredProjects || []).map((project) => project.slug);
+  const remainingProjects = (projects.projects || []).filter(
+    (project) => !featuredSlugs.includes(project.slug)
+  );
 
   return (
     <>
@@ -36,7 +40,9 @@ export default async function ProjectsPage() {
           subtitle={projects.selectedHeading?.subtitle}
         />
       ) : null}
-      <ProjectsGallery title={projects.title} projects={projects.projects} />
+      {remainingProjects.length ? (
+        <ProjectsGallery title={projects.title} projects={remainingProjects} />
+      ) : null}
     </>
   );
 }

@@ -919,6 +919,18 @@ export default function EditPage() {
     });
   }
 
+  function toggleSelectedWork(slug: string) {
+    setData((prev: any) => {
+      const current = Array.isArray(prev?.selectedProjectSlugs)
+        ? prev.selectedProjectSlugs
+        : [];
+      const next = current.includes(slug)
+        ? current.filter((item: string) => item !== slug)
+        : [...current, slug];
+      return { ...prev, selectedProjectSlugs: next };
+    });
+  }
+
   function getNestedValue(obj: any, path: string): any {
     return path.split(".").reduce((current, key) => current?.[key], obj);
   }
@@ -986,6 +998,13 @@ export default function EditPage() {
           if (field.key.toLowerCase().includes("hero") || field.key.toLowerCase().includes("divider")) {
             warnings.push(`${field.label} is missing.`);
           }
+        }
+        if (
+          field.key.toLowerCase().includes("herovideo") &&
+          typeof value === "string" &&
+          /(youtube\.com|youtu\.be|vimeo\.com)/i.test(value)
+        ) {
+          warnings.push(`${field.label} must be a direct .mp4 URL (YouTube/Vimeo not supported).`);
         }
       }
       if (field.type === "media" && !value) {
@@ -1268,6 +1287,13 @@ export default function EditPage() {
               className="w-full rounded border border-alabaster/20 bg-ink px-4 py-2 text-alabaster"
               placeholder={field.type === "url" ? "https://..." : ""}
             />
+            {field.type === "url" &&
+            field.key.toLowerCase().includes("herovideo") ? (
+              <p className="mt-2 text-xs text-alabaster/50">
+                Use a direct `.mp4` link (YouTube/Vimeo links will not play as a
+                background video).
+              </p>
+            ) : null}
             {field.type === "url" && value ? (
               /\.(png|jpg|jpeg|webp|gif)$/i.test(value) ||
               value.includes("unsplash") ||
@@ -1394,6 +1420,55 @@ export default function EditPage() {
                         type="checkbox"
                         checked={selected}
                         onChange={() => toggleMaterialLibrary(collection.slug)}
+                        className="h-4 w-4 accent-brass"
+                      />
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {page === "home" && (
+          <div className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
+            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-xl font-semibold">Selected Work (Homepage + Projects)</h2>
+                <p className="text-sm text-alabaster/60">
+                  Select which projects appear as Selected Work on the homepage
+                  and Projects page.
+                </p>
+              </div>
+              <button
+                onClick={() => router.push("/admin/edit?page=projects")}
+                className="rounded border border-alabaster/20 px-4 py-2 text-sm hover:bg-alabaster/10"
+              >
+                Manage Projects
+              </button>
+            </div>
+            {projects.length === 0 ? (
+              <p className="text-sm text-alabaster/60">
+                No projects yet. Add projects first, then select them here.
+              </p>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {projects.map((project) => {
+                  const selected = (data?.selectedProjectSlugs || []).includes(project.slug);
+                  return (
+                    <label
+                      key={project.id || project.slug}
+                      className={`flex cursor-pointer items-center justify-between rounded border px-4 py-3 text-sm ${
+                        selected
+                          ? "border-brass/60 bg-brass/10 text-alabaster"
+                          : "border-alabaster/15 bg-ink/40 text-alabaster/70"
+                      }`}
+                    >
+                      <span className="font-medium">{project.title}</span>
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        onChange={() => toggleSelectedWork(project.slug)}
                         className="h-4 w-4 accent-brass"
                       />
                     </label>
