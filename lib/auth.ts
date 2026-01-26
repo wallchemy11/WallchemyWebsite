@@ -41,6 +41,20 @@ export async function createSession(username: string) {
 
 export async function clearSession() {
   const cookieStore = cookies();
-  cookieStore.delete(`${AUTH_COOKIE}.u`, { path: "/" });
-  cookieStore.delete(`${AUTH_COOKIE}.s`, { path: "/" });
+  cookieStore.delete(`${AUTH_COOKIE}.u`);
+  cookieStore.delete(`${AUTH_COOKIE}.s`);
+  cookieStore.set(`${AUTH_COOKIE}.u`, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0
+  });
+  cookieStore.set(`${AUTH_COOKIE}.s`, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0
+  });
 }
