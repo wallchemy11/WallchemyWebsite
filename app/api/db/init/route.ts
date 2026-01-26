@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import fs from "fs";
 import path from "path";
 
@@ -18,6 +18,7 @@ export async function POST() {
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
 
+    const db = getDb();
     for (const statement of statements) {
       try {
         await db.query(statement, []);

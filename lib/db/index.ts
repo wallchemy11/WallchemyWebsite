@@ -1,8 +1,17 @@
 import { neon } from "@neondatabase/serverless";
 
-const sql = neon(process.env.DATABASE_URL || "");
+let sql: ReturnType<typeof neon> | null = null;
 
-export const db = sql;
+export function getDb() {
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    throw new Error("DATABASE_URL is not set.");
+  }
+  if (!sql) {
+    sql = neon(url);
+  }
+  return sql;
+}
 
 // Helper to ensure tables exist (run migrations)
 export async function initDatabase() {

@@ -1,4 +1,4 @@
-import { db } from "./index";
+import { getDb } from "./index";
 
 // Helper to handle JSON
 function jsonStringify(value: any) {
@@ -7,11 +7,13 @@ function jsonStringify(value: any) {
 
 // Pages
 export async function getPage(slug: string) {
+  const db = getDb();
   const result = await db.query("SELECT * FROM pages WHERE slug = $1 LIMIT 1", [slug]);
   return result[0] || null;
 }
 
 export async function savePage(slug: string, title: string, content: any, seo: any) {
+  const db = getDb();
   await db.query(
     `INSERT INTO pages (slug, title, content, seo, updated_at)
      VALUES ($1, $2, $3::jsonb, $4::jsonb, NOW())
@@ -27,10 +29,12 @@ export async function savePage(slug: string, title: string, content: any, seo: a
 
 // Projects
 export async function getAllProjects() {
+  const db = getDb();
   return await db.query("SELECT * FROM projects ORDER BY display_order ASC, created_at DESC", []);
 }
 
 export async function getFeaturedProjects() {
+  const db = getDb();
   return await db.query(
     `SELECT p.* FROM projects p
      INNER JOIN home_featured_projects hfp ON p.id = hfp.project_id
@@ -40,11 +44,13 @@ export async function getFeaturedProjects() {
 }
 
 export async function getProject(slug: string) {
+  const db = getDb();
   const result = await db.query("SELECT * FROM projects WHERE slug = $1 LIMIT 1", [slug]);
   return result[0] || null;
 }
 
 export async function getProjectIdBySlug(slug: string) {
+  const db = getDb();
   const result = await db.query("SELECT id FROM projects WHERE slug = $1 LIMIT 1", [slug]);
   return result[0]?.id || null;
 }
@@ -61,6 +67,7 @@ export async function saveProject(data: {
   isFeatured?: boolean;
 }) {
   if (data.id) {
+    const db = getDb();
     await db.query(
       `UPDATE projects SET
        title = $1, slug = $2, location = $3, area_sq_ft = $4, hero_image_url = $5,
@@ -80,6 +87,7 @@ export async function saveProject(data: {
     );
     return data.id;
   } else {
+    const db = getDb();
     const result = await db.query(
       `INSERT INTO projects (title, slug, location, area_sq_ft, hero_image_url, atmosphere_note, display_order, is_featured)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -100,10 +108,12 @@ export async function saveProject(data: {
 }
 
 export async function deleteProject(id: number) {
+  const db = getDb();
   await db.query("DELETE FROM projects WHERE id = $1", [id]);
 }
 
 export async function setFeaturedProjects(projectIds: number[]) {
+  const db = getDb();
   await db.query("DELETE FROM home_featured_projects", []);
   for (let i = 0; i < projectIds.length; i++) {
     await db.query("INSERT INTO home_featured_projects (project_id, display_order) VALUES ($1, $2)", [
@@ -115,10 +125,12 @@ export async function setFeaturedProjects(projectIds: number[]) {
 
 // Collections
 export async function getAllCollections() {
+  const db = getDb();
   return await db.query("SELECT * FROM collections ORDER BY display_order ASC, created_at DESC", []);
 }
 
 export async function getFeaturedCollections() {
+  const db = getDb();
   return await db.query(
     `SELECT c.* FROM collections c
      INNER JOIN home_featured_collections hfc ON c.id = hfc.collection_id
@@ -128,11 +140,13 @@ export async function getFeaturedCollections() {
 }
 
 export async function getCollection(slug: string) {
+  const db = getDb();
   const result = await db.query("SELECT * FROM collections WHERE slug = $1 LIMIT 1", [slug]);
   return result[0] || null;
 }
 
 export async function getCollectionIdBySlug(slug: string) {
+  const db = getDb();
   const result = await db.query("SELECT id FROM collections WHERE slug = $1 LIMIT 1", [slug]);
   return result[0]?.id || null;
 }
@@ -146,6 +160,7 @@ export async function saveCollection(data: {
   displayOrder?: number;
 }) {
   if (data.id) {
+    const db = getDb();
     await db.query(
       `UPDATE collections SET
        title = $1, slug = $2, hero_image_url = $3, short_description = $4, display_order = $5, updated_at = NOW()
@@ -161,6 +176,7 @@ export async function saveCollection(data: {
     );
     return data.id;
   } else {
+    const db = getDb();
     const result = await db.query(
       `INSERT INTO collections (title, slug, hero_image_url, short_description, display_order)
        VALUES ($1, $2, $3, $4, $5)
@@ -172,10 +188,12 @@ export async function saveCollection(data: {
 }
 
 export async function deleteCollection(id: number) {
+  const db = getDb();
   await db.query("DELETE FROM collections WHERE id = $1", [id]);
 }
 
 export async function setFeaturedCollections(collectionIds: number[]) {
+  const db = getDb();
   await db.query("DELETE FROM home_featured_collections", []);
   for (let i = 0; i < collectionIds.length; i++) {
     await db.query("INSERT INTO home_featured_collections (collection_id, display_order) VALUES ($1, $2)", [
@@ -187,6 +205,7 @@ export async function setFeaturedCollections(collectionIds: number[]) {
 
 // Site Settings
 export async function getSiteSettings() {
+  const db = getDb();
   const result = await db.query("SELECT * FROM site_settings WHERE id = 1 LIMIT 1", []);
   if (result[0]) {
     return {
@@ -205,6 +224,7 @@ export async function saveSiteSettings(data: {
     ember?: string;
   };
 }) {
+  const db = getDb();
   await db.query(
     `INSERT INTO site_settings (id, palette, updated_at)
      VALUES (1, $1::jsonb, NOW())
