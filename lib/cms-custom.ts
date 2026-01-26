@@ -216,7 +216,7 @@ export async function getAllProjects() {
     if (files.length === 0) return [];
     
     const projects = files.map((file, idx) => {
-      const data = readJsonFile(`projects/${file}`);
+      const data = readJsonFile<any>(`projects/${file}`);
       if (!data) return null;
       return {
         id: idx + 1,
@@ -247,7 +247,7 @@ export async function getAllCollections() {
     if (files.length === 0) return [];
     
     const collections = files.map((file, idx) => {
-      const data = readJsonFile(`collections/${file}`);
+      const data = readJsonFile<any>(`collections/${file}`);
       if (!data) return null;
       return {
         id: idx + 1,
