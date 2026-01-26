@@ -88,7 +88,7 @@ export default function AdminLoginPage({
                 </div>
               ) : null}
 
-              <form action="/admin/auth" method="post" className="space-y-5">
+              <form action="/api/admin/auth" method="post" className="space-y-5">
                 <input type="hidden" name="next" value={next} />
                 <Field
                   label="Admin ID"

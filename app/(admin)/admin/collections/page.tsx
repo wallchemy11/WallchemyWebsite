@@ -21,7 +21,7 @@ export default function CollectionsPage() {
   async function loadCollections() {
     setLoading(true);
     try {
-      const res = await fetch("/admin/api/data?page=collections-list");
+      const res = await fetch("/api/admin/data?page=collections-list");
       if (res.status === 401) {
         router.push("/admin/login");
         return;
@@ -39,7 +39,7 @@ export default function CollectionsPage() {
 
   async function saveCollection() {
     try {
-      const res = await fetch("/admin/api/collections", {
+      const res = await fetch("/api/admin/collections", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
@@ -61,7 +61,7 @@ export default function CollectionsPage() {
       const body = new FormData();
       body.append("file", file);
       body.append("folder", "collections");
-      const res = await fetch("/admin/api/upload", {
+      const res = await fetch("/api/admin/upload", {
         method: "POST",
         body
       });
@@ -81,7 +81,7 @@ export default function CollectionsPage() {
   async function deleteCollection(id: number) {
     if (!confirm("Delete this collection?")) return;
     try {
-      const res = await fetch(`/admin/api/collections?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/collections?id=${id}`, { method: "DELETE" });
       if (res.ok) {
         loadCollections();
       }

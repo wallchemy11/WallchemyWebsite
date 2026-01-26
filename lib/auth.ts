@@ -26,7 +26,7 @@ export async function createSession(username: string) {
     httpOnly: true,
     secure,
     sameSite: "lax",
-    path: "/admin",
+    path: "/",
     maxAge: 60 * 60 * 12 // 12 hours
   });
   
@@ -34,13 +34,13 @@ export async function createSession(username: string) {
     httpOnly: true,
     secure,
     sameSite: "lax",
-    path: "/admin",
+    path: "/",
     maxAge: 60 * 60 * 12
   });
 }
 
 export async function clearSession() {
   const cookieStore = cookies();
-  cookieStore.delete(`${AUTH_COOKIE}.u`);
-  cookieStore.delete(`${AUTH_COOKIE}.s`);
+  cookieStore.delete(`${AUTH_COOKIE}.u`, { path: "/" });
+  cookieStore.delete(`${AUTH_COOKIE}.s`, { path: "/" });
 }

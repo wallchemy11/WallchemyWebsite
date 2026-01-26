@@ -17,7 +17,6 @@ export async function POST(req: Request) {
   const expectedPass = process.env.ADMIN_PASSWORD || "";
 
   if (!expectedPass) {
-    // Dev mode - allow through
     await createSession(username);
     return NextResponse.redirect(new URL(nextPath, req.url), { status: 303 });
   }
@@ -32,4 +31,3 @@ export async function POST(req: Request) {
   await createSession(username);
   return NextResponse.redirect(new URL(nextPath, req.url), { status: 303 });
 }
-

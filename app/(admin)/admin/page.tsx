@@ -16,7 +16,7 @@ export default function AdminDashboard() {
 
   async function checkAuth() {
     try {
-      const res = await fetch("/admin/api/data?page=home");
+      const res = await fetch("/api/admin/data?page=home");
       if (res.ok) {
         setAuthenticated(true);
       } else {

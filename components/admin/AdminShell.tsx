@@ -40,7 +40,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     let active = true;
     (async () => {
       try {
-        const res = await fetch("/admin/api/data?page=home");
+        const res = await fetch("/api/admin/data?page=home");
         if (!active) return;
         if (res.ok) {
           setAuthorized(true);
@@ -98,7 +98,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               </button>
             ))}
             <button
-              onClick={() => router.push("/admin/auth/logout")}
+              onClick={() => router.push("/api/admin/auth/logout")}
               className="rounded border border-alabaster/20 px-3 py-2 text-[10px] uppercase tracking-[0.28em] text-alabaster/70 hover:text-brass"
             >
               Logout
@@ -123,7 +123,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               <button
                 onClick={() => {
                   setMenuOpen(false);
-                  router.push("/admin/auth/logout");
+                  router.push("/api/admin/auth/logout");
                 }}
                 className="rounded border border-alabaster/10 px-3 py-2 text-left hover:bg-alabaster/10"
               >

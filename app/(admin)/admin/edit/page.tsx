@@ -738,8 +738,8 @@ export default function EditPage() {
   async function loadProjectsAndCollections() {
     try {
       const [projRes, collRes] = await Promise.all([
-        fetch("/admin/api/data?page=projects-list"),
-        fetch("/admin/api/data?page=collections-list")
+        fetch("/api/admin/data?page=projects-list"),
+        fetch("/api/admin/data?page=collections-list")
       ]);
       if (projRes.ok) {
         const projData = await projRes.json();
@@ -756,7 +756,7 @@ export default function EditPage() {
 
   async function saveProjectInline() {
     try {
-      const res = await fetch("/admin/api/projects", {
+      const res = await fetch("/api/admin/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(projectForm)
@@ -774,7 +774,7 @@ export default function EditPage() {
   async function deleteProjectInline(id: number) {
     if (!confirm("Delete this project?")) return;
     try {
-      const res = await fetch(`/admin/api/projects?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/projects?id=${id}`, { method: "DELETE" });
       if (res.ok) {
         loadProjectsAndCollections();
       }
@@ -790,7 +790,7 @@ export default function EditPage() {
       const body = new FormData();
       body.append("file", file);
       body.append("folder", "projects");
-      const res = await fetch("/admin/api/upload", { method: "POST", body });
+      const res = await fetch("/api/admin/upload", { method: "POST", body });
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error?.error || "Upload failed");
@@ -806,7 +806,7 @@ export default function EditPage() {
 
   async function saveCollectionInline() {
     try {
-      const res = await fetch("/admin/api/collections", {
+      const res = await fetch("/api/admin/collections", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(collectionForm)
@@ -824,7 +824,7 @@ export default function EditPage() {
   async function deleteCollectionInline(id: number) {
     if (!confirm("Delete this collection?")) return;
     try {
-      const res = await fetch(`/admin/api/collections?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/collections?id=${id}`, { method: "DELETE" });
       if (res.ok) {
         loadProjectsAndCollections();
       }
@@ -840,7 +840,7 @@ export default function EditPage() {
       const body = new FormData();
       body.append("file", file);
       body.append("folder", "collections");
-      const res = await fetch("/admin/api/upload", { method: "POST", body });
+      const res = await fetch("/api/admin/upload", { method: "POST", body });
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error?.error || "Upload failed");
@@ -857,7 +857,7 @@ export default function EditPage() {
   async function loadPage() {
     setLoading(true);
     try {
-      const res = await fetch(`/admin/api/data?page=${page}`);
+      const res = await fetch(`/api/admin/data?page=${page}`);
       if (res.ok) {
         const json = await res.json();
         setData(json);
@@ -875,7 +875,7 @@ export default function EditPage() {
     setSaving(true);
     setMessage("");
     try {
-      const res = await fetch(`/admin/api/data?page=${page}`, {
+      const res = await fetch(`/api/admin/data?page=${page}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
@@ -1167,7 +1167,7 @@ export default function EditPage() {
           "folder",
           field.mediaKind === "video" ? "videos" : "images"
         );
-        const res = await fetch("/admin/api/upload", {
+        const res = await fetch("/api/admin/upload", {
           method: "POST",
           body: formData
         });

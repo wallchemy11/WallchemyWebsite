@@ -22,9 +22,9 @@ export default function FeaturedContentPage() {
     setLoading(true);
     try {
       const [projRes, collRes, homeRes] = await Promise.all([
-        fetch("/admin/api/data?page=projects-list"),
-        fetch("/admin/api/data?page=collections-list"),
-        fetch("/admin/api/data?page=home")
+        fetch("/api/admin/data?page=projects-list"),
+        fetch("/api/admin/data?page=collections-list"),
+        fetch("/api/admin/data?page=home")
       ]);
       
       if (projRes.status === 401 || collRes.status === 401 || homeRes.status === 401) {
@@ -55,7 +55,7 @@ export default function FeaturedContentPage() {
     setSaving(true);
     setMessage("");
     try {
-      const res = await fetch("/admin/api/data?page=home", {
+      const res = await fetch("/api/admin/data?page=home", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(homePage)

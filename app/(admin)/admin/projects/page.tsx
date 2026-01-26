@@ -21,7 +21,7 @@ export default function ProjectsPage() {
   async function loadProjects() {
     setLoading(true);
     try {
-      const res = await fetch("/admin/api/data?page=projects-list");
+      const res = await fetch("/api/admin/data?page=projects-list");
       if (res.status === 401) {
         router.push("/admin/login");
         return;
@@ -39,7 +39,7 @@ export default function ProjectsPage() {
 
   async function saveProject() {
     try {
-      const res = await fetch("/admin/api/projects", {
+      const res = await fetch("/api/admin/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
@@ -61,7 +61,7 @@ export default function ProjectsPage() {
       const body = new FormData();
       body.append("file", file);
       body.append("folder", "projects");
-      const res = await fetch("/admin/api/upload", {
+      const res = await fetch("/api/admin/upload", {
         method: "POST",
         body
       });
@@ -81,7 +81,7 @@ export default function ProjectsPage() {
   async function deleteProject(id: number) {
     if (!confirm("Delete this project?")) return;
     try {
-      const res = await fetch(`/admin/api/projects?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/projects?id=${id}`, { method: "DELETE" });
       if (res.ok) {
         loadProjects();
       }
