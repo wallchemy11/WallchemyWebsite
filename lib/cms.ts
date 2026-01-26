@@ -9,6 +9,7 @@ import {
   mockTexturesPage,
   mockSiteSettings
 } from "./mock-data";
+import { ensureHeroVideo, type HeroVideoPage } from "./hero";
 
 // Try database first, then file-based, then mock data
 let cmsModule: any = null;
@@ -42,88 +43,88 @@ async function getCmsModule() {
   }
 }
 
-export async function getHomePage() {
+export async function getHomePage(): Promise<HeroVideoPage> {
   noStore();
   const cms = await getCmsModule();
   if (cms) {
     try {
       const data = await cms.getHomePage();
-      if (data) return data;
+      if (data) return ensureHeroVideo(data);
     } catch (error) {
       console.error("Error fetching home page:", error);
     }
   }
-  return mockHomePage;
+  return ensureHeroVideo(mockHomePage);
 }
 
-export async function getAboutPage() {
+export async function getAboutPage(): Promise<HeroVideoPage> {
   noStore();
   const cms = await getCmsModule();
   if (cms) {
     try {
       const data = await cms.getAboutPage();
-      if (data) return data;
+      if (data) return ensureHeroVideo(data);
     } catch (error) {
       console.error("Error fetching about page:", error);
     }
   }
-  return mockAboutPage;
+  return ensureHeroVideo(mockAboutPage);
 }
 
-export async function getTexturesPage() {
+export async function getTexturesPage(): Promise<HeroVideoPage> {
   noStore();
   const cms = await getCmsModule();
   if (cms) {
     try {
       const data = await cms.getTexturesPage();
-      if (data) return data;
+      if (data) return ensureHeroVideo(data);
     } catch (error) {
       console.error("Error fetching textures page:", error);
     }
   }
-  return mockTexturesPage;
+  return ensureHeroVideo(mockTexturesPage);
 }
 
-export async function getProcessPage() {
+export async function getProcessPage(): Promise<HeroVideoPage> {
   noStore();
   const cms = await getCmsModule();
   if (cms) {
     try {
       const data = await cms.getProcessPage();
-      if (data) return data;
+      if (data) return ensureHeroVideo(data);
     } catch (error) {
       console.error("Error fetching process page:", error);
     }
   }
-  return mockProcessPage;
+  return ensureHeroVideo(mockProcessPage);
 }
 
-export async function getProjectsPage() {
+export async function getProjectsPage(): Promise<HeroVideoPage> {
   noStore();
   const cms = await getCmsModule();
   if (cms) {
     try {
       const data = await cms.getProjectsPage();
-      if (data) return data;
+      if (data) return ensureHeroVideo(data);
     } catch (error) {
       console.error("Error fetching projects page:", error);
     }
   }
-  return mockProjectsPage;
+  return ensureHeroVideo(mockProjectsPage);
 }
 
-export async function getContactPage() {
+export async function getContactPage(): Promise<HeroVideoPage> {
   noStore();
   const cms = await getCmsModule();
   if (cms) {
     try {
       const data = await cms.getContactPage();
-      if (data) return data;
+      if (data) return ensureHeroVideo(data);
     } catch (error) {
       console.error("Error fetching contact page:", error);
     }
   }
-  return mockContactPage;
+  return ensureHeroVideo(mockContactPage);
 }
 
 export async function getSiteSettings() {

@@ -10,7 +10,7 @@ export type Project = {
 export type ProjectsPageData = {
   title: string;
   intro?: string;
-  heroVideo?: string;
+  heroVideo: string;
   heroVideoMobile?: string;
   heroPoster?: string;
   selectedDivider?: {
