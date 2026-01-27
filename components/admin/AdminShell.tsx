@@ -6,10 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin" },
   { label: "Home", href: "/admin/edit?page=home" },
-  { label: "Selected Work", href: "/admin/selected-work" },
   { label: "Projects", href: "/admin/projects" },
-  { label: "Collections", href: "/admin/collections" },
-  { label: "Material Library", href: "/admin/material-library" },
   { label: "Textures", href: "/admin/edit?page=textures" },
   { label: "About", href: "/admin/edit?page=about" },
   { label: "Process", href: "/admin/edit?page=process" },
@@ -28,6 +25,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const isLogin = pathname?.startsWith("/admin/login");
   const navItems = useMemo(() => NAV_ITEMS, []);
   const currentEditPage = searchParams.get("page");
+  const showHomeShortcuts = pathname === "/admin/edit" && currentEditPage === "home";
+  const showProjectsShortcuts = pathname === "/admin/edit" && currentEditPage === "projects";
 
   function isActive(href: string) {
     if (href.startsWith("/admin/edit")) {
@@ -130,6 +129,85 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 className="rounded border border-alabaster/10 px-3 py-2 text-left hover:bg-alabaster/10"
               >
                 Logout
+              </button>
+            </div>
+          </div>
+        ) : null}
+        {showHomeShortcuts ? (
+          <div className="border-t border-alabaster/10 px-4 py-3 sm:px-6">
+            <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-2 text-xs text-alabaster/70">
+              <span className="text-[10px] uppercase tracking-[0.28em] text-brass">
+                Home shortcuts
+              </span>
+              <button
+                type="button"
+                onClick={() =>
+                  document
+                    .getElementById("home-featured-collections")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+                className="rounded border border-alabaster/20 px-3 py-1 hover:bg-alabaster/10"
+              >
+                Featured Collections
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  document
+                    .getElementById("home-material-library")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+                className="rounded border border-alabaster/20 px-3 py-1 hover:bg-alabaster/10"
+              >
+                Material Library
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  document
+                    .getElementById("home-selected-work")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+                className="rounded border border-alabaster/20 px-3 py-1 hover:bg-alabaster/10"
+              >
+                Selected Work
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  document
+                    .getElementById("home-featured-projects")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+                className="rounded border border-alabaster/20 px-3 py-1 hover:bg-alabaster/10"
+              >
+                Featured Projects
+              </button>
+            </div>
+          </div>
+        ) : null}
+        {showProjectsShortcuts ? (
+          <div className="border-t border-alabaster/10 px-4 py-3 sm:px-6">
+            <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-2 text-xs text-alabaster/70">
+              <span className="text-[10px] uppercase tracking-[0.28em] text-brass">
+                Projects shortcuts
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById("projects-inline-manager");
+                  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                className="rounded border border-alabaster/20 px-3 py-1 hover:bg-alabaster/10"
+              >
+                Projects Manager
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push("/admin/selected-work")}
+                className="rounded border border-alabaster/20 px-3 py-1 hover:bg-alabaster/10"
+              >
+                Selected Work
               </button>
             </div>
           </div>

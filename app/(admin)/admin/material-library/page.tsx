@@ -107,8 +107,17 @@ export default function MaterialLibraryPage() {
             <p className="mt-2 text-sm text-alabaster/60">
               Create ribbon entries for the homepage. Choose which items appear from the Home page editor.
             </p>
+            <p className="mt-2 text-sm text-alabaster/60">
+              This lives under Home. Use the Home editor to feature items.
+            </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              onClick={() => router.push("/admin/edit?page=home")}
+              className="rounded border border-alabaster/20 px-4 py-2 text-sm hover:bg-alabaster/10"
+            >
+              ← Home
+            </button>
             <button
               onClick={() => {
                 setFormData({});

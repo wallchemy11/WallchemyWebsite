@@ -741,10 +741,6 @@ export default function EditPage() {
   const [projectForm, setProjectForm] = useState<any>({});
   const [projectUploading, setProjectUploading] = useState(false);
   const [projectUploadError, setProjectUploadError] = useState("");
-  const [editingCollection, setEditingCollection] = useState<number | null>(null);
-  const [collectionForm, setCollectionForm] = useState<any>({});
-  const [collectionUploading, setCollectionUploading] = useState(false);
-  const [collectionUploadError, setCollectionUploadError] = useState("");
   const hasChanges = useMemo(() => {
     if (!data || !initialData) return false;
     return JSON.stringify(data) !== JSON.stringify(initialData);
@@ -836,56 +832,6 @@ export default function EditPage() {
       setProjectUploadError(error?.message || "Upload failed");
     } finally {
       setProjectUploading(false);
-    }
-  }
-
-  async function saveCollectionInline() {
-    try {
-      const res = await fetch("/api/admin/collections", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(collectionForm)
-      });
-      if (res.ok) {
-        setEditingCollection(null);
-        setCollectionForm({});
-        loadProjectsAndCollections();
-      }
-    } catch (error) {
-      console.error("Error saving collection:", error);
-    }
-  }
-
-  async function deleteCollectionInline(id: number) {
-    if (!confirm("Delete this collection?")) return;
-    try {
-      const res = await fetch(`/api/admin/collections?id=${id}`, { method: "DELETE" });
-      if (res.ok) {
-        loadProjectsAndCollections();
-      }
-    } catch (error) {
-      console.error("Error deleting collection:", error);
-    }
-  }
-
-  async function uploadCollectionImage(file: File) {
-    setCollectionUploadError("");
-    setCollectionUploading(true);
-    try {
-      const body = new FormData();
-      body.append("file", file);
-      body.append("folder", "collections");
-      const res = await fetch("/api/admin/upload", { method: "POST", body });
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error?.error || "Upload failed");
-      }
-      const json = await res.json();
-      setCollectionForm((prev: any) => ({ ...prev, heroImageUrl: json.url }));
-    } catch (error: any) {
-      setCollectionUploadError(error?.message || "Upload failed");
-    } finally {
-      setCollectionUploading(false);
     }
   }
 
@@ -1122,12 +1068,12 @@ export default function EditPage() {
             {field.arrayItemType === "collection" && (
               <div className="mb-4 rounded-lg border border-alabaster/10 bg-alabaster/5 p-4">
                 <p className="text-sm text-alabaster/70">
-                  💡 <strong>Tip:</strong> To add/edit collections, go to{" "}
+                  💡 <strong>Tip:</strong> Manage collections under{" "}
                   <button
                     onClick={() => router.push("/admin/collections")}
                     className="underline hover:text-brass"
                   >
-                    Collections Management
+                    Home → Collections
                   </button>
                   . Collections will appear here automatically.
                 </p>
@@ -1443,6 +1389,69 @@ export default function EditPage() {
           </div>
         ) : null}
 
+        {page === "home" && (
+          <div className="mb-6 rounded-lg border border-alabaster/10 bg-alabaster/5 p-4 text-sm text-alabaster/70">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs uppercase tracking-[0.28em] text-brass">Home shortcuts</span>
+              <button
+                onClick={() =>
+                  document
+                    .getElementById("home-featured-collections")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+                className="rounded border border-alabaster/20 px-3 py-1 text-xs hover:bg-alabaster/10"
+              >
+                Featured Collections
+              </button>
+              <button
+                onClick={() =>
+                  document
+                    .getElementById("home-material-library")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+                className="rounded border border-alabaster/20 px-3 py-1 text-xs hover:bg-alabaster/10"
+              >
+                Material Library
+              </button>
+              <button
+                onClick={() =>
+                  document
+                    .getElementById("home-selected-work")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+                className="rounded border border-alabaster/20 px-3 py-1 text-xs hover:bg-alabaster/10"
+              >
+                Selected Work
+              </button>
+              <button
+                onClick={() =>
+                  document
+                    .getElementById("home-featured-projects")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+                className="rounded border border-alabaster/20 px-3 py-1 text-xs hover:bg-alabaster/10"
+              >
+                Featured Projects
+              </button>
+            </div>
+            <p className="mt-3 text-xs text-alabaster/60">
+              Collections and Material Library live under Home. Selected Work lives under Projects.
+            </p>
+          </div>
+        )}
+
+        {page === "textures" && (
+          <div className="mb-6 rounded-lg border border-alabaster/10 bg-alabaster/5 p-4 text-sm text-alabaster/70">
+            Collections are managed under Home → Collections.
+            <button
+              onClick={() => router.push("/admin/collections")}
+              className="ml-2 underline hover:text-brass"
+            >
+              Go to Collections
+            </button>
+          </div>
+        )}
+
         <div className="space-y-6 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
           {Object.entries(groupedFields).map(([group, groupFields]) => (
             <details key={group} open className="rounded border border-alabaster/10 bg-ink/40 p-4">
@@ -1457,7 +1466,10 @@ export default function EditPage() {
         </div>
 
         {page === "home" && (
-          <div className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
+          <div
+            id="home-featured-collections"
+            className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6"
+          >
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-xl font-semibold">Featured Collections (Homepage)</h2>
@@ -1505,7 +1517,10 @@ export default function EditPage() {
         )}
 
         {page === "home" && (
-          <div className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
+          <div
+            id="home-material-library"
+            className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6"
+          >
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-xl font-semibold">Material Library (Homepage)</h2>
@@ -1553,7 +1568,10 @@ export default function EditPage() {
         )}
 
         {page === "home" && (
-          <div className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
+          <div
+            id="home-selected-work"
+            className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6"
+          >
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-xl font-semibold">Selected Work (Homepage)</h2>
@@ -1601,7 +1619,10 @@ export default function EditPage() {
         )}
 
         {page === "home" && (
-          <div className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
+          <div
+            id="home-featured-projects"
+            className="mt-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6"
+          >
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-xl font-semibold">Featured Projects (Homepage)</h2>
@@ -1670,146 +1691,11 @@ export default function EditPage() {
           </button>
         </div>
 
-        {page === "textures" && (
-          <div className="mt-10 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
-            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="text-xl font-semibold">Collections</h2>
-                <p className="text-sm text-alabaster/60">
-                  Add and edit collections directly here.
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  setCollectionForm({});
-                  setEditingCollection(-1);
-                }}
-                className="rounded bg-brass px-4 py-2 text-sm font-semibold text-ink"
-              >
-                + New Collection
-              </button>
-            </div>
-
-            {editingCollection !== null && (
-              <div className="mb-6 rounded border border-alabaster/10 bg-ink/40 p-4">
-                <h3 className="mb-4 text-lg font-semibold">
-                  {editingCollection === -1 ? "New Collection" : "Edit Collection"}
-                </h3>
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder="Title"
-                    value={collectionForm.title || ""}
-                    onChange={(e) => setCollectionForm({ ...collectionForm, title: e.target.value })}
-                    className="w-full rounded border border-alabaster/20 bg-ink px-3 py-2 text-alabaster"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Slug (e.g., velvet-lime)"
-                    value={collectionForm.slug || ""}
-                    onChange={(e) => setCollectionForm({ ...collectionForm, slug: e.target.value })}
-                    className="w-full rounded border border-alabaster/20 bg-ink px-3 py-2 text-alabaster"
-                  />
-                  <input
-                    type="url"
-                    placeholder="Hero Image URL"
-                    value={collectionForm.heroImageUrl || ""}
-                    onChange={(e) => setCollectionForm({ ...collectionForm, heroImageUrl: e.target.value })}
-                    className="w-full rounded border border-alabaster/20 bg-ink px-3 py-2 text-alabaster"
-                  />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) uploadCollectionImage(file);
-                    }}
-                    className="w-full rounded border border-alabaster/20 bg-ink px-3 py-2 text-sm text-alabaster file:mr-3 file:rounded file:border-0 file:bg-brass file:px-3 file:py-2 file:text-xs file:font-semibold file:text-ink"
-                  />
-                  {collectionUploading ? (
-                    <p className="text-xs text-alabaster/60">Uploading...</p>
-                  ) : null}
-                  {collectionUploadError ? (
-                    <p className="text-xs text-red-400">{collectionUploadError}</p>
-                  ) : null}
-                  <textarea
-                    placeholder="Short description"
-                    value={collectionForm.shortDescription || ""}
-                    onChange={(e) => setCollectionForm({ ...collectionForm, shortDescription: e.target.value })}
-                    className="w-full rounded border border-alabaster/20 bg-ink px-3 py-2 text-alabaster"
-                    rows={3}
-                  />
-                  <div className="flex gap-3">
-                    <button
-                      onClick={saveCollectionInline}
-                      className="rounded bg-brass px-4 py-2 text-sm font-semibold text-ink"
-                    >
-                      Save Collection
-                    </button>
-                    <button
-                      onClick={() => {
-                        setEditingCollection(null);
-                        setCollectionForm({});
-                      }}
-                      className="rounded border border-alabaster/20 px-4 py-2 text-sm hover:bg-alabaster/10"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="space-y-3">
-              {collections.map((collection) => (
-                <div
-                  key={collection.id}
-                  className={`flex flex-col gap-3 rounded border border-alabaster/10 bg-ink/40 p-4 sm:flex-row sm:items-center sm:justify-between ${
-                    editingCollection === collection.id ? "opacity-60" : ""
-                  }`}
-                >
-                  <div>
-                    <p className="font-semibold">{collection.title || collection.slug}</p>
-                    <p className="text-sm text-alabaster/60">{collection.short_description}</p>
-                    {editingCollection === collection.id ? (
-                      <p className="mt-1 text-xs text-brass">Editing</p>
-                    ) : null}
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setCollectionForm({
-                          id: collection.id,
-                          title: collection.title,
-                          slug: collection.slug,
-                          heroImageUrl: collection.hero_image_url,
-                          shortDescription: collection.short_description
-                        });
-                        setEditingCollection(collection.id);
-                      }}
-                      className="rounded border border-alabaster/20 px-3 py-2 text-sm hover:bg-alabaster/10 disabled:opacity-50"
-                      disabled={editingCollection === collection.id}
-                    >
-                      {editingCollection === collection.id ? "Editing" : "Edit"}
-                    </button>
-                    <button
-                      onClick={() => deleteCollectionInline(collection.id)}
-                      className="rounded border border-red-500/20 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-              {collections.length === 0 ? (
-                <p className="text-sm text-alabaster/60">No collections yet.</p>
-              ) : null}
-            </div>
-          </div>
-        )}
-
         {page === "projects" && (
-          <div className="mt-10 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
+          <div
+            id="projects-inline-manager"
+            className="mt-10 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6"
+          >
             <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-xl font-semibold">Projects</h2>

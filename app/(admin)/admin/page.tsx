@@ -42,20 +42,23 @@ export default function AdminDashboard() {
   }
 
   const pages = [
-    { slug: "home", label: "Home Page", description: "Hero, manifesto, featured sections", href: "/admin/edit?page=home" },
+    { slug: "home", label: "Home Page", description: "Hero, manifesto, featured selections", href: "/admin/edit?page=home" },
     { slug: "about", label: "About Page", description: "Studio narrative, values, founder note", href: "/admin/edit?page=about" },
-    { slug: "textures", label: "Textures Page", description: "Collections for the Textures page", href: "/admin/edit?page=textures" },
+    { slug: "textures", label: "Textures Page", description: "Textures layout and intro content", href: "/admin/edit?page=textures" },
     { slug: "process", label: "Process Page", description: "How we work, steps", href: "/admin/edit?page=process" },
-    { slug: "projects", label: "Projects Page", description: "Selected Work + project gallery", href: "/admin/edit?page=projects" },
+    { slug: "projects", label: "Projects Page", description: "Projects page layout + headings", href: "/admin/edit?page=projects" },
     { slug: "contact", label: "Contact Page", description: "Contact information and form", href: "/admin/edit?page=contact" },
     { slug: "settings", label: "Site Settings", description: "WhatsApp, social links", href: "/admin/edit?page=settings" }
   ];
 
-  const managementPages = [
-    { slug: "selected-work", label: "Selected Work", description: "Create curated work entries", href: "/admin/selected-work" },
-    { slug: "projects", label: "Projects", description: "Manage project details", href: "/admin/projects" },
-    { slug: "collections", label: "Collections", description: "Manage texture collections", href: "/admin/collections" },
-    { slug: "material-library", label: "Material Library", description: "Manage homepage ribbon items", href: "/admin/material-library" }
+  const homeManagement = [
+    { slug: "collections", label: "Collections", description: "Manage collections used on Home + Textures", href: "/admin/collections" },
+    { slug: "material-library", label: "Material Library", description: "Homepage ribbon items", href: "/admin/material-library" }
+  ];
+
+  const projectManagement = [
+    { slug: "projects", label: "Projects", description: "Manage project entries", href: "/admin/projects" },
+    { slug: "selected-work", label: "Selected Work", description: "Curated work items used on Home + Projects", href: "/admin/selected-work" }
   ];
 
   return (
@@ -83,28 +86,38 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div>
-        <h2 className="mb-4 text-xl font-semibold sm:text-2xl">Content Management</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {managementPages.map((page) => (
-            <button
-              key={page.slug}
-              onClick={() => router.push(page.href)}
-              className="group rounded-lg border border-brass/20 bg-brass/10 p-5 text-left transition-colors hover:bg-brass/20 sm:p-6"
-            >
-              <h3 className="text-lg font-semibold sm:text-xl">{page.label}</h3>
-              <p className="mt-2 text-sm text-alabaster/70">{page.description}</p>
-            </button>
-          ))}
+      <div className="space-y-8">
+        <div>
+          <h2 className="mb-4 text-xl font-semibold sm:text-2xl">Home Management</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            {homeManagement.map((page) => (
+              <button
+                key={page.slug}
+                onClick={() => router.push(page.href)}
+                className="group rounded-lg border border-brass/20 bg-brass/10 p-5 text-left transition-colors hover:bg-brass/20 sm:p-6"
+              >
+                <h3 className="text-lg font-semibold sm:text-xl">{page.label}</h3>
+                <p className="mt-2 text-sm text-alabaster/70">{page.description}</p>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
-        <h2 className="mb-4 text-lg font-semibold sm:text-xl">How Content Works</h2>
-        <p className="text-sm text-alabaster/70">
-          Manage projects, collections, selected work, and material library entries in their
-          dedicated views. Homepage selections are configured in the Home page editor.
-        </p>
+        <div>
+          <h2 className="mb-4 text-xl font-semibold sm:text-2xl">Projects Management</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            {projectManagement.map((page) => (
+              <button
+                key={page.slug}
+                onClick={() => router.push(page.href)}
+                className="group rounded-lg border border-brass/20 bg-brass/10 p-5 text-left transition-colors hover:bg-brass/20 sm:p-6"
+              >
+                <h3 className="text-lg font-semibold sm:text-xl">{page.label}</h3>
+                <p className="mt-2 text-sm text-alabaster/70">{page.description}</p>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

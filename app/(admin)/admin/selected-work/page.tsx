@@ -107,8 +107,17 @@ export default function SelectedWorkPage() {
             <p className="mt-2 text-sm text-alabaster/60">
               Create curated work entries. Choose which ones appear on the homepage from the Home page editor.
             </p>
+            <p className="mt-2 text-sm text-alabaster/60">
+              This lives under Projects. Use the Projects editor for layout text.
+            </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              onClick={() => router.push("/admin/projects")}
+              className="rounded border border-alabaster/20 px-4 py-2 text-sm hover:bg-alabaster/10"
+            >
+              ← Projects
+            </button>
             <button
               onClick={() => {
                 setFormData({});
