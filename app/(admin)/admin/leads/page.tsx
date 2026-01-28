@@ -26,6 +26,7 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "unread" | "read">("unread");
   const [summary, setSummary] = useState({ total: 0, unread: 0 });
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   useEffect(() => {
     loadSummary();
@@ -93,6 +94,13 @@ export default function LeadsPage() {
       hour: "2-digit",
       minute: "2-digit"
     })}`;
+  }
+
+  function previewMessage(message?: string) {
+    if (!message) return "—";
+    const trimmed = message.trim();
+    if (trimmed.length <= 140) return trimmed;
+    return `${trimmed.slice(0, 140)}…`;
   }
 
   if (loading) {
@@ -169,12 +177,20 @@ export default function LeadsPage() {
                       <p>{lead.timeline || "—"}</p>
                     </td>
                     <td className="px-4 py-4">
-                      <p className="max-w-[240px] truncate text-alabaster/80">
-                        {lead.message || "—"}
+                      <p className="max-w-[260px] text-alabaster/80">
+                        {previewMessage(lead.message)}
                       </p>
                       <p className="mt-1 text-xs text-alabaster/50">
                         {lead.source_page || "/"}
                       </p>
+                      {lead.message ? (
+                        <button
+                          onClick={() => setSelectedLead(lead)}
+                          className="mt-2 text-xs uppercase tracking-[0.28em] text-brass/80 hover:text-brass"
+                        >
+                          View full message
+                        </button>
+                      ) : null}
                     </td>
                     <td className="px-4 py-4 text-xs text-alabaster/60">
                       {formatDate(lead.created_at)}
@@ -194,6 +210,38 @@ export default function LeadsPage() {
           </div>
         )}
       </div>
+      {selectedLead ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-6">
+          <div className="w-full max-w-2xl rounded-2xl border border-alabaster/10 bg-ink/90 p-6 text-alabaster shadow-[0_24px_70px_rgba(0,0,0,0.45)]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.32em] text-alabaster/60">
+                  Lead message
+                </p>
+                <h3 className="mt-2 text-xl font-semibold">{selectedLead.name}</h3>
+                <p className="mt-1 text-sm text-alabaster/70">{selectedLead.email}</p>
+              </div>
+              <button
+                onClick={() => setSelectedLead(null)}
+                className="rounded border border-alabaster/20 px-3 py-2 text-xs uppercase tracking-[0.28em] text-alabaster/70 hover:bg-alabaster/10"
+              >
+                Close
+              </button>
+            </div>
+            <div className="mt-6 space-y-4 text-sm text-alabaster/80">
+              <p>{selectedLead.message || "No message provided."}</p>
+              <div className="grid gap-2 text-xs text-alabaster/60 sm:grid-cols-2">
+                <span>Phone: {selectedLead.phone || "—"}</span>
+                <span>Company: {selectedLead.company || "—"}</span>
+                <span>Project: {selectedLead.project_type || "—"}</span>
+                <span>Budget: {selectedLead.budget_range || "—"}</span>
+                <span>Timeline: {selectedLead.timeline || "—"}</span>
+                <span>Received: {formatDate(selectedLead.created_at)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

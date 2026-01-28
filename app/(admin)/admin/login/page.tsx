@@ -112,12 +112,6 @@ export default function AdminLoginPage({
                 </button>
               </form>
 
-              <p className="mt-5 text-xs leading-relaxed text-alabaster/45">
-                Tip: set <span className="text-alabaster/70">ADMIN_USERNAME</span>,{" "}
-                <span className="text-alabaster/70">ADMIN_PASSWORD</span> and{" "}
-                <span className="text-alabaster/70">ADMIN_SESSION_SECRET</span> in
-                Vercel for production.
-              </p>
             </div>
           </div>
         </div>
