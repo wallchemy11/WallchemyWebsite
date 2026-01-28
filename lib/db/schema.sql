@@ -62,6 +62,23 @@ CREATE TABLE IF NOT EXISTS material_library (
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
+-- Leads table (contact form submissions)
+CREATE TABLE IF NOT EXISTS leads (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  phone VARCHAR(60),
+  company VARCHAR(255),
+  project_type VARCHAR(120),
+  budget_range VARCHAR(120),
+  timeline VARCHAR(120),
+  message TEXT,
+  source_page VARCHAR(255),
+  is_read BOOLEAN DEFAULT FALSE,
+  read_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
 -- Site settings (singleton)
 CREATE TABLE IF NOT EXISTS site_settings (
   id INTEGER PRIMARY KEY DEFAULT 1,
@@ -106,3 +123,5 @@ CREATE INDEX IF NOT EXISTS idx_collections_slug ON collections(slug);
 CREATE INDEX IF NOT EXISTS idx_selected_work_slug ON selected_work(slug);
 CREATE INDEX IF NOT EXISTS idx_material_library_slug ON material_library(slug);
 CREATE INDEX IF NOT EXISTS idx_pages_slug ON pages(slug);
+CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at);
+CREATE INDEX IF NOT EXISTS idx_leads_is_read ON leads(is_read);

@@ -387,3 +387,73 @@ export async function saveSiteSettings(data: {
     ]
   );
 }
+
+// Leads
+export async function createLead(data: {
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  projectType?: string;
+  budgetRange?: string;
+  timeline?: string;
+  message?: string;
+  sourcePage?: string;
+}) {
+  const result = await queryRows<{ id: number }>(
+    `INSERT INTO leads (
+      name, email, phone, company, project_type, budget_range, timeline, message, source_page
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    RETURNING id`,
+    [
+      data.name,
+      data.email,
+      data.phone || null,
+      data.company || null,
+      data.projectType || null,
+      data.budgetRange || null,
+      data.timeline || null,
+      data.message || null,
+      data.sourcePage || null
+    ]
+  );
+  return result[0]?.id;
+}
+
+export async function getLeads(filter: { status?: "unread" | "read"; limit?: number } = {}) {
+  const where =
+    filter.status === "unread"
+      ? "WHERE is_read = false"
+      : filter.status === "read"
+      ? "WHERE is_read = true"
+      : "";
+  const limit =
+    typeof filter.limit === "number" && filter.limit > 0 ? `LIMIT ${filter.limit}` : "";
+  return await queryRows(
+    `SELECT * FROM leads ${where} ORDER BY created_at DESC ${limit}`,
+    []
+  );
+}
+
+export async function getLeadSummary() {
+  const result = await queryRows<{ total: number; unread: number }>(
+    `SELECT
+      COUNT(*)::int AS total,
+      COUNT(*) FILTER (WHERE is_read = false)::int AS unread
+     FROM leads`,
+    []
+  );
+  return result[0] || { total: 0, unread: 0 };
+}
+
+export async function setLeadReadState(id: number, isRead: boolean) {
+  const db = getDb();
+  await db.query(
+    `UPDATE leads
+     SET is_read = $1,
+         read_at = CASE WHEN $1 = true THEN NOW() ELSE NULL END
+     WHERE id = $2`,
+    [isRead, id]
+  );
+}

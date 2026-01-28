@@ -9,6 +9,7 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [leadSummary, setLeadSummary] = useState({ total: 0, unread: 0 });
 
   useEffect(() => {
     checkAuth();
@@ -19,6 +20,7 @@ export default function AdminDashboard() {
       const res = await fetch("/api/admin/data?page=home");
       if (res.ok) {
         setAuthenticated(true);
+        loadLeadSummary();
       } else {
         router.push("/admin/login");
       }
@@ -26,6 +28,21 @@ export default function AdminDashboard() {
       router.push("/admin/login");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadLeadSummary() {
+    try {
+      const res = await fetch("/api/admin/leads?summary=1");
+      if (res.ok) {
+        const data = await res.json();
+        setLeadSummary({
+          total: Number(data?.total || 0),
+          unread: Number(data?.unread || 0)
+        });
+      }
+    } catch (error) {
+      console.error("Error loading lead summary:", error);
     }
   }
 
@@ -59,6 +76,15 @@ export default function AdminDashboard() {
   const projectManagement = [
     { slug: "projects", label: "Projects", description: "Manage project entries", href: "/admin/projects" },
     { slug: "selected-work", label: "Selected Work", description: "Curated work items used on Home + Projects", href: "/admin/selected-work" }
+  ];
+
+  const inbox = [
+    {
+      slug: "leads",
+      label: "Leads",
+      description: `Unread ${leadSummary.unread} · Total ${leadSummary.total}`,
+      href: "/admin/leads"
+    }
   ];
 
   return (
@@ -97,6 +123,29 @@ export default function AdminDashboard() {
                 className="group rounded-lg border border-brass/20 bg-brass/10 p-5 text-left transition-colors hover:bg-brass/20 sm:p-6"
               >
                 <h3 className="text-lg font-semibold sm:text-xl">{page.label}</h3>
+                <p className="mt-2 text-sm text-alabaster/70">{page.description}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h2 className="mb-4 text-xl font-semibold sm:text-2xl">Leads</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            {inbox.map((page) => (
+              <button
+                key={page.slug}
+                onClick={() => router.push(page.href)}
+                className="group rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 text-left transition-colors hover:bg-alabaster/10 sm:p-6"
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold sm:text-xl">{page.label}</h3>
+                  {leadSummary.unread > 0 ? (
+                    <span className="rounded-full border border-brass/40 bg-brass/20 px-3 py-1 text-xs text-brass">
+                      {leadSummary.unread} new
+                    </span>
+                  ) : null}
+                </div>
                 <p className="mt-2 text-sm text-alabaster/70">{page.description}</p>
               </button>
             ))}

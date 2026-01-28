@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin" },
+  { label: "Leads", href: "/admin/leads" },
   { label: "Home", href: "/admin/edit?page=home" },
   { label: "Projects", href: "/admin/projects" },
   { label: "Textures", href: "/admin/edit?page=textures" },
@@ -21,6 +22,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [unreadLeads, setUnreadLeads] = useState(0);
 
   const isLogin = pathname?.startsWith("/admin/login");
   const navItems = useMemo(() => NAV_ITEMS, []);
@@ -59,6 +61,24 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     };
   }, [isLogin, router]);
 
+  useEffect(() => {
+    if (!authorized) return;
+    let active = true;
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/leads?summary=1");
+        if (!active || !res.ok) return;
+        const data = await res.json();
+        setUnreadLeads(Number(data?.unread || 0));
+      } catch {
+        if (active) setUnreadLeads(0);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [authorized]);
+
   if (isLogin) return <>{children}</>;
 
   if (loading || !authorized) {
@@ -95,7 +115,14 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   isActive(item.href) ? "text-brass" : ""
                 }`}
               >
-                {item.label}
+                <span className="inline-flex items-center gap-2">
+                  {item.label}
+                  {item.href === "/admin/leads" && unreadLeads > 0 ? (
+                    <span className="rounded-full border border-brass/40 bg-brass/20 px-2 py-0.5 text-[9px] text-brass">
+                      {unreadLeads}
+                    </span>
+                  ) : null}
+                </span>
               </button>
             ))}
             <button
@@ -118,7 +145,14 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   }}
                   className="rounded border border-alabaster/10 px-3 py-2 text-left hover:bg-alabaster/10"
                 >
-                  {item.label}
+                  <span className="inline-flex items-center gap-2">
+                    {item.label}
+                    {item.href === "/admin/leads" && unreadLeads > 0 ? (
+                      <span className="rounded-full border border-brass/40 bg-brass/20 px-2 py-0.5 text-[9px] text-brass">
+                        {unreadLeads}
+                      </span>
+                    ) : null}
+                  </span>
                 </button>
               ))}
               <button
