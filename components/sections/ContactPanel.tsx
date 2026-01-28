@@ -90,7 +90,12 @@ export default function ContactPanel({
         })
       });
       if (!res.ok) {
-        const data = await res.json();
+        let data: any = {};
+        try {
+          data = await res.json();
+        } catch {
+          data = {};
+        }
         setErrors(data?.fields || {});
         setServerMessage(data?.error || "Something went wrong. Please try again.");
         setStatus("error");

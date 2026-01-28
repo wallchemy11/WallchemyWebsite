@@ -11,7 +11,13 @@ function isValidEmail(email: string) {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json();
+  let body: any = {};
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+  }
+
   const name = String(body?.name || "").trim();
   const email = String(body?.email || "").trim();
   const phone = String(body?.phone || "").trim();
@@ -43,17 +49,24 @@ export async function POST(req: Request) {
     );
   }
 
-  await createLead({
-    name,
-    email,
-    phone,
-    company,
-    projectType,
-    budgetRange,
-    timeline,
-    message,
-    sourcePage
-  });
-
-  return NextResponse.json({ success: true });
+  try {
+    await createLead({
+      name,
+      email,
+      phone,
+      company,
+      projectType,
+      budgetRange,
+      timeline,
+      message,
+      sourcePage
+    });
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error("Lead submission failed:", error?.message || error);
+    return NextResponse.json(
+      { error: "Unable to save lead. Please try again." },
+      { status: 500 }
+    );
+  }
 }

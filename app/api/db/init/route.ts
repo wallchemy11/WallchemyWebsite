@@ -3,7 +3,7 @@ import { getDb } from "@/lib/db";
 import fs from "fs";
 import path from "path";
 
-export async function POST() {
+async function runInit() {
   try {
     const schemaPath = path.join(process.cwd(), "lib/db/schema.sql");
     const schema = fs.readFileSync(schemaPath, "utf-8");
@@ -34,4 +34,12 @@ export async function POST() {
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
+}
+
+export async function POST() {
+  return runInit();
+}
+
+export async function GET() {
+  return runInit();
 }
