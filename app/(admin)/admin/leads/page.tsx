@@ -211,26 +211,26 @@ export default function LeadsPage() {
         )}
       </div>
       {selectedLead ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-6">
-          <div className="w-full max-w-2xl rounded-2xl border border-alabaster/10 bg-ink/90 p-6 text-alabaster shadow-[0_24px_70px_rgba(0,0,0,0.45)]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30 p-6">
+          <div className="w-full max-w-2xl rounded-2xl border border-ink/10 bg-alabaster p-6 text-ink shadow-[0_24px_70px_rgba(0,0,0,0.35)]">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.32em] text-alabaster/60">
+                <p className="text-xs uppercase tracking-[0.32em] text-ink/60">
                   Lead message
                 </p>
                 <h3 className="mt-2 text-xl font-semibold">{selectedLead.name}</h3>
-                <p className="mt-1 text-sm text-alabaster/70">{selectedLead.email}</p>
+                <p className="mt-1 text-sm text-ink/70">{selectedLead.email}</p>
               </div>
               <button
                 onClick={() => setSelectedLead(null)}
-                className="rounded border border-alabaster/20 px-3 py-2 text-xs uppercase tracking-[0.28em] text-alabaster/70 hover:bg-alabaster/10"
+                className="rounded border border-ink/20 px-3 py-2 text-xs uppercase tracking-[0.28em] text-ink/70 hover:bg-ink/10"
               >
                 Close
               </button>
             </div>
-            <div className="mt-6 space-y-4 text-sm text-alabaster/80">
+            <div className="mt-6 space-y-4 text-sm text-ink/80">
               <p>{selectedLead.message || "No message provided."}</p>
-              <div className="grid gap-2 text-xs text-alabaster/60 sm:grid-cols-2">
+              <div className="grid gap-2 text-xs text-ink/60 sm:grid-cols-2">
                 <span>Phone: {selectedLead.phone || "—"}</span>
                 <span>Company: {selectedLead.company || "—"}</span>
                 <span>Project: {selectedLead.project_type || "—"}</span>
