@@ -44,15 +44,15 @@ export default function SiteHeader({
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-ink/80 backdrop-blur-lg">
-      <div className="mx-auto max-w-6xl px-6 py-4 md:py-5">
+    <header className="sticky top-0 z-50 bg-ink/92 [--site-header-h:72px] md:bg-ink/80 md:[--site-header-h:84px] md:backdrop-blur-lg">
+      <div className="mx-auto max-w-6xl px-5 py-3 md:px-6 md:py-5">
         <div className="grid grid-cols-3 items-center md:flex md:justify-between">
           <div className="flex items-center md:hidden">
             <button
               type="button"
               aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
               aria-expanded={isOpen}
-              className="relative h-10 w-10 rounded-full border border-alabaster/15"
+              className="relative h-11 w-11 rounded-full border border-alabaster/15"
               ref={menuButtonRef}
               onClick={() => setIsOpen((open) => !open)}
             >
@@ -72,7 +72,7 @@ export default function SiteHeader({
 
           <Link
             href="/"
-            className="col-start-2 text-center font-display text-sm font-semibold uppercase tracking-[0.35em] text-alabaster md:col-auto md:text-left md:text-lg"
+            className="col-start-2 text-center font-display text-sm font-semibold uppercase tracking-[0.3em] text-alabaster md:col-auto md:text-left md:text-lg md:tracking-[0.35em]"
           >
             Wallchemy
           </Link>
@@ -82,7 +82,7 @@ export default function SiteHeader({
               href={whatsappHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-brass/60 text-brass/90 transition-colors hover:bg-brass/10"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-brass/60 text-brass/90 transition-colors hover:bg-brass/10"
               aria-label="WhatsApp"
             >
               <BrandIcon name="whatsapp" className="h-[18px] w-[18px]" />

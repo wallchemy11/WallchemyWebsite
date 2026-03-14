@@ -106,7 +106,7 @@ export default function SelectedProjects({
   }, [shouldAnimate]);
 
   return (
-    <section className="bg-ink py-24">
+    <section className="bg-ink py-16 sm:py-20 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeading
         eyebrow={safeEyebrow}
@@ -114,11 +114,11 @@ export default function SelectedProjects({
         subtitle={safeSubtitle}
         />
       </div>
-      <div ref={containerRef} className="mt-16 space-y-24">
+      <div ref={containerRef} className="mt-12 space-y-16 sm:mt-14 sm:space-y-20 md:mt-16 md:space-y-24">
         {projects.map((project, index) => (
             <article
               key={project.slug}
-            className="project-card relative min-h-[420px] overflow-hidden md:min-h-[640px]"
+            className="project-card relative min-h-[380px] overflow-hidden sm:min-h-[430px] md:min-h-[640px]"
             >
               <Image
                 src={project.heroImage}
@@ -138,13 +138,13 @@ export default function SelectedProjects({
                     : "text-right md:ml-auto"
                 }`}
               >
-                <p className="text-[10px] uppercase tracking-[0.32em] text-brass/90 sm:text-xs sm:tracking-[0.42em]">
+                <p className="text-[10px] uppercase tracking-[0.22em] text-brass/90 sm:text-xs sm:tracking-[0.34em] md:tracking-[0.42em]">
                     {project.location}
                   </p>
-                <h3 className="font-display text-2xl uppercase tracking-[0.18em] sm:text-3xl md:text-6xl">
+                <h3 className="font-display text-2xl uppercase tracking-[0.12em] sm:text-3xl sm:tracking-[0.16em] md:text-6xl md:tracking-[0.18em]">
                     {project.title}
                   </h3>
-                <p className="text-xs uppercase tracking-[0.2em] text-alabaster/70 sm:text-sm md:text-base md:tracking-[0.28em]">
+                <p className="text-[11px] uppercase tracking-[0.12em] text-alabaster/70 sm:text-sm sm:tracking-[0.18em] md:text-base md:tracking-[0.28em]">
                     {project.areaSqFt.toLocaleString()} sq. ft. · Crafted
                     atmosphere at scale.
                   </p>

@@ -120,9 +120,9 @@ export default function ContactPanel({
     }
   }
   return (
-    <section className="bg-ink py-24">
+    <section className="bg-ink py-16 sm:py-20 md:py-24">
       <ScrollReveal>
-        <div className="mx-auto grid max-w-6xl gap-10 px-6 md:gap-12 md:grid-cols-[1fr_1.2fr]">
+        <div className="mx-auto grid max-w-6xl gap-9 px-6 md:gap-12 md:grid-cols-[1fr_1.2fr]">
           <div>
             <SectionHeading
               eyebrow={safeEyebrow}
@@ -135,7 +135,11 @@ export default function ContactPanel({
               <p>WhatsApp: {safeWhatsapp}</p>
             </div>
           </div>
-          <div id="enquiry" data-reveal className="scroll-mt-28 rounded-none border border-alabaster/10 p-6 sm:p-8">
+          <div
+            id="enquiry"
+            data-reveal
+            className="scroll-mt-[var(--site-header-h,88px)] rounded-none border border-alabaster/10 p-5 sm:p-8"
+          >
             <form className="space-y-5" onSubmit={handleSubmit} noValidate>
               <input
                 type="text"
@@ -148,12 +152,13 @@ export default function ContactPanel({
               />
               <div data-reveal>
                 <label className="text-[10px] uppercase tracking-[0.28em] text-alabaster/70 sm:text-xs sm:tracking-[0.3em]">
-                  Name
+                  Name *
                 </label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  required
                   className="mt-2 w-full border border-alabaster/10 bg-transparent px-4 py-3 text-sm text-alabaster placeholder:text-alabaster/40 outline-none focus:border-brass"
                   placeholder="Full name"
                   aria-invalid={Boolean(errors.name)}
@@ -167,12 +172,13 @@ export default function ContactPanel({
               </div>
               <div data-reveal>
                 <label className="text-[10px] uppercase tracking-[0.28em] text-alabaster/70 sm:text-xs sm:tracking-[0.3em]">
-                  Email
+                  Email *
                 </label>
                 <input
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  required
                   className="mt-2 w-full border border-alabaster/10 bg-transparent px-4 py-3 text-sm text-alabaster placeholder:text-alabaster/40 outline-none focus:border-brass"
                   placeholder="Email address"
                   aria-invalid={Boolean(errors.email)}
@@ -193,6 +199,7 @@ export default function ContactPanel({
                     type="tel"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    required
                     className="mt-2 w-full border border-alabaster/10 bg-transparent px-4 py-3 text-sm text-alabaster placeholder:text-alabaster/40 outline-none focus:border-brass"
                     placeholder="+91 ..."
                     aria-invalid={Boolean(errors.phone)}
@@ -260,11 +267,12 @@ export default function ContactPanel({
               </div>
               <div data-reveal>
                 <label className="text-[10px] uppercase tracking-[0.28em] text-alabaster/70 sm:text-xs sm:tracking-[0.3em]">
-                  Project Summary
+                  Project Summary *
                 </label>
                 <textarea
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  required
                   className="mt-2 h-32 w-full border border-alabaster/10 bg-transparent px-4 py-3 text-sm text-alabaster placeholder:text-alabaster/40 outline-none focus:border-brass"
                   placeholder="Tell us about the space, scale, timeline, and desired finish."
                   aria-invalid={Boolean(errors.message)}

@@ -61,9 +61,7 @@ function writeJsonFile<T>(filePath: string, data: T): boolean {
   try {
     const fullPath = path.join(dataDir, filePath);
     const dir = path.dirname(fullPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
+    fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(fullPath, JSON.stringify(data, null, 2), "utf-8");
     return true;
   } catch (error) {

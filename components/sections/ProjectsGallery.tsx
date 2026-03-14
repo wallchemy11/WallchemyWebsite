@@ -18,7 +18,7 @@ export default function ProjectsGallery({
   const safeTitle = resolveText(title);
   const safeIntro = resolveText(intro);
   return (
-    <section className="bg-ink py-24">
+    <section className="bg-ink py-16 sm:py-20 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <ScrollReveal>
           <SectionHeading
@@ -26,7 +26,7 @@ export default function ProjectsGallery({
             title={safeTitle}
             subtitle={safeIntro}
           />
-          <div className="mt-12 grid gap-12">
+          <div className="mt-10 grid gap-10 sm:mt-12 sm:gap-12">
             {projects.map((project) => (
               <article key={project.slug}>
                 <div data-reveal="image">
@@ -37,15 +37,15 @@ export default function ProjectsGallery({
                     height={800}
                   sizes="(max-width: 768px) 100vw, 70vw"
                   quality={70}
-                    className="h-[260px] w-full object-cover sm:h-[360px] md:h-[420px]"
+                    className="h-[220px] w-full object-cover sm:h-[340px] md:h-[420px]"
                   />
                 </div>
                 <div data-reveal className="mt-5 flex flex-col gap-2 md:mt-6 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-brass sm:text-xs sm:tracking-[0.35em]">
+                    <p className="text-[10px] uppercase tracking-[0.22em] text-brass sm:text-xs sm:tracking-[0.35em]">
                       {project.location}
                     </p>
-                    <h3 className="font-display text-xl uppercase tracking-[0.16em] sm:text-2xl md:tracking-[0.18em]">
+                    <h3 className="font-display text-xl uppercase tracking-[0.11em] sm:text-2xl sm:tracking-[0.14em] md:tracking-[0.18em]">
                       {project.title}
                     </h3>
                   </div>
@@ -55,7 +55,7 @@ export default function ProjectsGallery({
                 </div>
                 <p
                   data-reveal
-                  className="mt-3 max-w-3xl text-xs uppercase tracking-[0.18em] text-alabaster/70 sm:text-sm md:tracking-[0.2em]"
+                  className="mt-3 max-w-3xl text-[11px] uppercase tracking-[0.12em] text-alabaster/70 sm:text-sm sm:tracking-[0.16em] md:tracking-[0.2em]"
                 >
                   {project.atmosphereNote}
                 </p>

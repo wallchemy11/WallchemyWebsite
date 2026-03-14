@@ -146,14 +146,14 @@ export default function MobileNavOverlay({
       />
 
       <div
-        className={`relative flex h-full flex-col px-6 pb-8 pt-[calc(env(safe-area-inset-top)+14px)] transition-all duration-400 ease-out ${
+        className={`relative flex h-full flex-col overflow-y-auto px-5 pb-6 pt-[calc(env(safe-area-inset-top)+12px)] transition-all duration-400 ease-out ${
           visible ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
         }`}
       >
         <div className="flex items-center justify-between">
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-ink/5 text-ink"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-ink/5 text-ink"
             ref={closeButtonRef}
             onClick={() => onClose()}
             aria-label="Close navigation"
@@ -167,7 +167,7 @@ export default function MobileNavOverlay({
             href={whatsappHref}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-ink text-alabaster transition-transform duration-200 ease-out hover:scale-[1.03] active:scale-[0.98]"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-ink text-alabaster transition-transform duration-200 ease-out hover:scale-[1.03] active:scale-[0.98]"
             onClick={() => onClose(false)}
             aria-label="WhatsApp"
           >
@@ -175,13 +175,13 @@ export default function MobileNavOverlay({
           </a>
         </div>
 
-        <nav className="flex flex-1 flex-col justify-center">
+        <nav className="flex flex-1 flex-col justify-center py-6">
           <div className="mx-auto w-full max-w-xs text-center">
             {items.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="block font-sans text-5xl font-extrabold leading-[0.88] tracking-[-0.035em] text-ink"
+                className="block py-1.5 font-sans text-4xl font-extrabold leading-[0.92] tracking-[-0.03em] text-ink sm:text-5xl sm:leading-[0.9]"
                 onClick={() => onClose(false)}
               >
                 {item.label}
@@ -191,7 +191,7 @@ export default function MobileNavOverlay({
           <div className="mt-10 flex justify-center">
             <Link
               href={meetingHref || "/contact#enquiry"}
-              className="rounded-full border border-ink/20 px-6 py-3 text-xs uppercase tracking-[0.32em] text-ink"
+              className="inline-flex min-h-11 items-center rounded-full border border-ink/20 px-6 py-3 text-xs uppercase tracking-[0.24em] text-ink sm:tracking-[0.32em]"
               onClick={() => onClose(false)}
             >
               {meetingLabel || "Book a Meeting"}
@@ -199,13 +199,13 @@ export default function MobileNavOverlay({
           </div>
         </nav>
 
-        <div className="mt-8 flex items-center justify-center gap-3 pb-[calc(env(safe-area-inset-bottom)+6px)]">
+        <div className="mt-6 flex items-center justify-center gap-3 pb-[calc(env(safe-area-inset-bottom)+6px)]">
           {instagramHref ? (
             <a
               href={instagramHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/10 bg-ink/5 text-ink transition-colors hover:bg-ink/10"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-ink/5 text-ink transition-colors hover:bg-ink/10"
               aria-label="Instagram"
               onClick={() => onClose(false)}
             >
@@ -217,7 +217,7 @@ export default function MobileNavOverlay({
               href={behanceHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/10 bg-ink/5 text-ink transition-colors hover:bg-ink/10"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-ink/5 text-ink transition-colors hover:bg-ink/10"
               aria-label="Behance"
               onClick={() => onClose(false)}
             >
@@ -229,7 +229,7 @@ export default function MobileNavOverlay({
               href={linkedinHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/10 bg-ink/5 text-ink transition-colors hover:bg-ink/10"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-ink/5 text-ink transition-colors hover:bg-ink/10"
               aria-label="LinkedIn"
               onClick={() => onClose(false)}
             >
@@ -241,7 +241,7 @@ export default function MobileNavOverlay({
               href={youtubeHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/10 bg-ink/5 text-ink transition-colors hover:bg-ink/10"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-ink/5 text-ink transition-colors hover:bg-ink/10"
               aria-label="YouTube"
               onClick={() => onClose(false)}
             >

@@ -44,7 +44,7 @@ export default function HomeCinematicPanels({
 
       const ctx = gsap.context(() => {
         ScrollTrigger.matchMedia({
-          "(min-width: 768px)": () => {
+          "(min-width: 1024px) and (pointer: fine)": () => {
             const segment = 1.6;
             const timeline = gsap.timeline({
               scrollTrigger: {
@@ -86,7 +86,7 @@ export default function HomeCinematicPanels({
                 );
             });
           },
-          "(max-width: 767px)": () => {
+          "(max-width: 1023px), (pointer: coarse)": () => {
             panelRefs.current.forEach((panel) => {
               gsap.set(panel, { clearProps: "all", autoAlpha: 1 });
             });
@@ -107,7 +107,60 @@ export default function HomeCinematicPanels({
 
   return (
     <section ref={sectionRef} className="relative bg-ink">
-      <div className="relative h-auto overflow-visible md:h-[90vh] md:overflow-hidden">
+      <div className="md:hidden">
+        {items.map((panel, index) => {
+          const source =
+            panel.images && panel.images.length > 0
+              ? panel.images
+              : [panel.heroImage];
+          const frames = [...source].filter(Boolean).slice(0, 4);
+          return (
+            <article
+              key={`${panel.title}-mobile-${index}`}
+              className="border-b border-alabaster/10 bg-gradient-to-b from-[#15110f] via-[#0f0d0c] to-ink px-5 py-8 last:border-b-0"
+            >
+              <div className="overflow-x-auto pb-2">
+                <div className="flex w-max items-center gap-4">
+                  {frames.map((src, frameIndex) => {
+                    const imageKey = `${panel.title}-m-${index}-${frameIndex}-${src}`;
+                    if (!isVisible(imageKey)) return null;
+                    return (
+                      <div
+                        key={imageKey}
+                        className="h-[42svh] w-[46vw] min-w-[154px] max-w-[210px] rounded-sm border border-alabaster/20 bg-alabaster/[0.04] p-2"
+                      >
+                        <div className="h-full w-full overflow-hidden bg-[#151210]">
+                          <Image
+                            src={src}
+                            alt={`${panel.title} ${frameIndex + 1}`}
+                            width={420}
+                            height={560}
+                            sizes="46vw"
+                            quality={68}
+                            className="h-full w-full object-contain"
+                            priority={index === 0 && frameIndex === 0}
+                            onError={() => markFailed(imageKey)}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="mt-5">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-brass">
+                  Curated Finish
+                </p>
+                <h2 className="font-display mt-2 text-[1.7rem]">{panel.title}</h2>
+                <p className="mt-2 text-[11px] uppercase tracking-[0.12em] text-alabaster/70">
+                  {panel.shortDescription}
+                </p>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+      <div className="relative hidden h-auto overflow-visible md:block md:h-[82vh] lg:h-[90vh] md:overflow-hidden">
         {items.map((panel, index) => (
           <div
             key={panel.title}
@@ -177,7 +230,7 @@ export default function HomeCinematicPanels({
                     : [panel.heroImage];
                 const frames = [...source].filter(Boolean).slice(0, 4);
                 return (
-                  <div className="h-full overflow-x-auto px-6 py-8">
+                  <div className="h-full overflow-x-auto px-5 py-7 sm:px-6 sm:py-8">
                     <div className="flex h-full w-max items-center gap-4">
                       {frames.map((src, frameIndex) => {
                         const imageKey = `${panel.title}-m-${index}-${frameIndex}-${src}`;
@@ -185,7 +238,7 @@ export default function HomeCinematicPanels({
                         return (
                           <div
                             key={imageKey}
-                            className="h-[52vh] w-[42vw] min-w-[160px] max-w-[220px] rounded-sm border border-alabaster/20 bg-alabaster/[0.04] p-2"
+                            className="h-[44svh] w-[46vw] min-w-[156px] max-w-[214px] rounded-sm border border-alabaster/20 bg-alabaster/[0.04] p-2 sm:h-[50svh] sm:w-[42vw]"
                           >
                             <div className="h-full w-full overflow-hidden bg-[#151210]">
                               <Image
@@ -210,14 +263,14 @@ export default function HomeCinematicPanels({
             </div>
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-ink/90" />
             <div className="absolute inset-0 flex items-end">
-              <div className="mx-auto w-full max-w-6xl px-6 pb-20">
-                <p className="text-xs uppercase tracking-[0.4em] text-brass">
+              <div className="mx-auto w-full max-w-6xl px-5 pb-12 sm:px-6 sm:pb-16 md:pb-20">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-brass sm:text-xs sm:tracking-[0.4em]">
                   Curated Finish
                 </p>
-                <h2 className="font-display mt-3 text-2xl sm:text-3xl md:text-5xl">
+                <h2 className="font-display mt-3 text-[1.8rem] sm:text-3xl md:text-5xl">
                   {panel.title}
                 </h2>
-                <p className="mt-3 max-w-2xl text-xs uppercase tracking-[0.18em] text-alabaster/70 sm:text-sm md:tracking-[0.2em]">
+                <p className="mt-2 max-w-2xl text-[11px] uppercase tracking-[0.12em] text-alabaster/70 sm:mt-3 sm:text-sm sm:tracking-[0.18em] md:tracking-[0.2em]">
                   {panel.shortDescription}
                 </p>
               </div>

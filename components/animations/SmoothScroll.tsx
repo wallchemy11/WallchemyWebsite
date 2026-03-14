@@ -6,8 +6,11 @@ import { loadGsap } from "@/components/animations/loadGsap";
 
 export default function SmoothScroll() {
   useEffect(() => {
+    const hasCoarsePointer =
+      typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
     if (
       typeof window === "undefined" ||
+      hasCoarsePointer ||
       window.matchMedia("(max-width: 767px)").matches ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {

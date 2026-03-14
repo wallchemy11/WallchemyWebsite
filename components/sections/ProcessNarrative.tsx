@@ -156,13 +156,13 @@ export default function ProcessNarrative({
 
       const ctx = gsap.context(() => {
         ScrollTrigger.matchMedia({
-          "(min-width: 768px)": () => {
+          "(min-width: 1024px) and (pointer: fine)": () => {
             ScrollTrigger.create({
               trigger: container,
               start: "top top",
               end: "bottom bottom",
               pin: pinned,
-              pinSpacing: false
+              pinSpacing: true
             });
           }
         });
@@ -199,32 +199,32 @@ export default function ProcessNarrative({
   }, [shouldAnimate]);
 
   return (
-    <section ref={containerRef} className="bg-ink py-20 md:py-28">
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 md:gap-12 md:grid-cols-[0.9fr_1.1fr]">
+    <section ref={containerRef} className="bg-ink py-16 sm:py-20 md:py-28">
+      <div className="mx-auto grid max-w-6xl gap-9 px-6 md:gap-12 md:grid-cols-[0.9fr_1.1fr]">
         <div ref={pinRef} className="self-start space-y-8">
-          <p className="text-[10px] tracking-[0.24em] text-brass/90 sm:text-xs sm:tracking-[0.3em]">
+          <p className="text-[10px] tracking-[0.2em] text-brass/90 sm:text-xs sm:tracking-[0.3em]">
             {safeEyebrow}
           </p>
           <h2 className="font-display text-3xl font-medium leading-tight sm:text-4xl md:text-6xl">
             {safeTitle}
           </h2>
-          <p className="text-xs tracking-[0.08em] text-alabaster/70 sm:text-sm md:tracking-[0.1em]">
+          <p className="text-xs tracking-[0.06em] text-alabaster/70 sm:text-sm md:tracking-[0.1em]">
             {safeSubtitle}
           </p>
         </div>
         <div className="relative pl-3 sm:pl-4">
-          <div className="pointer-events-none absolute bottom-4 left-0 top-3 w-px bg-gradient-to-b from-brass/45 via-alabaster/20 to-transparent" />
+          <div className="pointer-events-none absolute bottom-4 left-0 top-2 w-px bg-gradient-to-b from-brass/45 via-alabaster/20 to-transparent" />
           {steps.map((step, index) => (
             <div
               key={`${step.title}-${index}`}
               className="process-step relative pb-8 pl-3 last:pb-0 sm:pl-5"
             >
-              <div className="grid grid-cols-[40px_1fr] items-start gap-3 sm:grid-cols-[48px_1fr] sm:gap-5">
-                <div className="relative z-10 mt-0.5 flex h-10 w-10 items-center justify-center rounded-full border border-brass/45 bg-[#17120f] shadow-[0_10px_22px_rgba(0,0,0,0.22)] sm:h-12 sm:w-12">
+              <div className="grid grid-cols-[44px_1fr] items-start gap-3 sm:grid-cols-[48px_1fr] sm:gap-5">
+                <div className="relative z-10 mt-0.5 flex h-11 w-11 items-center justify-center rounded-full border border-brass/45 bg-[#17120f] shadow-[0_10px_22px_rgba(0,0,0,0.22)] sm:h-12 sm:w-12">
                   <StepIcon kind={getStepKind(step.title, index)} />
                 </div>
                 <div className="relative pl-1">
-                  <p className="text-[10px] tracking-[0.24em] text-brass/90 sm:text-xs sm:tracking-[0.28em]">
+                  <p className="text-[10px] tracking-[0.2em] text-brass/90 sm:text-xs sm:tracking-[0.28em]">
                     {(index + 1).toString().padStart(2, "0")}
                   </p>
                   <h3 className="font-display mt-2 text-xl tracking-[0.035em] text-alabaster sm:text-2xl md:text-[1.65rem] md:tracking-[0.045em]">

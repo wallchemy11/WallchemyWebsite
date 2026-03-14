@@ -45,7 +45,7 @@ export default function EditorialManifesto({
 
       const ctx = gsap.context(() => {
         ScrollTrigger.matchMedia({
-          "(min-width: 768px)": () => {
+          "(min-width: 1024px) and (pointer: fine)": () => {
             ScrollTrigger.create({
               trigger: container,
               start: "top top",
@@ -86,26 +86,26 @@ export default function EditorialManifesto({
   }, [shouldAnimate]);
 
   return (
-    <section ref={containerRef} className="bg-ink py-24">
-      <div className="mx-auto grid max-w-6xl gap-12 px-6 md:grid-cols-[0.9fr_1.1fr]">
+    <section ref={containerRef} className="bg-ink py-16 sm:py-20 md:py-24">
+      <div className="mx-auto grid max-w-6xl gap-10 px-6 md:gap-12 md:grid-cols-[0.9fr_1.1fr]">
         <div ref={pinRef} className="space-y-6 self-start">
-          <p className="text-xs uppercase tracking-[0.45em] text-brass">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-brass sm:text-xs sm:tracking-[0.45em]">
             {safeEyebrow}
           </p>
-          <h2 className="font-display text-4xl font-medium leading-tight md:text-6xl">
+          <h2 className="font-display text-3xl font-medium leading-tight sm:text-4xl md:text-6xl">
             {safeTitle}
           </h2>
-          <p className="text-base uppercase tracking-[0.18em] text-alabaster/80">
+          <p className="text-sm uppercase tracking-[0.12em] text-alabaster/80 sm:text-base sm:tracking-[0.18em]">
             {safeSubtitle}
           </p>
         </div>
-        <div className="space-y-12">
+        <div className="space-y-9 sm:space-y-12">
           {items.map((item) => (
             <div key={item.eyebrow} className="manifesto-item border-l border-alabaster/10 pl-6">
-              <p className="text-xs uppercase tracking-[0.35em] text-brass">
+              <p className="text-[11px] uppercase tracking-[0.24em] text-brass sm:text-xs sm:tracking-[0.35em]">
                 {item.eyebrow}
               </p>
-              <p className="mt-4 text-xl text-alabaster/85">{item.text}</p>
+              <p className="mt-3 text-lg text-alabaster/85 sm:mt-4 sm:text-xl">{item.text}</p>
             </div>
           ))}
         </div>

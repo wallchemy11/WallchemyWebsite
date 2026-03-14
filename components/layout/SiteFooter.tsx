@@ -30,7 +30,7 @@ export default function SiteFooter({
 
   return (
     <footer className="border-t border-alabaster/10 bg-ink">
-      <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 md:grid-cols-3">
+      <div className="mx-auto grid max-w-6xl gap-9 px-6 py-12 md:grid-cols-3">
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-brass">
             Wallchemy
@@ -46,7 +46,7 @@ export default function SiteFooter({
                   href={instagram}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-alabaster/10 bg-alabaster/5 text-alabaster/80 transition-colors hover:bg-alabaster/10 hover:text-alabaster"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-alabaster/10 bg-alabaster/5 text-alabaster/80 transition-colors hover:bg-alabaster/10 hover:text-alabaster"
                   aria-label="Instagram"
                 >
                   <BrandIcon name="instagram" className="h-5 w-5" />
@@ -57,7 +57,7 @@ export default function SiteFooter({
                   href={behance}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-alabaster/10 bg-alabaster/5 text-alabaster/80 transition-colors hover:bg-alabaster/10 hover:text-alabaster"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-alabaster/10 bg-alabaster/5 text-alabaster/80 transition-colors hover:bg-alabaster/10 hover:text-alabaster"
                   aria-label="Behance"
                 >
                   <BrandIcon name="behance" className="h-5 w-5" />
@@ -68,7 +68,7 @@ export default function SiteFooter({
                   href={linkedin}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-alabaster/10 bg-alabaster/5 text-alabaster/80 transition-colors hover:bg-alabaster/10 hover:text-alabaster"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-alabaster/10 bg-alabaster/5 text-alabaster/80 transition-colors hover:bg-alabaster/10 hover:text-alabaster"
                   aria-label="LinkedIn"
                 >
                   <BrandIcon name="linkedin" className="h-5 w-5" />
@@ -79,7 +79,7 @@ export default function SiteFooter({
                   href={youtube}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-alabaster/10 bg-alabaster/5 text-alabaster/80 transition-colors hover:bg-alabaster/10 hover:text-alabaster"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-alabaster/10 bg-alabaster/5 text-alabaster/80 transition-colors hover:bg-alabaster/10 hover:text-alabaster"
                   aria-label="YouTube"
                 >
                   <BrandIcon name="youtube" className="h-5 w-5" />

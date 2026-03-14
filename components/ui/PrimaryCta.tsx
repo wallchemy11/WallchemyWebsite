@@ -12,7 +12,7 @@ export default function PrimaryCta({ label, href }: PrimaryCtaProps) {
         href={href}
         target="_blank"
         rel="noreferrer"
-        className="inline-flex items-center gap-4 border-b border-brass/70 pb-2 text-xs uppercase tracking-[0.45em] text-brass/90"
+        className="inline-flex min-h-11 items-center gap-3 border-b border-brass/70 pb-2 pr-1 text-[11px] uppercase tracking-[0.32em] text-brass/90 sm:text-xs sm:tracking-[0.4em]"
       >
         {label}
         <span aria-hidden>↗</span>
@@ -23,7 +23,7 @@ export default function PrimaryCta({ label, href }: PrimaryCtaProps) {
   return (
     <a
       href={href}
-      className="inline-flex items-center gap-4 border-b border-brass/70 pb-2 text-xs uppercase tracking-[0.45em] text-brass/90"
+      className="inline-flex min-h-11 items-center gap-3 border-b border-brass/70 pb-2 pr-1 text-[11px] uppercase tracking-[0.32em] text-brass/90 sm:text-xs sm:tracking-[0.4em]"
     >
       {label}
       <span aria-hidden>↗</span>

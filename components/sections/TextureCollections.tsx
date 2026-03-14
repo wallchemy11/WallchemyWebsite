@@ -47,6 +47,7 @@ export default function TextureCollections({
   const [failedImages, setFailedImages] = useState<Record<string, true>>({});
   const [autoPaused, setAutoPaused] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const stageRef = useRef<HTMLDivElement>(null);
   const directoryScrollRef = useRef<HTMLDivElement>(null);
   const { shouldAnimate } = useMotionPrefs();
@@ -135,6 +136,14 @@ export default function TextureCollections({
   };
 
   useEffect(() => {
+    const query = window.matchMedia("(max-width: 767px)");
+    const apply = () => setIsMobileViewport(query.matches);
+    apply();
+    query.addEventListener("change", apply);
+    return () => query.removeEventListener("change", apply);
+  }, []);
+
+  useEffect(() => {
     const syncVisibility = () => {
       setPageVisible(document.visibilityState === "visible");
     };
@@ -144,35 +153,35 @@ export default function TextureCollections({
   }, []);
 
   useEffect(() => {
-    if (safeCollections.length <= 1 || autoPaused || !pageVisible) return;
+    if (safeCollections.length <= 1 || autoPaused || !pageVisible || isMobileViewport) return;
     const timer = window.setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % safeCollections.length);
     }, 4200);
     return () => window.clearInterval(timer);
-  }, [safeCollections.length, autoPaused, pageVisible]);
+  }, [safeCollections.length, autoPaused, pageVisible, isMobileViewport]);
 
   return (
-    <section className="relative overflow-hidden bg-ink py-20 md:py-24">
+    <section className="relative overflow-x-clip overflow-y-visible bg-ink py-14 sm:py-18 md:py-24">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_18%,rgba(201,166,107,0.16),transparent_36%),radial-gradient(circle_at_86%_78%,rgba(103,72,48,0.2),transparent_42%)]" />
-      <div className="mx-auto max-w-[1460px] px-6 md:px-8">
+      <div className="mx-auto w-full max-w-[1460px] px-4 sm:px-6 md:px-8">
         <ScrollReveal>
           <SectionHeading
             eyebrow={safeEyebrow}
             title={safeTitle}
             subtitle={safeIntro}
           />
-          <div className="relative mt-14 grid gap-8 border border-alabaster/12 bg-gradient-to-b from-[#130f0d] via-[#100d0b] to-[#0c0a09] p-5 sm:p-6 md:grid-cols-[0.78fr_1.22fr] md:gap-12 md:p-8 lg:p-10">
+          <div className="relative mt-10 grid w-full min-w-0 gap-7 border border-alabaster/12 bg-gradient-to-b from-[#130f0d] via-[#100d0b] to-[#0c0a09] p-4 sm:mt-12 sm:p-6 md:grid-cols-[0.78fr_1.22fr] md:gap-12 md:p-8 lg:p-10">
             <aside
               data-reveal
-              className="space-y-7 border-b border-alabaster/10 pb-8 md:sticky md:top-10 md:flex md:max-h-[82vh] md:min-h-0 md:flex-col md:space-y-6 md:border-b-0 md:border-r md:pb-0 md:pr-9"
+              className="min-w-0 space-y-6 border-b border-alabaster/10 pb-7 md:space-y-6 md:border-b-0 md:border-r md:pb-0 md:pr-8 lg:sticky lg:top-10 lg:flex lg:max-h-[82vh] lg:min-h-0 lg:flex-col"
             >
               <p className="text-[10px] tracking-[0.24em] text-brass/90 sm:text-xs">
                 Texture Directory
               </p>
-              <p className="max-w-lg text-sm leading-relaxed text-alabaster/76 sm:text-base md:text-lg">
+              <p className="max-w-lg text-sm leading-relaxed text-alabaster/76 [overflow-wrap:anywhere] sm:text-base md:text-lg">
                 {safeSupportText || safeIntro}
               </p>
-              <div className="rounded border border-alabaster/12 bg-[#0f0c0a]/70 p-3 md:flex md:flex-1 md:min-h-0 md:flex-col">
+              <div className="rounded border border-alabaster/12 bg-[#0f0c0a]/70 p-3 lg:flex lg:flex-1 lg:min-h-0 lg:flex-col">
                 <div
                   ref={directoryScrollRef}
                   onWheel={handleDirectoryWheel}
@@ -182,7 +191,7 @@ export default function TextureCollections({
                   onTouchEnd={() => setAutoPaused(false)}
                   onFocus={() => setAutoPaused(true)}
                   onBlur={() => setAutoPaused(false)}
-                  className="max-h-[42vh] space-y-3 overflow-y-auto overscroll-contain pr-2 [scrollbar-color:rgba(201,166,107,0.55)_rgba(255,255,255,0.06)] [scrollbar-width:thin] md:h-full md:flex-1 md:max-h-none md:min-h-0 md:touch-pan-y [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-brass/60 [&::-webkit-scrollbar-track]:bg-alabaster/5 [&::-webkit-scrollbar]:w-1.5"
+                  className="w-full min-w-0 space-y-3 pr-2 lg:h-full lg:flex-1 lg:max-h-none lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:touch-pan-y lg:[scrollbar-color:rgba(201,166,107,0.55)_rgba(255,255,255,0.06)] lg:[scrollbar-width:thin] lg:[&::-webkit-scrollbar-thumb]:rounded-full lg:[&::-webkit-scrollbar-thumb]:bg-brass/60 lg:[&::-webkit-scrollbar-track]:bg-alabaster/5 lg:[&::-webkit-scrollbar]:w-1.5"
                 >
                   {safeCollections.map((collection, index) => {
                     const isActive = index === normalizedIndex;
@@ -191,7 +200,7 @@ export default function TextureCollections({
                         key={collection.slug}
                         type="button"
                         onClick={() => setActiveIndex(index)}
-                        className={`group w-full rounded border px-4 py-4 text-left transition ${
+                        className={`group block w-full min-w-0 max-w-full rounded border px-3.5 py-3.5 text-left transition sm:px-4 sm:py-4 ${
                           isActive
                             ? "border-brass/70 bg-brass/[0.09] shadow-[0_12px_30px_rgba(0,0,0,0.25)]"
                             : "border-alabaster/10 bg-alabaster/[0.02] hover:border-brass/40"
@@ -200,10 +209,10 @@ export default function TextureCollections({
                         <p className="text-[10px] tracking-[0.25em] text-brass/85 sm:text-xs">
                           {String(index + 1).padStart(2, "0")}
                         </p>
-                        <h3 className="font-display mt-2 text-lg tracking-[0.04em] sm:text-xl md:text-2xl">
+                        <h3 className="mt-2 break-words font-display text-lg tracking-[0.03em] [overflow-wrap:anywhere] sm:text-xl md:text-2xl">
                           {collection.title}
                         </h3>
-                        <p className="mt-2 max-h-10 overflow-hidden text-xs leading-relaxed text-alabaster/62 sm:max-h-12 sm:text-sm">
+                        <p className="mt-2 max-h-10 overflow-hidden text-xs leading-relaxed text-alabaster/62 [overflow-wrap:anywhere] sm:max-h-12 sm:text-sm">
                           {collection.shortDescription}
                         </p>
                       </button>
@@ -213,24 +222,24 @@ export default function TextureCollections({
               </div>
 
               <div className="md:hidden">
-                <div className="rounded border border-alabaster/10 bg-[#0c0a09] p-4">
+                <div className="w-full min-w-0 max-w-full rounded border border-alabaster/10 bg-[#0c0a09] p-3.5 sm:p-4">
                   <p className="text-[10px] tracking-[0.26em] text-brass/90 sm:text-xs">
                     {String(normalizedIndex + 1).padStart(2, "0")} / {String(safeCollections.length).padStart(2, "0")}
                   </p>
-                  <h3 className="font-display mt-3 text-2xl tracking-[0.05em] sm:text-3xl">
+                  <h3 className="mt-3 break-words font-display text-[1.7rem] tracking-[0.04em] [overflow-wrap:anywhere] sm:text-3xl">
                     {selected.title}
                   </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-alabaster/75">
+                  <p className="mt-3 text-sm leading-relaxed text-alabaster/75 [overflow-wrap:anywhere]">
                     {selected.shortDescription}
                   </p>
-                  <div className="mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
+                  <div className="mt-4 flex w-full max-w-full snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
                     {images.map((src, i) => {
                       const key = `${selected.slug}-m-${i}-${src || ""}`;
                       if (!src || failedImages[key]) return null;
                       return (
                         <div
                           key={key}
-                          className="w-[78vw] max-w-[360px] flex-shrink-0 snap-start rounded border border-alabaster/15 bg-alabaster/[0.04] p-2"
+                          className="w-[78vw] max-w-[320px] flex-shrink-0 snap-start rounded border border-alabaster/15 bg-alabaster/[0.04] p-2 sm:w-[72vw] sm:max-w-[360px]"
                         >
                           <div className={`${i % 2 === 0 ? "aspect-[3/4]" : "aspect-[4/3]"} bg-[#151210]`}>
                             <Image
@@ -261,7 +270,7 @@ export default function TextureCollections({
               data-reveal="image"
               onMouseEnter={() => setAutoPaused(true)}
               onMouseLeave={() => setAutoPaused(false)}
-              className="relative hidden rounded border border-alabaster/10 bg-[#0c0a09] p-6 md:block md:p-7 lg:p-8"
+              className="relative hidden min-w-0 rounded border border-alabaster/10 bg-[#0c0a09] p-6 md:block md:p-7 lg:p-8"
             >
               <div className="pointer-events-none absolute inset-0 rounded bg-[radial-gradient(circle_at_16%_14%,rgba(201,166,107,0.18),transparent_34%),radial-gradient(circle_at_84%_74%,rgba(120,90,62,0.24),transparent_40%)]" />
               <div className="relative z-10">

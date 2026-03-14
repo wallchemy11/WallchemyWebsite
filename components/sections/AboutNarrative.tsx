@@ -23,7 +23,7 @@ export default function AboutNarrative({
   const safeNarrative = resolveText(narrative);
   const safeFounderNote = resolveText(founderNote);
   return (
-    <section className="bg-ink py-24">
+    <section className="bg-ink py-16 sm:py-20 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <ScrollReveal>
           <SectionHeading
@@ -33,13 +33,13 @@ export default function AboutNarrative({
           />
           <p
             data-reveal
-            className="mt-6 text-xs uppercase tracking-[0.18em] text-alabaster/60 sm:text-sm md:tracking-[0.2em]"
+            className="mt-6 text-[11px] uppercase tracking-[0.12em] text-alabaster/60 sm:text-sm sm:tracking-[0.16em] md:tracking-[0.2em]"
           >
             {safeFounderNote}
           </p>
           <p
             data-reveal
-            className="mt-8 max-w-4xl text-base text-alabaster/80 sm:text-lg md:text-xl"
+            className="mt-7 max-w-4xl text-[15px] text-alabaster/80 sm:text-lg md:text-xl"
           >
             {safeNarrative}
           </p>

@@ -47,7 +47,7 @@ export default function TextureRibbon({
 
       const ctx = gsap.context(() => {
         ScrollTrigger.matchMedia({
-          "(min-width: 768px)": () => {
+          "(min-width: 1024px) and (pointer: fine)": () => {
             const getDistance = () =>
               Math.max(200, track.scrollWidth - pinEl.offsetWidth);
 
@@ -57,7 +57,8 @@ export default function TextureRibbon({
               start: "center center",
               end: () => `+=${getDistance() * 0.8}`,
               pin: true,
-              pinSpacing: true
+              pinSpacing: true,
+              invalidateOnRefresh: true
             });
             gsap.fromTo(
               track,
@@ -75,7 +76,7 @@ export default function TextureRibbon({
               }
             );
           },
-          "(max-width: 767px)": () => {
+          "(max-width: 1023px), (pointer: coarse)": () => {
             gsap.set(track, { clearProps: "all" });
           }
         });
@@ -102,16 +103,16 @@ export default function TextureRibbon({
       </div>
       <div
         ref={pinRef}
-        className="overflow-x-auto md:flex md:min-h-[70vh] md:items-center md:overflow-visible"
+        className="overflow-x-auto md:flex md:min-h-[60vh] lg:min-h-[70vh] md:items-center md:overflow-visible"
       >
         <div
           ref={trackRef}
-          className="flex w-max items-center gap-6 px-6 py-10 md:gap-10 md:py-0"
+          className="flex w-max items-center gap-4 px-5 py-8 sm:gap-6 sm:px-6 sm:py-10 md:gap-10 md:py-0"
         >
           {ribbonItems.map((item, index) => (
             <div
               key={`${item.title}-${index}`}
-              className="w-[200px] flex-shrink-0 sm:w-[260px] md:w-[320px]"
+              className="w-[180px] flex-shrink-0 sm:w-[240px] md:w-[320px]"
             >
               <div className="aspect-[3/4] w-full overflow-hidden">
                 {!failedImages[`${item.title}-${index}-${item.heroImage}`] ? (

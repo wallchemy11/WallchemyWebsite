@@ -13,6 +13,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
@@ -20,6 +21,7 @@ body {
   color: rgb(var(--color-alabaster));
   font-family: var(--font-sans);
   letter-spacing: 0.012em;
+  overflow-x: clip;
 }
 
 .admin-light {
@@ -144,4 +146,13 @@ img,
 video {
   backface-visibility: hidden;
   transform: translateZ(0);
+}
+
+@media (max-width: 767px) {
+  h1,
+  h2,
+  h3,
+  h4 {
+    letter-spacing: 0.025em;
+  }
 }

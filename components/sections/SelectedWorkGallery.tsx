@@ -26,7 +26,7 @@ export default function SelectedWorkGallery({
   if (!items.length) return null;
 
   return (
-    <section className="bg-ink py-24">
+    <section className="bg-ink py-16 sm:py-20 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <ScrollReveal>
           <SectionHeading
@@ -34,11 +34,11 @@ export default function SelectedWorkGallery({
             title={safeTitle}
             subtitle={safeSubtitle}
           />
-          <div className="mt-12 grid gap-10 md:gap-12">
+          <div className="mt-10 grid gap-9 sm:mt-12 sm:gap-10 md:gap-12">
             {items.map((item) => (
               <article
                 key={item.slug}
-                className="grid gap-6 md:grid-cols-[1.1fr_1fr]"
+                className="grid gap-5 sm:gap-6 md:grid-cols-[1.1fr_1fr]"
               >
                 <div data-reveal="image">
                   <Image
@@ -48,11 +48,11 @@ export default function SelectedWorkGallery({
                     height={800}
                     sizes="(max-width: 768px) 100vw, 60vw"
                     quality={70}
-                    className="h-[260px] w-full object-cover sm:h-[340px] md:h-[420px]"
+                    className="h-[220px] w-full object-cover sm:h-[320px] md:h-[420px]"
                   />
                 </div>
                 <div data-reveal className="space-y-4">
-                  <h3 className="font-display text-xl uppercase tracking-[0.18em] sm:text-2xl md:tracking-[0.2em]">
+                  <h3 className="font-display text-xl uppercase tracking-[0.12em] sm:text-2xl sm:tracking-[0.16em] md:tracking-[0.2em]">
                     {item.title}
                   </h3>
                   {item.description ? (
