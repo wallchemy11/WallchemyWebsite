@@ -9,6 +9,34 @@ export const dynamic = "force-dynamic";
 const MAX_IMAGES = 4;
 const PORTRAIT_PLACEHOLDER = "Portrait (3:4)";
 
+function normalizeImageUrls(raw: unknown): string[] {
+  if (Array.isArray(raw)) {
+    return raw
+      .filter((u): u is string => typeof u === "string")
+      .map((u) => u.trim())
+      .filter(Boolean);
+  }
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if (!trimmed) return [];
+    try {
+      return normalizeImageUrls(JSON.parse(trimmed));
+    } catch {
+      return trimmed
+        .split(",")
+        .map((u) => u.trim())
+        .filter(Boolean);
+    }
+  }
+  if (raw && typeof raw === "object") {
+    return Object.values(raw)
+      .filter((u): u is string => typeof u === "string")
+      .map((u) => u.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
 export default function CollectionsPage() {
   const router = useRouter();
   const [collections, setCollections] = useState<any[]>([]);
@@ -260,19 +288,16 @@ export default function CollectionsPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => {
-                    const urls = Array.isArray(collection.image_urls)
-                      ? collection.image_urls
-                      : collection.image_urls
-                        ? (typeof collection.image_urls === "string" ? [] : Object.values(collection.image_urls))
-                        : collection.hero_image_url
-                          ? [collection.hero_image_url]
-                          : [];
+                    const urls = normalizeImageUrls(collection.image_urls);
+                    const fallbackHero = collection.hero_image_url
+                      ? [collection.hero_image_url]
+                      : [];
                     setFormData({
                       id: collection.id,
                       title: collection.title,
                       slug: collection.slug,
                       heroImageUrl: collection.hero_image_url,
-                      imageUrls: urls,
+                      imageUrls: urls.length > 0 ? urls : fallbackHero,
                       shortDescription: collection.short_description
                     });
                     setEditing(collection.id);

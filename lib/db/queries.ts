@@ -13,6 +13,28 @@ function jsonStringify(value: any) {
   return JSON.stringify(value);
 }
 
+function normalizeImageUrls(raw: unknown): string[] {
+  if (Array.isArray(raw)) {
+    return raw
+      .filter((u): u is string => typeof u === "string")
+      .map((u) => u.trim())
+      .filter(Boolean);
+  }
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if (!trimmed) return [];
+    try {
+      return normalizeImageUrls(JSON.parse(trimmed));
+    } catch {
+      return trimmed
+        .split(",")
+        .map((u) => u.trim())
+        .filter(Boolean);
+    }
+  }
+  return [];
+}
+
 // Pages
 export async function getPage(slug: string) {
   const result = await queryRows("SELECT * FROM pages WHERE slug = $1 LIMIT 1", [slug]);
@@ -158,8 +180,9 @@ export async function saveCollection(data: {
   shortDescription?: string;
   displayOrder?: number;
 }) {
-  const imageUrlsJson = jsonStringify(Array.isArray(data.imageUrls) ? data.imageUrls : []);
-  const firstImage = Array.isArray(data.imageUrls) && data.imageUrls.length > 0 ? data.imageUrls[0] : (data.heroImageUrl || null);
+  const normalizedImageUrls = normalizeImageUrls(data.imageUrls);
+  const imageUrlsJson = jsonStringify(normalizedImageUrls);
+  const firstImage = normalizedImageUrls[0] || data.heroImageUrl || null;
   if (data.id) {
     const db = getDb();
     await db.query(

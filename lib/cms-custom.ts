@@ -479,9 +479,7 @@ export async function saveProject(slug: string, data: any) {
 }
 
 export async function saveCollection(slug: string, data: any) {
-  const imageUrls = Array.isArray(data.imageUrls)
-    ? data.imageUrls.filter(Boolean)
-    : [];
+  const imageUrls = normalizeImageUrls(data.imageUrls ?? data.image_urls);
   const collectionData = {
     title: data.title,
     slug: data.slug || slug,

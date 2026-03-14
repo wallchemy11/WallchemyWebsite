@@ -384,12 +384,15 @@ export async function saveProject(slug: string, data: any) {
 }
 
 export async function saveCollection(slug: string, data: any) {
+  const normalizedImageUrls = normalizeImageUrls(
+    data?.imageUrls ?? data?.image_urls
+  );
   await saveCollectionToDb({
     id: data.id,
     title: data.title,
     slug,
-    heroImageUrl: data.heroImageUrl,
-    imageUrls: data.imageUrls,
+    heroImageUrl: normalizedImageUrls[0] || data.heroImageUrl,
+    imageUrls: normalizedImageUrls,
     shortDescription: data.shortDescription
   });
   return true;
