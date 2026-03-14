@@ -1,14 +1,14 @@
 import "server-only";
 import { unstable_noStore as noStore } from "next/cache";
 import {
-  mockAboutPage,
-  mockContactPage,
-  mockHomePage,
-  mockProcessPage,
-  mockProjectsPage,
-  mockTexturesPage,
-  mockSiteSettings
-} from "./mock-data";
+  defaultAboutPage,
+  defaultContactPage,
+  defaultHomePage,
+  defaultProcessPage,
+  defaultProjectsPage,
+  defaultTexturesPage,
+  defaultSiteSettings
+} from "./cms-defaults";
 import { ensureHeroMedia, type HeroVideoPage } from "./hero";
 
 // Try database first, then file-based, then mock data
@@ -38,7 +38,7 @@ async function getCmsModule() {
     cmsModule = await import("./cms-custom");
     return cmsModule;
   } catch (error: any) {
-    console.warn("File CMS not available, using mock data:", error.message);
+    console.warn("File CMS not available, using default fallback content:", error.message);
     return null;
   }
 }
@@ -54,7 +54,7 @@ export async function getHomePage(): Promise<HeroVideoPage> {
       console.error("Error fetching home page:", error);
     }
   }
-  return ensureHeroMedia(mockHomePage);
+  return ensureHeroMedia(defaultHomePage);
 }
 
 export async function getAboutPage(): Promise<HeroVideoPage> {
@@ -68,7 +68,7 @@ export async function getAboutPage(): Promise<HeroVideoPage> {
       console.error("Error fetching about page:", error);
     }
   }
-  return ensureHeroMedia(mockAboutPage);
+  return ensureHeroMedia(defaultAboutPage);
 }
 
 export async function getTexturesPage(): Promise<HeroVideoPage> {
@@ -82,7 +82,7 @@ export async function getTexturesPage(): Promise<HeroVideoPage> {
       console.error("Error fetching textures page:", error);
     }
   }
-  return ensureHeroMedia(mockTexturesPage);
+  return ensureHeroMedia(defaultTexturesPage);
 }
 
 export async function getProcessPage(): Promise<HeroVideoPage> {
@@ -96,7 +96,7 @@ export async function getProcessPage(): Promise<HeroVideoPage> {
       console.error("Error fetching process page:", error);
     }
   }
-  return ensureHeroMedia(mockProcessPage);
+  return ensureHeroMedia(defaultProcessPage);
 }
 
 export async function getProjectsPage(): Promise<HeroVideoPage> {
@@ -110,7 +110,7 @@ export async function getProjectsPage(): Promise<HeroVideoPage> {
       console.error("Error fetching projects page:", error);
     }
   }
-  return ensureHeroMedia(mockProjectsPage);
+  return ensureHeroMedia(defaultProjectsPage);
 }
 
 export async function getContactPage(): Promise<HeroVideoPage> {
@@ -124,7 +124,7 @@ export async function getContactPage(): Promise<HeroVideoPage> {
       console.error("Error fetching contact page:", error);
     }
   }
-  return ensureHeroMedia(mockContactPage);
+  return ensureHeroMedia(defaultContactPage);
 }
 
 export async function getSiteSettings() {
@@ -138,7 +138,7 @@ export async function getSiteSettings() {
       console.error("Error fetching site settings:", error);
     }
   }
-  return mockSiteSettings;
+  return defaultSiteSettings;
 }
 
 export async function saveHomePage(data: any) {

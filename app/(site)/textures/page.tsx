@@ -2,6 +2,7 @@ import { getTexturesPage } from "@/lib/cms";
 import VideoHero from "@/components/ui/VideoHero";
 import TextureCollections from "@/components/sections/TextureCollections";
 import CinematicDivider from "@/components/sections/CinematicDivider";
+import CraftsmanshipSection from "@/components/sections/CraftsmanshipSection";
 import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
 
@@ -16,7 +17,7 @@ export default async function TexturesPage() {
   return (
     <>
       <VideoHero
-        headline="Textures / Collections"
+        headline="Textures"
         subheadline={textures.intro}
         videoSrc={textures.heroVideo}
         mobileVideoSrc={textures.heroVideoMobile}
@@ -28,10 +29,15 @@ export default async function TexturesPage() {
         title={textures.divider?.title}
         subtitle={textures.divider?.subtitle}
       />
+      <CraftsmanshipSection
+        title={textures.craftsmanship?.title}
+        body={textures.craftsmanship?.body}
+      />
       <TextureCollections
         eyebrow={textures.collectionsHeading?.eyebrow}
         title={textures.title}
         intro={textures.collectionsHeading?.subtitle}
+        supportText={textures.collectionsHeading?.supportText}
         collections={textures.collections}
       />
     </>

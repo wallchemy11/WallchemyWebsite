@@ -1,4 +1,6 @@
 import "server-only";
+import fs from "fs";
+import path from "path";
 import {
   getPage,
   getAllProjects as getAllProjectsFromDb,
@@ -30,14 +32,55 @@ import {
   saveSiteSettings as saveSiteSettingsToDb
 } from "./db/queries";
 import {
-  mockAboutPage,
-  mockContactPage,
-  mockHomePage,
-  mockProcessPage,
-  mockProjectsPage,
-  mockTexturesPage,
-  mockSiteSettings
-} from "./mock-data";
+  defaultAboutPage,
+  defaultContactPage,
+  defaultHomePage,
+  defaultProcessPage,
+  defaultProjectsPage,
+  defaultTexturesPage,
+  defaultSiteSettings
+} from "./cms-defaults";
+import { FALLBACK_IMAGE } from "./hero";
+
+function normalizeImageUrls(rawUrls: unknown): string[] {
+  if (Array.isArray(rawUrls)) {
+    return rawUrls.filter((u): u is string => typeof u === "string" && u.trim().length > 0);
+  }
+
+  if (typeof rawUrls === "string") {
+    const trimmed = rawUrls.trim();
+    if (!trimmed) return [];
+    try {
+      const parsed = JSON.parse(trimmed);
+      return normalizeImageUrls(parsed);
+    } catch {
+      return trimmed
+        .split(",")
+        .map((part) => part.trim())
+        .filter(Boolean);
+    }
+  }
+
+  if (rawUrls && typeof rawUrls === "object") {
+    return Object.values(rawUrls)
+      .filter((u): u is string => typeof u === "string" && u.trim().length > 0)
+      .map((u) => u.trim());
+  }
+
+  return [];
+}
+
+function getExistingLocalTextureUrls(slug: string) {
+  if (!slug) return [];
+  const root = process.cwd();
+  const urls: string[] = [];
+  for (let i = 1; i <= 4; i += 1) {
+    const rel = `/textures/${slug}/${slug}-${i}.jpg`;
+    const full = path.join(root, "public", rel);
+    if (fs.existsSync(full)) urls.push(rel);
+  }
+  return urls;
+}
 
 // Helper to transform database results
 function transformProject(project: any) {
@@ -53,11 +96,29 @@ function transformProject(project: any) {
 }
 
 function transformCollection(collection: any) {
+  const slug = collection.slug || "";
+  const urls = normalizeImageUrls(collection.image_urls);
+  const localUrls = getExistingLocalTextureUrls(slug);
+  const heroUrl =
+    urls[0] ||
+    localUrls[0] ||
+    collection.hero_image_url ||
+    FALLBACK_IMAGE;
+  const mergedImages = Array.from(
+    new Set([
+      ...urls,
+      ...localUrls,
+      ...(collection.hero_image_url ? [collection.hero_image_url] : [])
+    ])
+  )
+    .filter(Boolean)
+    .slice(0, 4);
   return {
     id: collection.id,
     title: collection.title,
-    slug: collection.slug,
-    heroImage: collection.hero_image_url,
+    slug,
+    heroImage: heroUrl,
+    images: mergedImages.length > 0 ? mergedImages : heroUrl ? [heroUrl] : [],
     shortDescription: collection.short_description
   };
 }
@@ -73,11 +134,13 @@ function transformSelectedWork(item: any) {
 }
 
 function transformMaterialLibrary(item: any) {
+  const slug = item.slug || "";
+  const heroUrl = item.hero_image_url || FALLBACK_IMAGE;
   return {
     id: item.id,
     title: item.title,
-    slug: item.slug,
-    heroImage: item.hero_image_url,
+    slug,
+    heroImage: heroUrl,
     description: item.description
   };
 }
@@ -91,20 +154,28 @@ export async function getHomePage() {
       const featuredCollections = await getFeaturedCollections();
       const featuredSelectedWork = await getFeaturedSelectedWork();
       const featuredMaterialLibrary = await getFeaturedMaterialLibraryItems();
+      const allCollections = await getAllCollections();
+      const allMaterialLibrary = await getAllMaterialLibraryItems();
+      const resolvedCollections =
+        featuredCollections.length > 0 ? featuredCollections : allCollections;
+      const resolvedMaterialLibrary =
+        featuredMaterialLibrary.length > 0
+          ? featuredMaterialLibrary
+          : allMaterialLibrary;
       
       return {
         ...page.content,
         selectedProjects: featuredProjects.map(transformProject),
-        textureHighlights: featuredCollections.map(transformCollection),
+        textureHighlights: resolvedCollections.map(transformCollection),
         selectedWork: featuredSelectedWork.map(transformSelectedWork),
-        materialLibrary: featuredMaterialLibrary.map(transformMaterialLibrary),
+        materialLibrary: resolvedMaterialLibrary.map(transformMaterialLibrary),
         seo: page.seo || {}
       };
     }
   } catch (error) {
     console.error("Error fetching home page:", error);
   }
-  return mockHomePage;
+  return defaultHomePage;
 }
 
 // About Page
@@ -120,7 +191,7 @@ export async function getAboutPage() {
   } catch (error) {
     console.error("Error fetching about page:", error);
   }
-  return mockAboutPage;
+  return defaultAboutPage;
 }
 
 // Textures Page
@@ -138,7 +209,7 @@ export async function getTexturesPage() {
   } catch (error) {
     console.error("Error fetching textures page:", error);
   }
-  return mockTexturesPage;
+  return defaultTexturesPage;
 }
 
 // Process Page
@@ -154,7 +225,7 @@ export async function getProcessPage() {
   } catch (error) {
     console.error("Error fetching process page:", error);
   }
-  return mockProcessPage;
+  return defaultProcessPage;
 }
 
 // Projects Page
@@ -175,7 +246,7 @@ export async function getProjectsPage() {
   } catch (error) {
     console.error("Error fetching projects page:", error);
   }
-  return mockProjectsPage;
+  return defaultProjectsPage;
 }
 
 // Contact Page
@@ -191,7 +262,7 @@ export async function getContactPage() {
   } catch (error) {
     console.error("Error fetching contact page:", error);
   }
-  return mockContactPage;
+  return defaultContactPage;
 }
 
 // Site Settings
@@ -202,7 +273,7 @@ export async function getSiteSettings() {
   } catch (error) {
     console.error("Error fetching site settings:", error);
   }
-  return mockSiteSettings;
+  return defaultSiteSettings;
 }
 
 function splitSeo(content: any) {
@@ -318,6 +389,7 @@ export async function saveCollection(slug: string, data: any) {
     title: data.title,
     slug,
     heroImageUrl: data.heroImageUrl,
+    imageUrls: data.imageUrls,
     shortDescription: data.shortDescription
   });
   return true;

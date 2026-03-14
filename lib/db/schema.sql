@@ -26,12 +26,13 @@ CREATE TABLE IF NOT EXISTS projects (
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Collections table (texture collections)
+-- Collections table (texture collections; up to 4 portrait images per collection)
 CREATE TABLE IF NOT EXISTS collections (
   id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   slug VARCHAR(255) UNIQUE NOT NULL,
   hero_image_url TEXT,
+  image_urls JSONB DEFAULT '[]'::jsonb,
   short_description TEXT,
   display_order INTEGER DEFAULT 0,
   created_at TIMESTAMP DEFAULT NOW(),

@@ -190,7 +190,7 @@ export default function MobileNavOverlay({
           </div>
           <div className="mt-10 flex justify-center">
             <Link
-              href={meetingHref || "/contact#meeting"}
+              href={meetingHref || "/contact#enquiry"}
               className="rounded-full border border-ink/20 px-6 py-3 text-xs uppercase tracking-[0.32em] text-ink"
               onClick={() => onClose(false)}
             >

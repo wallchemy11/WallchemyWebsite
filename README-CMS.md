@@ -47,11 +47,29 @@ A clean, intuitive content management system built specifically for Wallchemy. A
 3. Arrays (like CTAs, steps) can be added/removed easily
 4. Save changes - they appear immediately
 
-### Video URLs (R2)
-- Upload videos to Cloudflare R2
-- Get the public URL
-- Paste in "Hero Video URL" fields in page editors
-- No code changes needed!
+### Collections vs Material Library (separate areas)
+- **Collections** (**Admin → Collections**, linked from **Textures Page** editor): Full texture entries (title, slug, **up to 4 images**, description). These power the Textures page and homepage texture panels.
+- **Material Library** (**Admin → Material Library**): Items for the homepage horizontal ribbon (each with its own image). Independent from Collections.
+- **Database:** If you use Neon/Postgres, run the migration once to add `image_urls` to collections:  
+  `psql $DATABASE_URL -f lib/db/migrations/add-collection-image-urls.sql`
+- **Local texture files:** Photos can also live in **`public/textures/<slug>/`**. Run **`node scripts/copy-texture-images.mjs`** to copy from a **Wallchemy Pictures** folder.
+
+### Changing the background (hero) video
+Hero video is set **per page** in the CMS. To change it:
+
+1. **Host your video** somewhere that gives you a **direct URL** (e.g. `https://..../your-video.mp4`). Options:
+   - **Cloudflare R2** – Create a bucket, upload the video, enable public access, copy the object URL. When you have the Cloudflare URL, paste it in **Hero Video URL** in the CMS (step 3); no code change needed.
+   - **Vercel Blob** – Use [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) and store the file; use the returned URL.
+   - **Cloudinary** – Upload to Cloudinary and use the “Delivery URL” (e.g. `https://res.cloudinary.com/.../video/upload/.../video.mp4`).
+   - **Any CDN or static host** – As long as the URL ends in `.mp4` (or your player supports it) and is publicly accessible.
+2. In the CMS go to **Admin → Edit** and open the page you want (e.g. **Home**).
+3. Set:
+   - **Hero Video URL** – main video (desktop). Paste your Cloudflare or other host URL here.
+   - **Hero Video (mobile)** – optional; if empty, desktop URL is used.
+   - **Hero poster image URL** – optional thumbnail shown before the video loads.
+4. Click **Save**. The new video will be used on the next load.
+
+No code changes are required; everything is driven by the CMS.
 
 ## Environment Variables
 

@@ -154,19 +154,23 @@ export async function saveCollection(data: {
   title: string;
   slug: string;
   heroImageUrl?: string;
+  imageUrls?: string[];
   shortDescription?: string;
   displayOrder?: number;
 }) {
+  const imageUrlsJson = jsonStringify(Array.isArray(data.imageUrls) ? data.imageUrls : []);
+  const firstImage = Array.isArray(data.imageUrls) && data.imageUrls.length > 0 ? data.imageUrls[0] : (data.heroImageUrl || null);
   if (data.id) {
     const db = getDb();
     await db.query(
       `UPDATE collections SET
-       title = $1, slug = $2, hero_image_url = $3, short_description = $4, display_order = $5, updated_at = NOW()
-       WHERE id = $6`,
+       title = $1, slug = $2, hero_image_url = $3, image_urls = $4, short_description = $5, display_order = $6, updated_at = NOW()
+       WHERE id = $7`,
       [
         data.title,
         data.slug,
-        data.heroImageUrl || null,
+        firstImage,
+        imageUrlsJson,
         data.shortDescription || null,
         data.displayOrder || 0,
         data.id
@@ -175,10 +179,10 @@ export async function saveCollection(data: {
     return data.id;
   } else {
     const result = await queryRows<{ id: number }>(
-      `INSERT INTO collections (title, slug, hero_image_url, short_description, display_order)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO collections (title, slug, hero_image_url, image_urls, short_description, display_order)
+       VALUES ($1, $2, $3, $4::jsonb, $5, $6)
        RETURNING id`,
-      [data.title, data.slug, data.heroImageUrl || null, data.shortDescription || null, data.displayOrder || 0]
+      [data.title, data.slug, firstImage, imageUrlsJson, data.shortDescription || null, data.displayOrder || 0]
     );
     return result[0]?.id;
   }

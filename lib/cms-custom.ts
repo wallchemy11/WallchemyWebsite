@@ -5,6 +5,46 @@ import { FALLBACK_IMAGE } from "./hero";
 
 const dataDir = path.join(process.cwd(), "data");
 
+function normalizeImageUrls(rawUrls: unknown): string[] {
+  if (Array.isArray(rawUrls)) {
+    return rawUrls.filter((u): u is string => typeof u === "string" && u.trim().length > 0);
+  }
+
+  if (typeof rawUrls === "string") {
+    const trimmed = rawUrls.trim();
+    if (!trimmed) return [];
+    try {
+      const parsed = JSON.parse(trimmed);
+      return normalizeImageUrls(parsed);
+    } catch {
+      return trimmed
+        .split(",")
+        .map((part) => part.trim())
+        .filter(Boolean);
+    }
+  }
+
+  if (rawUrls && typeof rawUrls === "object") {
+    return Object.values(rawUrls)
+      .filter((u): u is string => typeof u === "string" && u.trim().length > 0)
+      .map((u) => u.trim());
+  }
+
+  return [];
+}
+
+function getExistingLocalTextureUrls(slug: string) {
+  if (!slug) return [];
+  const root = process.cwd();
+  const urls: string[] = [];
+  for (let i = 1; i <= 4; i += 1) {
+    const rel = `/textures/${slug}/${slug}-${i}.jpg`;
+    const full = path.join(root, "public", rel);
+    if (fs.existsSync(full)) urls.push(rel);
+  }
+  return urls;
+}
+
 function readJsonFile<T>(filePath: string): T | null {
   try {
     const fullPath = path.join(dataDir, filePath);
@@ -77,11 +117,38 @@ export async function getHomePage() {
       .map((c: any) => ({
         title: c.title,
         slug: c.slug,
-        heroImage: c.hero_image_url || texturesPage.defaultCollectionImage || FALLBACK_IMAGE,
+        heroImage:
+          c.hero_image_url ||
+          getExistingLocalTextureUrls(c.slug || "")[0] ||
+          texturesPage.defaultCollectionImage ||
+          FALLBACK_IMAGE,
+        images: Array.from(
+          new Set([
+            ...normalizeImageUrls(c.image_urls),
+            ...getExistingLocalTextureUrls(c.slug || ""),
+            ...(c.hero_image_url ? [c.hero_image_url] : [])
+          ])
+        ).filter(Boolean).slice(0, 4),
         shortDescription: c.short_description
       }));
   } else {
-    page.textureHighlights = [];
+    page.textureHighlights = allCollections.map((c: any) => ({
+      title: c.title,
+      slug: c.slug,
+      heroImage:
+        c.hero_image_url ||
+        getExistingLocalTextureUrls(c.slug || "")[0] ||
+        texturesPage.defaultCollectionImage ||
+        FALLBACK_IMAGE,
+      images: Array.from(
+        new Set([
+          ...normalizeImageUrls(c.image_urls),
+          ...getExistingLocalTextureUrls(c.slug || ""),
+          ...(c.hero_image_url ? [c.hero_image_url] : [])
+        ])
+      ).filter(Boolean).slice(0, 4),
+      shortDescription: c.short_description
+    }));
   }
 
   if (page.selectedWorkSlugs && Array.isArray(page.selectedWorkSlugs) && page.selectedWorkSlugs.length > 0) {
@@ -109,7 +176,12 @@ export async function getHomePage() {
         description: item.description
       }));
   } else {
-    page.materialLibrary = [];
+    page.materialLibrary = allMaterialLibrary.map((item: any) => ({
+      title: item.title,
+      slug: item.slug,
+      heroImage: item.hero_image_url || FALLBACK_IMAGE,
+      description: item.description
+    }));
   }
   
   // Ensure primaryCtas is always an array
@@ -146,7 +218,14 @@ export async function getTexturesPage() {
   page.collections = allCollections.map((c: any) => ({
     title: c.title,
     slug: c.slug,
-    heroImage: c.hero_image_url || defaultCollectionImage,
+    heroImage: c.hero_image_url || getExistingLocalTextureUrls(c.slug || "")[0] || defaultCollectionImage,
+    images: Array.from(
+      new Set([
+        ...normalizeImageUrls(c.image_urls),
+        ...getExistingLocalTextureUrls(c.slug || ""),
+        ...(c.hero_image_url ? [c.hero_image_url] : [])
+      ])
+    ).filter(Boolean).slice(0, 4),
     shortDescription: c.short_description
   }));
   
@@ -272,11 +351,23 @@ export async function getAllCollections() {
     const collections = files.map((file, idx) => {
       const data = readJsonFile<any>(`collections/${file}`);
       if (!data) return null;
+      const slug = data.slug || file.replace(".json", "");
       return {
         id: idx + 1,
         title: data.title,
-        slug: data.slug || file.replace(".json", ""),
-        hero_image_url: data.heroImageUrl || data.heroImage || defaultCollectionImage,
+        slug,
+        hero_image_url:
+          data.heroImageUrl ||
+          data.heroImage ||
+          getExistingLocalTextureUrls(slug)[0] ||
+          defaultCollectionImage,
+        image_urls: (() => {
+          const fromCamel = normalizeImageUrls(data.imageUrls);
+          if (fromCamel.length > 0) return fromCamel;
+          const fromSnake = normalizeImageUrls(data.image_urls);
+          if (fromSnake.length > 0) return fromSnake;
+          return data.heroImageUrl || data.heroImage ? [data.heroImageUrl || data.heroImage] : [];
+        })(),
         short_description: data.shortDescription
       };
     }).filter(Boolean);
@@ -388,11 +479,15 @@ export async function saveProject(slug: string, data: any) {
 }
 
 export async function saveCollection(slug: string, data: any) {
+  const imageUrls = Array.isArray(data.imageUrls)
+    ? data.imageUrls.filter(Boolean)
+    : [];
   const collectionData = {
     title: data.title,
     slug: data.slug || slug,
-    heroImageUrl: data.heroImageUrl,
-    heroImage: data.heroImageUrl, // Legacy support
+    heroImageUrl: imageUrls[0] || data.heroImageUrl,
+    heroImage: imageUrls[0] || data.heroImageUrl, // Legacy support
+    imageUrls,
     shortDescription: data.shortDescription
   };
   return writeJsonFile(`collections/${data.slug || slug}.json`, collectionData);

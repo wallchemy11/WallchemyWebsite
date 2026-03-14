@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type SmartVideoProps = {
   src: string;
@@ -37,26 +37,46 @@ export default function SmartVideo({
     threshold: 0.35
   });
   const [shouldLoad, setShouldLoad] = useState(false);
+  const [selectedSrc, setSelectedSrc] = useState(src);
+  const [canStreamVideo, setCanStreamVideo] = useState(true);
 
-  const selectedSrc = useMemo(() => {
-    if (typeof window === "undefined") return src;
-    const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    return isMobile && mobileSrc ? mobileSrc : src;
+  useEffect(() => {
+    const mobile = window.matchMedia("(max-width: 767px)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => {
+      const connection = (navigator as any).connection;
+      const saveData = Boolean(connection?.saveData);
+      const lowBandwidth =
+        typeof connection?.effectiveType === "string" &&
+        /(2g|slow-2g|3g)/i.test(connection.effectiveType);
+      setSelectedSrc(mobile.matches && mobileSrc ? mobileSrc : src);
+      setCanStreamVideo(!reducedMotion.matches && !saveData && !lowBandwidth);
+    };
+    update();
+    mobile.addEventListener("change", update);
+    reducedMotion.addEventListener("change", update);
+    return () => {
+      mobile.removeEventListener("change", update);
+      reducedMotion.removeEventListener("change", update);
+    };
   }, [src, mobileSrc]);
 
   useEffect(() => {
-    const connection = (navigator as any).connection;
-    const saveData = Boolean(connection?.saveData);
-    if (!saveData && inView) {
+    if (canStreamVideo && inView) {
       setShouldLoad(true);
     }
-  }, [inView]);
+  }, [inView, canStreamVideo]);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !shouldLoad) return;
 
     if (!inView) {
+      video.pause();
+      return;
+    }
+
+    if (document.visibilityState !== "visible") {
       video.pause();
       return;
     }
@@ -79,6 +99,7 @@ export default function SmartVideo({
         playsInline
         preload="none"
         poster={poster}
+        aria-hidden="true"
       >
         {shouldLoad ? <source src={selectedSrc} /> : null}
       </video>

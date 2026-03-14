@@ -4,7 +4,6 @@ import ContactPanel from "@/components/sections/ContactPanel";
 import CinematicDivider from "@/components/sections/CinematicDivider";
 import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
-import { toWhatsAppHref } from "@/lib/whatsapp";
 
 export async function generateMetadata() {
   const contact = await getContactPage();
@@ -13,13 +12,7 @@ export async function generateMetadata() {
 
 export default async function ContactPage() {
   const contact = await getContactPage();
-  const meetingLink =
-    contact.meetingLink ||
-    toWhatsAppHref(
-      contact?.whatsappNumber || "+91 00000 00000",
-      contact?.whatsappMessage ||
-        "Hi Wallchemy, I'd like to connect about textures and finishes."
-    );
+  const meetingLink = "/contact#enquiry";
   const dividerImage = resolveImage(contact.dividerImage, contact.heroPoster);
 
   return (

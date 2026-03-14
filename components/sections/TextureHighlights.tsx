@@ -1,6 +1,7 @@
 import Image from "next/image";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { resolveImage } from "@/lib/hero";
 
 type TextureHighlight = {
   title: string;
@@ -28,7 +29,7 @@ export default function TextureHighlights({ textures }: TextureHighlightsProps) 
               <article key={texture.slug} className="space-y-6">
                 <div data-reveal="image" className="overflow-hidden rounded-none">
                   <Image
-                    src={texture.heroImage}
+                    src={resolveImage(texture.heroImage)}
                     alt={texture.title}
                     width={600}
                     height={800}

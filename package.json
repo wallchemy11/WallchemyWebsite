@@ -6,10 +6,8 @@
     "node": "20.x"
   },
   "scripts": {
-    "predev": "node scripts/ensure-next-manifests.mjs",
     "dev": "node scripts/dev.mjs",
     "dev:turbo": "next dev --turbo",
-    "prebuild": "node scripts/ensure-next-manifests.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

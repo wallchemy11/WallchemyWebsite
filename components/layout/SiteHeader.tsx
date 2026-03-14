@@ -97,7 +97,7 @@ export default function SiteHeader({
         </nav>
         <div className="hidden md:block">
           <Link
-            href={meetingHref || "/contact#meeting"}
+            href={meetingHref || "/contact#enquiry"}
             className="rounded-full border border-brass/60 px-4 py-2 text-xs uppercase tracking-[0.32em] text-brass/90"
           >
             {meetingLabel || "Book a Meeting"}

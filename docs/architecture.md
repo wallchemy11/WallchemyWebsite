@@ -39,7 +39,7 @@ components/
     VideoHero.tsx
 lib/
   cms.ts
-  mock-data.ts
+  cms-defaults.ts
   queries.ts
   sanity.client.ts
   sanity.image.ts

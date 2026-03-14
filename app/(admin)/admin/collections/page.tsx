@@ -2,16 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
+
+const MAX_IMAGES = 4;
+const PORTRAIT_PLACEHOLDER = "Portrait (3:4)";
 
 export default function CollectionsPage() {
   const router = useRouter();
   const [collections, setCollections] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<number | null>(null);
-  const [formData, setFormData] = useState<any>({});
-  const [uploading, setUploading] = useState(false);
+  const [formData, setFormData] = useState<any>({ imageUrls: [] });
+  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
   const [uploadError, setUploadError] = useState("");
 
   useEffect(() => {
@@ -54,9 +58,9 @@ export default function CollectionsPage() {
     }
   }
 
-  async function uploadMedia(file: File) {
+  async function uploadMedia(file: File, index: number) {
     setUploadError("");
-    setUploading(true);
+    setUploadingIndex(index);
     try {
       const body = new FormData();
       body.append("file", file);
@@ -70,12 +74,22 @@ export default function CollectionsPage() {
         throw new Error(error?.error || "Upload failed");
       }
       const json = await res.json();
-      setFormData((prev: any) => ({ ...prev, heroImageUrl: json.url }));
+      const urls = [...(formData.imageUrls || [])];
+      while (urls.length <= index) urls.push("");
+      urls[index] = json.url;
+      setFormData((prev: any) => ({ ...prev, imageUrls: urls }));
     } catch (error: any) {
       setUploadError(error?.message || "Upload failed");
     } finally {
-      setUploading(false);
+      setUploadingIndex(null);
     }
+  }
+
+  function setImageUrl(index: number, url: string) {
+    const urls = [...(formData.imageUrls || [])];
+    while (urls.length <= index) urls.push("");
+    urls[index] = url;
+    setFormData((prev: any) => ({ ...prev, imageUrls: urls }));
   }
 
   async function deleteCollection(id: number) {
@@ -153,32 +167,55 @@ export default function CollectionsPage() {
                 />
               </div>
               <div>
-                <label className="mb-2 block">Hero Image URL</label>
-                <input
-                  type="url"
-                  value={formData.heroImageUrl || ""}
-                  onChange={(e) => setFormData({ ...formData, heroImageUrl: e.target.value })}
-                  className="w-full rounded border border-alabaster/20 bg-ink px-4 py-2 text-alabaster"
-                  placeholder="https://..."
-                />
-              </div>
-              <div>
-                <label className="mb-2 block">Upload Hero Image</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) uploadMedia(file);
-                  }}
-                  className="w-full rounded border border-alabaster/20 bg-ink px-3 py-2 text-sm text-alabaster file:mr-3 file:rounded file:border-0 file:bg-brass file:px-3 file:py-2 file:text-xs file:font-semibold file:text-ink"
-                />
-                {uploading ? (
-                  <p className="mt-2 text-xs text-alabaster/60">Uploading...</p>
-                ) : null}
+                <label className="mb-2 block">Images (portrait, up to 4 — no cropping on site)</label>
                 {uploadError ? (
-                  <p className="mt-2 text-xs text-red-400">{uploadError}</p>
+                  <p className="mb-2 text-xs text-red-400">{uploadError}</p>
                 ) : null}
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                  {Array.from({ length: MAX_IMAGES }, (_, i) => {
+                    const url = (formData.imageUrls || [])[i] || "";
+                    return (
+                      <div key={i} className="flex flex-col gap-2">
+                        <div className="aspect-[3/4] w-full overflow-hidden rounded border border-alabaster/10 bg-ink">
+                          {url ? (
+                            <Image
+                              src={url}
+                              alt={`Image ${i + 1}`}
+                              width={200}
+                              height={267}
+                              className="h-full w-full object-contain"
+                              unoptimized={url.startsWith("http")}
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-center text-xs text-alabaster/40">
+                              {PORTRAIT_PLACEHOLDER}
+                            </div>
+                          )}
+                        </div>
+                        <input
+                          type="url"
+                          value={url}
+                          onChange={(e) => setImageUrl(i, e.target.value)}
+                          placeholder={`Image ${i + 1} URL`}
+                          className="w-full rounded border border-alabaster/20 bg-ink px-2 py-1.5 text-xs text-alabaster"
+                        />
+                        <label className="flex cursor-pointer items-center justify-center gap-1 rounded border border-alabaster/20 py-1.5 text-xs hover:bg-alabaster/10">
+                          {uploadingIndex === i ? "…" : "Upload"}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) uploadMedia(file, i);
+                              e.target.value = "";
+                            }}
+                          />
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
               <div>
                 <label className="mb-2 block">Short Description</label>
@@ -223,11 +260,19 @@ export default function CollectionsPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => {
+                    const urls = Array.isArray(collection.image_urls)
+                      ? collection.image_urls
+                      : collection.image_urls
+                        ? (typeof collection.image_urls === "string" ? [] : Object.values(collection.image_urls))
+                        : collection.hero_image_url
+                          ? [collection.hero_image_url]
+                          : [];
                     setFormData({
                       id: collection.id,
                       title: collection.title,
                       slug: collection.slug,
                       heroImageUrl: collection.hero_image_url,
+                      imageUrls: urls,
                       shortDescription: collection.short_description
                     });
                     setEditing(collection.id);

@@ -14,9 +14,7 @@ export default async function SiteHeaderServer() {
 
   const whatsappHref = toWhatsAppHref(whatsappNumber, whatsappMessage);
   const meetingLabel = contact?.meetingCtaLabel || "Book a Meeting";
-  const meetingHref =
-    contact?.meetingLink ||
-    toWhatsAppHref(whatsappNumber, whatsappMessage);
+  const meetingHref = "/contact#enquiry";
 
   return (
     <SiteHeader

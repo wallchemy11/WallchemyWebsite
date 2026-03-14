@@ -28,7 +28,6 @@ export default function ContactPanel({
     name: "",
     email: "",
     phone: "",
-    company: "",
     projectType: "",
     budgetRange: "",
     timeline: "",
@@ -63,6 +62,9 @@ export default function ContactPanel({
     if (form.name.trim().length < 2) nextErrors.name = "Please enter your name.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
       nextErrors.email = "Please enter a valid email.";
+    }
+    if (form.phone.trim().length < 8) {
+      nextErrors.phone = "Phone number is required.";
     }
     if (form.message.trim().length < 10) {
       nextErrors.message = "Please add a short project summary.";
@@ -106,7 +108,6 @@ export default function ContactPanel({
         name: "",
         email: "",
         phone: "",
-        company: "",
         projectType: "",
         budgetRange: "",
         timeline: "",
@@ -183,10 +184,10 @@ export default function ContactPanel({
                   </p>
                 ) : null}
               </div>
-              <div data-reveal className="grid gap-4 sm:grid-cols-2">
+              <div data-reveal>
                 <div>
                   <label className="text-[10px] uppercase tracking-[0.28em] text-alabaster/70 sm:text-xs sm:tracking-[0.3em]">
-                    Phone (optional)
+                    Phone *
                   </label>
                   <input
                     type="tel"
@@ -194,19 +195,14 @@ export default function ContactPanel({
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     className="mt-2 w-full border border-alabaster/10 bg-transparent px-4 py-3 text-sm text-alabaster placeholder:text-alabaster/40 outline-none focus:border-brass"
                     placeholder="+91 ..."
+                    aria-invalid={Boolean(errors.phone)}
+                    aria-describedby={errors.phone ? "lead-phone-error" : undefined}
                   />
-                </div>
-                <div>
-                  <label className="text-[10px] uppercase tracking-[0.28em] text-alabaster/70 sm:text-xs sm:tracking-[0.3em]">
-                    Company / Studio (optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={form.company}
-                    onChange={(e) => setForm({ ...form, company: e.target.value })}
-                    className="mt-2 w-full border border-alabaster/10 bg-transparent px-4 py-3 text-sm text-alabaster placeholder:text-alabaster/40 outline-none focus:border-brass"
-                    placeholder="Company name"
-                  />
+                  {errors.phone ? (
+                    <p id="lead-phone-error" className="mt-2 text-xs text-ember">
+                      {errors.phone}
+                    </p>
+                  ) : null}
                 </div>
               </div>
               <div data-reveal className="grid gap-4 sm:grid-cols-3">

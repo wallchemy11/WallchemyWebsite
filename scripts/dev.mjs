@@ -4,76 +4,60 @@ import path from "node:path";
 
 const root = process.cwd();
 const nextDir = path.join(root, ".next");
-const serverDir = path.join(nextDir, "server");
-const staticDir = path.join(nextDir, "static");
-const cacheDir = path.join(nextDir, "cache");
-const webpackCacheDir = path.join(cacheDir, "webpack");
+const nextBin = path.join(root, "node_modules", "next", "dist", "bin", "next");
 
-function ensureDir(target) {
-  try {
-    fs.mkdirSync(target, { recursive: true });
-  } catch {
-    // No-op
-  }
-}
-
-function ensureJsonFile(target, value) {
-  try {
-    fs.writeFileSync(target, JSON.stringify(value, null, 2), "utf8");
-  } catch {
-    // No-op
-  }
-}
-
-function ensureManifests() {
-  ensureDir(serverDir);
-  ensureDir(staticDir);
-  ensureDir(cacheDir);
-  ensureDir(path.join(webpackCacheDir, "client-development"));
-  ensureDir(path.join(webpackCacheDir, "server-development"));
-  ensureDir(path.join(webpackCacheDir, "client-production"));
-  ensureDir(path.join(webpackCacheDir, "server-production"));
-
-  ensureJsonFile(path.join(serverDir, "middleware-manifest.json"), {
-    sortedMiddleware: [],
-    middleware: {},
-    functions: {}
+function tryRemoveDir(dirPath) {
+  fs.rmSync(dirPath, {
+    recursive: true,
+    force: true,
+    maxRetries: 6,
+    retryDelay: 120
   });
+}
 
-  ensureJsonFile(path.join(serverDir, "pages-manifest.json"), {});
+function tryRemoveFile(filePath) {
+  try {
+    fs.rmSync(filePath, { force: true });
+  } catch {
+    // No-op
+  }
 }
 
 function cleanNextCaches() {
-  try {
-    fs.rmSync(path.join(nextDir, "cache", "webpack"), { recursive: true, force: true });
-  } catch {
-    // No-op
-  }
-  try {
-    fs.rmSync(path.join(nextDir, "server"), { recursive: true, force: true });
-  } catch {
-    // No-op
-  }
+  // Use targeted cleanup instead of removing the entire .next directory.
+  // This is more reliable in synced/macOS Desktop locations where rm -r can
+  // intermittently hang or throw ENOTEMPTY.
+  tryRemoveDir(path.join(nextDir, "cache", "webpack"));
+  tryRemoveDir(path.join(nextDir, "server", "app"));
+  tryRemoveDir(path.join(nextDir, "server", "pages"));
+  tryRemoveDir(path.join(nextDir, "static", "chunks", "app"));
+  tryRemoveFile(path.join(nextDir, "app-build-manifest.json"));
+  tryRemoveFile(path.join(nextDir, "build-manifest.json"));
+  tryRemoveFile(path.join(nextDir, "react-loadable-manifest.json"));
+  tryRemoveFile(path.join(nextDir, "server", "middleware-manifest.json"));
+  tryRemoveFile(path.join(nextDir, "server", "pages-manifest.json"));
+  fs.mkdirSync(nextDir, { recursive: true });
 }
 
 // Clean stale caches before starting Next.
 cleanNextCaches();
 
-// Pre-create before starting Next.
-ensureManifests();
+const nodeMajor = Number(process.versions.node.split(".")[0]);
+if (Number.isFinite(nodeMajor) && nodeMajor !== 20) {
+  console.warn(
+    `Warning: Detected Node ${process.versions.node}. This project targets Node 20.x for stable Next.js dev behavior.`
+  );
+}
 
-const child = spawn(
-  process.platform === "win32" ? "npx.cmd" : "npx",
-  ["next", "dev"],
-  { stdio: "inherit" }
-);
+const devArgs = [nextBin, "dev"];
+if (Number.isFinite(nodeMajor) && nodeMajor !== 20) {
+  // Turbopack is more stable than webpack dev on newer Node versions.
+  devArgs.push("--turbo");
+  console.warn("Using Turbopack fallback for non-Node20 runtime.");
+}
 
-// Keep ensuring manifests for the first 30s in case Next clears .next.
-const timer = setInterval(() => {
-  ensureManifests();
-}, 100);
+const child = spawn(process.execPath, devArgs, { stdio: "inherit" });
 
 child.on("exit", (code) => {
-  clearInterval(timer);
   process.exit(code ?? 0);
 });

@@ -8,7 +8,21 @@ type SocialLinks = {
   youtube?: string;
 };
 
-export default function SiteFooter({ socialLinks }: { socialLinks?: SocialLinks }) {
+type SiteFooterProps = {
+  socialLinks?: SocialLinks;
+  studioAddress?: string;
+  email?: string;
+  whatsappHref?: string;
+  whatsappNumber?: string;
+};
+
+export default function SiteFooter({
+  socialLinks,
+  studioAddress,
+  email,
+  whatsappHref,
+  whatsappNumber
+}: SiteFooterProps) {
   const instagram = socialLinks?.instagram;
   const behance = socialLinks?.behance;
   const linkedin = socialLinks?.linkedin;
@@ -76,10 +90,23 @@ export default function SiteFooter({ socialLinks }: { socialLinks?: SocialLinks 
         </div>
         <div className="text-sm text-alabaster/70">
           <p className="uppercase tracking-[0.25em] text-alabaster">
-            Credentials
+            Studio Details
           </p>
-          <p className="mt-4">Founded 2026 · Boutique studio</p>
-          <p>Panipat · New Delhi · International projects</p>
+          {studioAddress ? <p className="mt-4">{studioAddress}</p> : null}
+          {email ? (
+            <p className="mt-2">
+              <a href={`mailto:${email}`} className="hover:text-brass">
+                {email}
+              </a>
+            </p>
+          ) : null}
+          {whatsappHref && whatsappNumber ? (
+            <p className="mt-2">
+              <a href={whatsappHref} target="_blank" rel="noreferrer" className="hover:text-brass">
+                WhatsApp: {whatsappNumber}
+              </a>
+            </p>
+          ) : null}
         </div>
         <div className="text-sm text-alabaster/70">
           <p className="uppercase tracking-[0.25em] text-alabaster">Explore</p>

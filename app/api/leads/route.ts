@@ -21,7 +21,6 @@ export async function POST(req: Request) {
   const name = String(body?.name || "").trim();
   const email = String(body?.email || "").trim();
   const phone = String(body?.phone || "").trim();
-  const company = String(body?.company || "").trim();
   const projectType = String(body?.projectType || "").trim();
   const budgetRange = String(body?.budgetRange || "").trim();
   const timeline = String(body?.timeline || "").trim();
@@ -36,6 +35,7 @@ export async function POST(req: Request) {
   const errors: Record<string, string> = {};
   if (name.length < 2) errors.name = "Please enter your name.";
   if (!isValidEmail(email)) errors.email = "Please enter a valid email.";
+  if (phone.length < 8) errors.phone = "Phone number is required.";
   if (message.length < 10) errors.message = "Please add a short project summary.";
 
   if (Object.keys(errors).length > 0) {
@@ -54,7 +54,6 @@ export async function POST(req: Request) {
       name,
       email,
       phone,
-      company,
       projectType,
       budgetRange,
       timeline,

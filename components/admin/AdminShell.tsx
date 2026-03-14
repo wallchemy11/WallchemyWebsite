@@ -6,12 +6,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin" },
   { label: "Leads", href: "/admin/leads" },
-  { label: "Home", href: "/admin/edit?page=home" },
-  { label: "Projects", href: "/admin/projects" },
-  { label: "Textures", href: "/admin/edit?page=textures" },
-  { label: "About", href: "/admin/edit?page=about" },
-  { label: "Process", href: "/admin/edit?page=process" },
-  { label: "Contact", href: "/admin/edit?page=contact" },
   { label: "Settings", href: "/admin/edit?page=settings" }
 ];
 
@@ -26,7 +20,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   const isLogin = pathname?.startsWith("/admin/login");
   const navItems = useMemo(() => NAV_ITEMS, []);
-  const currentEditPage = searchParams.get("page");
+  const currentEditPage = searchParams?.get("page");
   const showHomeShortcuts = pathname === "/admin/edit" && currentEditPage === "home";
   const showProjectsShortcuts = pathname === "/admin/edit" && currentEditPage === "projects";
 

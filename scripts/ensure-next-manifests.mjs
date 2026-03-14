@@ -1,5 +1,5 @@
-import fs from "node:fs";
 import path from "node:path";
+import fs from "node:fs";
 
 const root = process.cwd();
 const nextDir = path.join(root, ".next");
@@ -12,13 +12,8 @@ function ensureDir(p) {
   fs.mkdirSync(p, { recursive: true });
 }
 
-function ensureJsonFile(p, value) {
-  // Always write to ensure the file exists with correct structure
-  fs.writeFileSync(p, JSON.stringify(value, null, 2), "utf8");
-}
-
-// Next 14 can sometimes crash if these manifests are missing during the first request.
-// Creating placeholders avoids hard 500s; Next will overwrite them when it finishes compiling.
+// Keep only directory bootstrap. Do NOT write manifest placeholders:
+// writing empty pages/middleware manifests can break chunk resolution and /_document lookups.
 ensureDir(serverDir);
 ensureDir(staticDir);
 ensureDir(cacheDir);
@@ -27,14 +22,4 @@ ensureDir(path.join(webpackCacheDir, "client-development"));
 ensureDir(path.join(webpackCacheDir, "server-development"));
 ensureDir(path.join(webpackCacheDir, "client-production"));
 ensureDir(path.join(webpackCacheDir, "server-production"));
-
-// Create middleware manifest - Next.js 14.2.35 requires this even without middleware
-ensureJsonFile(path.join(serverDir, "middleware-manifest.json"), {
-  sortedMiddleware: [],
-  middleware: {},
-  functions: {}
-});
-
-// Create pages manifest with proper structure
-ensureJsonFile(path.join(serverDir, "pages-manifest.json"), {});
 

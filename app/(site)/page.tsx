@@ -32,11 +32,12 @@ export default async function HomePage() {
 
   const hasTextureHighlights = (home.textureHighlights || []).length > 0;
   const hasSelectedWork = (home.selectedWork || []).length > 0;
-  const hasMaterialLibrary = (home.materialLibrary || []).length > 0;
   const hasFeaturedProjects = (home.selectedProjects || []).length > 0;
-  const studioCraftImage = hasTextureHighlights
-    ? resolveImage(home.textureHighlights?.[0]?.heroImage, home.heroPoster)
-    : "";
+  const hasMaterialLibrary = (home.materialLibrary || []).length > 0;
+  const studioCraftImage = resolveImage(
+    home.studioDividerImage,
+    resolveImage(home.textureHighlights?.[0]?.heroImage, home.heroPoster)
+  );
   const selectedWorkImage = hasSelectedWork
     ? resolveImage(home.selectedWork?.[0]?.heroImage, home.heroPoster)
     : "";
@@ -87,14 +88,12 @@ export default async function HomePage() {
         subtitle={home.manifesto?.subtitle}
         items={manifestoItems}
       />
-      {studioCraftImage ? (
-        <CinematicDivider
-          image={studioCraftImage}
-          eyebrow={home.studioDivider?.eyebrow}
-          title={home.studioDivider?.title}
-          subtitle={home.studioDivider?.subtitle}
-        />
-      ) : null}
+      <CinematicDivider
+        image={studioCraftImage}
+        eyebrow={home.studioDivider?.eyebrow}
+        title={home.studioDivider?.title}
+        subtitle={home.studioDivider?.subtitle}
+      />
       <HomeCinematicPanels panels={home.textureHighlights || []} />
       <HomeCtas intro={home.ctaIntro} ctas={normalizedCtas} />
       {hasMaterialLibrary ? (

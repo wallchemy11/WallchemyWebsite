@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useMemo, useRef } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
@@ -9,6 +10,7 @@ type Panel = {
   title: string;
   shortDescription: string;
   heroImage: string;
+  images?: string[];
 };
 
 type HomeCinematicPanelsProps = {
@@ -21,8 +23,12 @@ export default function HomeCinematicPanels({
   const sectionRef = useRef<HTMLDivElement>(null);
   const panelRefs = useRef<HTMLDivElement[]>([]);
   const { shouldAnimate } = useMotionPrefs();
-
+  const [failedImages, setFailedImages] = useState<Record<string, true>>({});
   const items = useMemo(() => panels.slice(0, 3), [panels]);
+
+  const isVisible = (key: string) => !failedImages[key];
+  const markFailed = (key: string) =>
+    setFailedImages((prev) => ({ ...prev, [key]: true }));
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -43,7 +49,7 @@ export default function HomeCinematicPanels({
             const timeline = gsap.timeline({
               scrollTrigger: {
                 trigger: section,
-                start: "top top",
+                start: "center center",
                 end: () => `+=${items.length * 900}`,
                 scrub: 0.8,
                 pin: true,
@@ -97,6 +103,8 @@ export default function HomeCinematicPanels({
     };
   }, [shouldAnimate, items.length]);
 
+  if (items.length === 0) return null;
+
   return (
     <section ref={sectionRef} className="relative bg-ink">
       <div className="relative h-auto overflow-visible md:h-[90vh] md:overflow-hidden">
@@ -108,16 +116,99 @@ export default function HomeCinematicPanels({
             }}
             className="relative min-h-[60vh] will-change-[opacity] md:absolute md:inset-0 md:min-h-0"
           >
-            <Image
-              src={panel.heroImage}
-              alt={panel.title}
-              fill
-              sizes="100vw"
-              quality={70}
-              className="object-cover"
-              priority={index === 0}
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-ink/20 via-ink/50 to-ink" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(201,166,107,0.14),transparent_45%),radial-gradient(circle_at_80%_85%,rgba(120,93,66,0.18),transparent_50%)]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#15110f] via-[#0f0d0c] to-ink" />
+            <div className="absolute inset-0 mx-auto hidden max-w-6xl px-6 py-10 md:block">
+              <div className="grid h-full grid-cols-12 grid-rows-6 gap-4 lg:gap-6">
+                {(() => {
+                  const source =
+                    panel.images && panel.images.length > 0
+                      ? panel.images
+                      : [panel.heroImage];
+                  const frames = [...source].filter(Boolean).slice(0, 4);
+                  const frameClasses = [
+                    "col-span-4 row-span-4",
+                    "col-span-5 row-span-3",
+                    "col-span-4 row-span-4",
+                    "col-span-5 row-span-3"
+                  ];
+                  const frameStarts = [
+                    "col-start-1 row-start-1",
+                    "col-start-4 row-start-1",
+                    "col-start-9 row-start-2",
+                    "col-start-3 row-start-4"
+                  ];
+                  return frames.map((src, frameIndex) => {
+                    const imageKey = `${panel.title}-${index}-${frameIndex}-${src}`;
+                    if (!isVisible(imageKey)) return null;
+                    return (
+                      <div
+                        key={imageKey}
+                        className={`rounded-sm border border-alabaster/20 bg-alabaster/[0.04] p-2 shadow-[0_18px_40px_rgba(0,0,0,0.35)] ${frameClasses[frameIndex]} ${frameStarts[frameIndex]}`}
+                      >
+                        <div
+                          className={`h-full w-full overflow-hidden bg-[#151210] ${
+                            frameIndex % 2 === 0 ? "aspect-[3/4]" : "aspect-[4/3]"
+                          }`}
+                        >
+                          <Image
+                            src={src}
+                            alt={`${panel.title} ${frameIndex + 1}`}
+                            width={900}
+                            height={1200}
+                            sizes="(max-width: 1200px) 30vw, 24vw"
+                            quality={72}
+                            className="h-full w-full object-contain"
+                            priority={index === 0 && frameIndex === 0}
+                            onError={() => markFailed(imageKey)}
+                          />
+                        </div>
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+            </div>
+            <div className="absolute inset-0 block md:hidden">
+              {(() => {
+                const source =
+                  panel.images && panel.images.length > 0
+                    ? panel.images
+                    : [panel.heroImage];
+                const frames = [...source].filter(Boolean).slice(0, 4);
+                return (
+                  <div className="h-full overflow-x-auto px-6 py-8">
+                    <div className="flex h-full w-max items-center gap-4">
+                      {frames.map((src, frameIndex) => {
+                        const imageKey = `${panel.title}-m-${index}-${frameIndex}-${src}`;
+                        if (!isVisible(imageKey)) return null;
+                        return (
+                          <div
+                            key={imageKey}
+                            className="h-[52vh] w-[42vw] min-w-[160px] max-w-[220px] rounded-sm border border-alabaster/20 bg-alabaster/[0.04] p-2"
+                          >
+                            <div className="h-full w-full overflow-hidden bg-[#151210]">
+                              <Image
+                                src={src}
+                                alt={`${panel.title} ${frameIndex + 1}`}
+                                width={420}
+                                height={560}
+                                sizes="42vw"
+                                quality={68}
+                                className="h-full w-full object-contain"
+                                priority={index === 0 && frameIndex === 0}
+                                onError={() => markFailed(imageKey)}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-ink/90" />
             <div className="absolute inset-0 flex items-end">
               <div className="mx-auto w-full max-w-6xl px-6 pb-20">
                 <p className="text-xs uppercase tracking-[0.4em] text-brass">

@@ -79,6 +79,13 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       arrayItemType: "manifesto"
     },
     {
+      key: "studioDividerImage",
+      label: "Studio Divider Image",
+      description: "Image shown above Studio Craft text on homepage",
+      type: "media",
+      mediaKind: "image"
+    },
+    {
       key: "studioDivider.eyebrow",
       label: "Studio Divider Eyebrow",
       description: "Label above the studio divider text",
@@ -397,7 +404,24 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       description: "Subtitle above the collections list",
       type: "text"
     },
-    
+    {
+      key: "collectionsHeading.supportText",
+      label: "Collections Supporting Text",
+      description: "Supporting text shown alongside the vertical texture scroller",
+      type: "textarea"
+    },
+    {
+      key: "craftsmanship.title",
+      label: "Craftsmanship Title",
+      description: "Title for the craftsmanship block (e.g. Textures are only as good as the hands that apply them.)",
+      type: "text"
+    },
+    {
+      key: "craftsmanship.body",
+      label: "Craftsmanship Body",
+      description: "Paragraph about craftsmanship and qualified applicators",
+      type: "textarea"
+    }
   ],
   process: [
     {
@@ -725,7 +749,7 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
 export default function EditPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [page, setPage] = useState<string>(searchParams.get("page") || "home");
+  const [page, setPage] = useState<string>(searchParams?.get("page") || "home");
   const [data, setData] = useState<any>(null);
   const [initialData, setInitialData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -747,7 +771,7 @@ export default function EditPage() {
   }, [data, initialData]);
 
   useEffect(() => {
-    const pageParam = searchParams.get("page");
+    const pageParam = searchParams?.get("page");
     if (pageParam) setPage(pageParam);
   }, [searchParams]);
 
@@ -1442,12 +1466,12 @@ export default function EditPage() {
 
         {page === "textures" && (
           <div className="mb-6 rounded-lg border border-alabaster/10 bg-alabaster/5 p-4 text-sm text-alabaster/70">
-            Collections are managed under Home → Collections.
+            Collections (including up to 4 texture images each) are managed here:
             <button
               onClick={() => router.push("/admin/collections")}
               className="ml-2 underline hover:text-brass"
             >
-              Go to Collections
+              Open Collections Manager
             </button>
           </div>
         )}
