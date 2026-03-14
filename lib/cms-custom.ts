@@ -356,17 +356,32 @@ export async function getAllCollections() {
         id: idx + 1,
         title: data.title,
         slug,
-        hero_image_url:
-          data.heroImageUrl ||
-          data.heroImage ||
-          getExistingLocalTextureUrls(slug)[0] ||
-          defaultCollectionImage,
+        hero_image_url: (() => {
+          const merged = Array.from(
+            new Set([
+              ...normalizeImageUrls(data.imageUrls),
+              ...normalizeImageUrls(data.image_urls),
+              ...getExistingLocalTextureUrls(slug),
+              ...(data.heroImageUrl ? [data.heroImageUrl] : []),
+              ...(data.heroImage ? [data.heroImage] : [])
+            ])
+          )
+            .filter(Boolean)
+            .slice(0, 4);
+          return merged[0] || defaultCollectionImage;
+        })(),
         image_urls: (() => {
-          const fromCamel = normalizeImageUrls(data.imageUrls);
-          if (fromCamel.length > 0) return fromCamel;
-          const fromSnake = normalizeImageUrls(data.image_urls);
-          if (fromSnake.length > 0) return fromSnake;
-          return data.heroImageUrl || data.heroImage ? [data.heroImageUrl || data.heroImage] : [];
+          return Array.from(
+            new Set([
+              ...normalizeImageUrls(data.imageUrls),
+              ...normalizeImageUrls(data.image_urls),
+              ...getExistingLocalTextureUrls(slug),
+              ...(data.heroImageUrl ? [data.heroImageUrl] : []),
+              ...(data.heroImage ? [data.heroImage] : [])
+            ])
+          )
+            .filter(Boolean)
+            .slice(0, 4);
         })(),
         short_description: data.shortDescription
       };

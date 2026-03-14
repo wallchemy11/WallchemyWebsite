@@ -31,8 +31,8 @@ A clean, intuitive content management system built specifically for Wallchemy. A
 ### Content Management
 - **Selected Work** - Curated work entries (title, description, image)
 - **Projects** - Individual project entries (title, location, area, images)
-- **Collections** - Texture collections (title, description, images)
-- **Material Library** - Ribbon items for homepage
+- **Textures** - Texture entries (title, description, up to 4 images)
+- **Material Collections** - Homepage material ribbon items
 
 ## How It Works
 
@@ -47,9 +47,9 @@ A clean, intuitive content management system built specifically for Wallchemy. A
 3. Arrays (like CTAs, steps) can be added/removed easily
 4. Save changes - they appear immediately
 
-### Collections vs Material Library (separate areas)
-- **Collections** (**Admin → Collections**, linked from **Textures Page** editor): Full texture entries (title, slug, **up to 4 images**, description). These power the Textures page and homepage texture panels.
-- **Material Library** (**Admin → Material Library**): Items for the homepage horizontal ribbon (each with its own image). Independent from Collections.
+### Textures vs Material Collections (separate areas)
+- **Textures** (**Admin → Textures**, linked from **Textures Page** editor): Full texture entries (title, slug, **up to 4 images**, description). These power the Textures page and homepage texture panels.
+- **Material Collections** (**Admin → Material Library**): Items for the homepage horizontal ribbon (each with its own image). Independent from Textures.
 - **Database:** If you use Neon/Postgres, run the migration once to add `image_urls` to collections:  
   `psql $DATABASE_URL -f lib/db/migrations/add-collection-image-urls.sql`
 - **Local texture files:** Photos can also live in **`public/textures/<slug>/`**. Run **`node scripts/copy-texture-images.mjs`** to copy from a **Wallchemy Pictures** folder.
@@ -98,7 +98,7 @@ DATABASE_URL=postgresql://...  # Neon Postgres connection string
   /projects
     project-slug.json  # Individual projects
   /collections
-    collection-slug.json  # Individual collections
+    texture-slug.json     # Individual textures
   /selected-work
     work-slug.json        # Selected work entries
   /material-library
@@ -119,5 +119,5 @@ When ready to use Neon Postgres:
 - **Clear Descriptions**: Every field in the CMS has a description explaining what it controls
 - **Array Fields**: Use the "+ Add Item" button to add new items to arrays
 - **Homepage Selections**: Use the Home Page editor to select what appears on the homepage
-- **Projects/Collections**: Create them first, then feature them from the homepage
+- **Projects/Textures**: Create them first, then feature them from the homepage
 - **Video URLs**: Just paste R2 public URLs - no code changes needed

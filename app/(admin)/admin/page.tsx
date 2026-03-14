@@ -69,8 +69,18 @@ export default function AdminDashboard() {
   ];
 
   const homeManagement = [
-    { slug: "collections", label: "Collections", description: "Manage collections used on Home + Textures", href: "/admin/collections" },
-    { slug: "material-library", label: "Material Library", description: "Homepage ribbon items", href: "/admin/material-library" }
+    {
+      slug: "textures",
+      label: "Textures",
+      description: "Manage texture items (up to 4 images each) used in Home + Textures page",
+      href: "/admin/textures"
+    },
+    {
+      slug: "material-library",
+      label: "Material Collections",
+      description: "Homepage Material Library ribbon items",
+      href: "/admin/material-library"
+    }
   ];
 
   const projectManagement = [

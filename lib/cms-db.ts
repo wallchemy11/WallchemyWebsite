@@ -359,7 +359,26 @@ export async function getAllProjects() {
 }
 
 export async function getAllCollections() {
-  return getAllCollectionsFromDb();
+  const rows = await getAllCollectionsFromDb();
+  return rows.map((row: any) => {
+    const slug = row?.slug || "";
+    const parsed = normalizeImageUrls(row?.image_urls);
+    const local = getExistingLocalTextureUrls(slug);
+    const merged = Array.from(
+      new Set([
+        ...parsed,
+        ...local,
+        ...(row?.hero_image_url ? [row.hero_image_url] : [])
+      ])
+    )
+      .filter(Boolean)
+      .slice(0, 4);
+    return {
+      ...row,
+      hero_image_url: merged[0] || row?.hero_image_url || FALLBACK_IMAGE,
+      image_urls: merged
+    };
+  });
 }
 
 export async function getAllSelectedWork() {

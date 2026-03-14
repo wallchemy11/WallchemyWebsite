@@ -40,27 +40,40 @@ function normalizeImageUrls(raw: unknown): string[] {
 export default function CollectionsPage() {
   const router = useRouter();
   const [collections, setCollections] = useState<any[]>([]);
+  const [homeData, setHomeData] = useState<any>(null);
+  const [featuredTextureSlugs, setFeaturedTextureSlugs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<number | null>(null);
   const [formData, setFormData] = useState<any>({ imageUrls: [] });
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
+  const [updatingFeaturedSlug, setUpdatingFeaturedSlug] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState("");
 
   useEffect(() => {
-    loadCollections();
+    loadCollectionsAndHomeState();
   }, []);
 
-  async function loadCollections() {
+  async function loadCollectionsAndHomeState() {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/data?page=collections-list");
-      if (res.status === 401) {
+      const [collectionsRes, homeRes] = await Promise.all([
+        fetch("/api/admin/data?page=collections-list"),
+        fetch("/api/admin/data?page=home")
+      ]);
+      if (collectionsRes.status === 401 || homeRes.status === 401) {
         router.push("/admin/login");
         return;
       }
-      if (res.ok) {
-        const data = await res.json();
+      if (collectionsRes.ok) {
+        const data = await collectionsRes.json();
         setCollections(Array.isArray(data) ? data : []);
+      }
+      if (homeRes.ok) {
+        const home = await homeRes.json();
+        setHomeData(home);
+        setFeaturedTextureSlugs(
+          Array.isArray(home?.textureHighlightSlugs) ? home.textureHighlightSlugs : []
+        );
       }
     } catch (error) {
       console.error("Error loading collections:", error);
@@ -79,7 +92,7 @@ export default function CollectionsPage() {
       if (res.ok) {
         setEditing(null);
         setFormData({});
-        loadCollections();
+        loadCollectionsAndHomeState();
       }
     } catch (error) {
       console.error("Error saving collection:", error);
@@ -125,10 +138,36 @@ export default function CollectionsPage() {
     try {
       const res = await fetch(`/api/admin/collections?id=${id}`, { method: "DELETE" });
       if (res.ok) {
-        loadCollections();
+        loadCollectionsAndHomeState();
       }
     } catch (error) {
       console.error("Error deleting collection:", error);
+    }
+  }
+
+  async function toggleHomepageTexture(slug: string) {
+    if (!homeData) return;
+    const current = featuredTextureSlugs;
+    const next = current.includes(slug)
+      ? current.filter((item) => item !== slug)
+      : [...current, slug];
+    setFeaturedTextureSlugs(next);
+    setUpdatingFeaturedSlug(slug);
+    try {
+      const res = await fetch("/api/admin/data?page=home", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...homeData, textureHighlightSlugs: next })
+      });
+      if (!res.ok) {
+        setFeaturedTextureSlugs(current);
+        return;
+      }
+      setHomeData((prev: any) => ({ ...(prev || {}), textureHighlightSlugs: next }));
+    } catch {
+      setFeaturedTextureSlugs(current);
+    } finally {
+      setUpdatingFeaturedSlug(null);
     }
   }
 
@@ -145,10 +184,10 @@ export default function CollectionsPage() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold sm:text-3xl">Collections Management</h1>
+            <h1 className="text-2xl font-bold sm:text-3xl">Textures Management</h1>
             <p className="mt-2 text-sm text-alabaster/60">
-              Manage texture collections for the Textures page. Homepage featured collections
-              and Material Library selections are curated separately.
+              Manage texture entries used on the Textures page and homepage texture showcase.
+              Each texture supports up to 4 images.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -159,7 +198,7 @@ export default function CollectionsPage() {
               }}
               className="rounded bg-brass px-4 py-2 text-sm font-semibold text-ink"
             >
-              + New Collection
+              + New Texture
             </button>
             <button
               onClick={() => router.push("/admin")}
@@ -170,10 +209,16 @@ export default function CollectionsPage() {
           </div>
         </div>
 
+        <div className="mb-6 rounded-lg border border-alabaster/10 bg-alabaster/5 p-4 text-sm text-alabaster/70">
+          Choose which textures appear on homepage from this screen using the
+          <span className="mx-1 font-semibold text-brass">Show on Homepage</span>
+          toggle.
+        </div>
+
         {editing !== null && (
           <div className="mb-8 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
             <h2 className="mb-4 text-xl font-semibold">
-              {editing === -1 ? "New Collection" : "Edit Collection"}
+              {editing === -1 ? "New Texture" : "Edit Texture"}
             </h2>
             <div className="space-y-4">
               <div>
@@ -285,7 +330,17 @@ export default function CollectionsPage() {
                 <h3 className="font-semibold">{collection.title || collection.slug}</h3>
                 <p className="text-sm text-alabaster/60">{collection.short_description}</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex items-center gap-3">
+                <label className="inline-flex items-center gap-2 rounded border border-alabaster/20 px-3 py-2 text-xs text-alabaster/80">
+                  <input
+                    type="checkbox"
+                    checked={featuredTextureSlugs.includes(collection.slug)}
+                    onChange={() => toggleHomepageTexture(collection.slug)}
+                    disabled={updatingFeaturedSlug === collection.slug}
+                    className="h-4 w-4 accent-brass"
+                  />
+                  {updatingFeaturedSlug === collection.slug ? "Saving..." : "Show on Homepage"}
+                </label>
                 <button
                   onClick={() => {
                     const urls = normalizeImageUrls(collection.image_urls);

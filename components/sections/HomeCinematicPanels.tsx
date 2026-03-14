@@ -24,7 +24,7 @@ export default function HomeCinematicPanels({
   const panelRefs = useRef<HTMLDivElement[]>([]);
   const { shouldAnimate } = useMotionPrefs();
   const [failedImages, setFailedImages] = useState<Record<string, true>>({});
-  const items = useMemo(() => panels.slice(0, 3), [panels]);
+  const items = useMemo(() => panels.filter(Boolean), [panels]);
 
   const isVisible = (key: string) => !failedImages[key];
   const markFailed = (key: string) =>

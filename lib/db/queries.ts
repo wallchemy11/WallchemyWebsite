@@ -13,6 +13,26 @@ function jsonStringify(value: any) {
   return JSON.stringify(value);
 }
 
+let collectionImageUrlsColumnReady = false;
+
+async function ensureCollectionImageUrlsColumn(db: any) {
+  if (collectionImageUrlsColumnReady) return;
+  await db.query(
+    `ALTER TABLE collections
+     ADD COLUMN IF NOT EXISTS image_urls JSONB DEFAULT '[]'::jsonb`,
+    []
+  );
+  await db.query(
+    `UPDATE collections
+     SET image_urls = jsonb_build_array(hero_image_url)
+     WHERE hero_image_url IS NOT NULL
+       AND hero_image_url != ''
+       AND (image_urls IS NULL OR image_urls = '[]'::jsonb)`,
+    []
+  );
+  collectionImageUrlsColumnReady = true;
+}
+
 function normalizeImageUrls(raw: unknown): string[] {
   if (Array.isArray(raw)) {
     return raw
@@ -149,10 +169,14 @@ export async function setFeaturedProjects(projectIds: number[]) {
 
 // Collections
 export async function getAllCollections() {
+  const db = getDb();
+  await ensureCollectionImageUrlsColumn(db);
   return await queryRows("SELECT * FROM collections ORDER BY display_order ASC, created_at DESC", []);
 }
 
 export async function getFeaturedCollections() {
+  const db = getDb();
+  await ensureCollectionImageUrlsColumn(db);
   return await queryRows(
     `SELECT c.* FROM collections c
      INNER JOIN home_featured_collections hfc ON c.id = hfc.collection_id
@@ -180,11 +204,12 @@ export async function saveCollection(data: {
   shortDescription?: string;
   displayOrder?: number;
 }) {
+  const db = getDb();
+  await ensureCollectionImageUrlsColumn(db);
   const normalizedImageUrls = normalizeImageUrls(data.imageUrls);
   const imageUrlsJson = jsonStringify(normalizedImageUrls);
   const firstImage = normalizedImageUrls[0] || data.heroImageUrl || null;
   if (data.id) {
-    const db = getDb();
     await db.query(
       `UPDATE collections SET
        title = $1, slug = $2, hero_image_url = $3, image_urls = $4, short_description = $5, display_order = $6, updated_at = NOW()

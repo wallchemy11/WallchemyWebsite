@@ -394,20 +394,20 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
     },
     {
       key: "collectionsHeading.eyebrow",
-      label: "Collections Eyebrow",
-      description: "Label above the collections list",
+      label: "Textures Eyebrow",
+      description: "Label above the textures list",
       type: "text"
     },
     {
       key: "collectionsHeading.subtitle",
-      label: "Collections Subtitle",
-      description: "Subtitle above the collections list",
+      label: "Textures Subtitle",
+      description: "Subtitle above the textures list",
       type: "text"
     },
     {
       key: "collectionsHeading.supportText",
-      label: "Collections Supporting Text",
-      description: "Supporting text shown alongside the vertical texture scroller",
+      label: "Textures Supporting Text",
+      description: "Supporting text shown alongside the vertical textures scroller",
       type: "textarea"
     },
     {
@@ -1002,7 +1002,7 @@ export default function EditPage() {
       if (key.startsWith("hero") || key === "title" || key === "intro") return "Hero";
       if (key.startsWith("divider")) return "Divider";
       if (key.startsWith("collectionsHeading") || key.startsWith("defaultCollection"))
-        return "Collections";
+        return "Textures";
     }
     if (pageKey === "process") {
       if (key.startsWith("hero") || key === "title" || key === "intro") return "Hero";
@@ -1092,14 +1092,14 @@ export default function EditPage() {
             {field.arrayItemType === "collection" && (
               <div className="mb-4 rounded-lg border border-alabaster/10 bg-alabaster/5 p-4">
                 <p className="text-sm text-alabaster/70">
-                  💡 <strong>Tip:</strong> Manage collections under{" "}
+                  💡 <strong>Tip:</strong> Manage textures under{" "}
                   <button
-                    onClick={() => router.push("/admin/collections")}
+                    onClick={() => router.push("/admin/textures")}
                     className="underline hover:text-brass"
                   >
-                    Home → Collections
+                    Home → Textures
                   </button>
-                  . Collections will appear here automatically.
+                  . Texture entries will appear here automatically.
                 </p>
               </div>
             )}
@@ -1425,7 +1425,7 @@ export default function EditPage() {
                 }
                 className="rounded border border-alabaster/20 px-3 py-1 text-xs hover:bg-alabaster/10"
               >
-                Featured Collections
+                Featured Textures
               </button>
               <button
                 onClick={() =>
@@ -1459,19 +1459,19 @@ export default function EditPage() {
               </button>
             </div>
             <p className="mt-3 text-xs text-alabaster/60">
-              Collections and Material Library live under Home. Selected Work lives under Projects.
+              Textures and Material Collections live under Home. Selected Work lives under Projects.
             </p>
           </div>
         )}
 
         {page === "textures" && (
           <div className="mb-6 rounded-lg border border-alabaster/10 bg-alabaster/5 p-4 text-sm text-alabaster/70">
-            Collections (including up to 4 texture images each) are managed here:
+            Textures (including up to 4 images each) are managed here:
             <button
-              onClick={() => router.push("/admin/collections")}
+              onClick={() => router.push("/admin/textures")}
               className="ml-2 underline hover:text-brass"
             >
-              Open Collections Manager
+              Open Textures Manager
             </button>
           </div>
         )}
@@ -1496,21 +1496,21 @@ export default function EditPage() {
           >
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-xl font-semibold">Featured Collections (Homepage)</h2>
+                <h2 className="text-xl font-semibold">Featured Textures (Homepage)</h2>
                 <p className="text-sm text-alabaster/60">
-                  Select which collections appear in the homepage panels and dividers.
+                  Select which textures appear in the homepage panels and dividers.
                 </p>
               </div>
               <button
-                onClick={() => router.push("/admin/collections")}
+                onClick={() => router.push("/admin/textures")}
                 className="rounded border border-alabaster/20 px-4 py-2 text-sm hover:bg-alabaster/10"
               >
-                Manage Collections
+                Manage Textures
               </button>
             </div>
             {collections.length === 0 ? (
               <p className="text-sm text-alabaster/60">
-                No collections yet. Add collections first, then feature them here.
+                No textures yet. Add textures first, then feature them here.
               </p>
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
