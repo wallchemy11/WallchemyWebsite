@@ -7,6 +7,7 @@ type VideoHeroProps = {
   videoSrc: string;
   mobileVideoSrc?: string;
   poster?: string;
+  priorityVideo?: boolean;
 };
 
 export default function VideoHero({
@@ -14,7 +15,8 @@ export default function VideoHero({
   subheadline,
   videoSrc,
   mobileVideoSrc,
-  poster
+  poster,
+  priorityVideo = false
 }: VideoHeroProps) {
   return (
     <section className="relative min-h-[62svh] overflow-hidden sm:min-h-[68svh] md:min-h-[90vh]">
@@ -22,6 +24,7 @@ export default function VideoHero({
         src={videoSrc}
         mobileSrc={mobileVideoSrc}
         poster={poster}
+        priority={priorityVideo}
         className="absolute inset-0"
       />
       <div

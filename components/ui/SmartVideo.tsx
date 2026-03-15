@@ -7,7 +7,49 @@ type SmartVideoProps = {
   poster?: string;
   className?: string;
   mobileSrc?: string;
+  priority?: boolean;
 };
+
+declare global {
+  interface Window {
+    Hls?: any;
+    __hlsLibPromise?: Promise<any>;
+  }
+}
+
+function isHlsManifest(url: string) {
+  return /\.m3u8(?:[?#].*)?$/i.test(url);
+}
+
+async function loadHlsLibrary() {
+  if (typeof window === "undefined") return null;
+  if (window.Hls) return window.Hls;
+  if (!window.__hlsLibPromise) {
+    window.__hlsLibPromise = new Promise((resolve, reject) => {
+      const existingScript = document.querySelector(
+        'script[data-hls-lib="true"]'
+      ) as HTMLScriptElement | null;
+      if (existingScript) {
+        existingScript.addEventListener("load", () => resolve(window.Hls || null), {
+          once: true
+        });
+        existingScript.addEventListener("error", () => reject(new Error("Failed to load hls.js")), {
+          once: true
+        });
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js";
+      script.async = true;
+      script.dataset.hlsLib = "true";
+      script.onload = () => resolve(window.Hls || null);
+      script.onerror = () => reject(new Error("Failed to load hls.js"));
+      document.head.appendChild(script);
+    });
+  }
+  return window.__hlsLibPromise;
+}
 
 function useInView<T extends HTMLElement>(options?: IntersectionObserverInit) {
   const ref = useRef<T | null>(null);
@@ -30,7 +72,8 @@ export default function SmartVideo({
   src,
   mobileSrc,
   poster,
-  className
+  className,
+  priority = false
 }: SmartVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { ref: containerRef, inView } = useInView<HTMLDivElement>({
@@ -39,6 +82,17 @@ export default function SmartVideo({
   const [shouldLoad, setShouldLoad] = useState(false);
   const [selectedSrc, setSelectedSrc] = useState(src);
   const [canStreamVideo, setCanStreamVideo] = useState(true);
+  const [isPageVisible, setIsPageVisible] = useState(true);
+  const selectedSrcIsHls = isHlsManifest(selectedSrc);
+
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      setIsPageVisible(document.visibilityState === "visible");
+    };
+    onVisibilityChange();
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", onVisibilityChange);
+  }, []);
 
   useEffect(() => {
     const mobile = window.matchMedia("(max-width: 767px)");
@@ -49,8 +103,13 @@ export default function SmartVideo({
       const lowBandwidth =
         typeof connection?.effectiveType === "string" &&
         /(2g|slow-2g|3g)/i.test(connection.effectiveType);
-      setSelectedSrc(mobile.matches && mobileSrc ? mobileSrc : src);
-      setCanStreamVideo(!reducedMotion.matches && !saveData && !lowBandwidth);
+      const nextSrc = mobile.matches && mobileSrc ? mobileSrc : src;
+      const nextCanStream = !reducedMotion.matches && !saveData && !lowBandwidth;
+      setSelectedSrc(nextSrc);
+      setCanStreamVideo(nextCanStream);
+      if (priority && nextCanStream) {
+        setShouldLoad(true);
+      }
     };
     update();
     mobile.addEventListener("change", update);
@@ -59,24 +118,79 @@ export default function SmartVideo({
       mobile.removeEventListener("change", update);
       reducedMotion.removeEventListener("change", update);
     };
-  }, [src, mobileSrc]);
+  }, [src, mobileSrc, priority]);
 
   useEffect(() => {
-    if (canStreamVideo && inView) {
+    if (canStreamVideo && (priority || inView)) {
       setShouldLoad(true);
     }
-  }, [inView, canStreamVideo]);
+  }, [inView, canStreamVideo, priority]);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !shouldLoad) return;
+    if (!video) return;
+    if (!shouldLoad || !canStreamVideo || !selectedSrcIsHls) return;
+
+    let cancelled = false;
+    let teardown = () => {};
+
+    const attachNativeHls = () => {
+      video.src = selectedSrc;
+      video.load();
+      teardown = () => {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+      };
+    };
+
+    const canPlayNativeHls = Boolean(
+      video.canPlayType("application/vnd.apple.mpegurl") ||
+        video.canPlayType("application/x-mpegURL")
+    );
+
+    if (canPlayNativeHls) {
+      attachNativeHls();
+      return () => teardown();
+    }
+
+    loadHlsLibrary()
+      .then((HlsCtor) => {
+        if (cancelled || !video) return;
+        if (HlsCtor?.isSupported?.()) {
+          const hls = new HlsCtor({
+            enableWorker: true,
+            lowLatencyMode: true
+          });
+          hls.loadSource(selectedSrc);
+          hls.attachMedia(video);
+          teardown = () => {
+            hls.destroy();
+          };
+        } else {
+          attachNativeHls();
+        }
+      })
+      .catch(() => {
+        if (!cancelled) attachNativeHls();
+      });
+
+    return () => {
+      cancelled = true;
+      teardown();
+    };
+  }, [selectedSrc, shouldLoad, canStreamVideo, selectedSrcIsHls]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !shouldLoad || !canStreamVideo) return;
 
     if (!inView) {
       video.pause();
       return;
     }
 
-    if (document.visibilityState !== "visible") {
+    if (!isPageVisible) {
       video.pause();
       return;
     }
@@ -87,7 +201,7 @@ export default function SmartVideo({
         // Autoplay can be blocked; we silently ignore and keep poster visible.
       });
     }
-  }, [inView, shouldLoad, selectedSrc]);
+  }, [inView, shouldLoad, selectedSrc, canStreamVideo, isPageVisible]);
 
   return (
     <div ref={containerRef} className={className}>
@@ -97,11 +211,13 @@ export default function SmartVideo({
         muted
         loop
         playsInline
-        preload="none"
+        preload={priority ? "metadata" : "none"}
         poster={poster}
         aria-hidden="true"
       >
-        {shouldLoad ? <source src={selectedSrc} /> : null}
+        {shouldLoad && !selectedSrcIsHls ? (
+          <source src={selectedSrc} type="video/mp4" />
+        ) : null}
       </video>
     </div>
   );

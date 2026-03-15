@@ -24,6 +24,16 @@ type FieldConfig = {
   options?: Array<{ label: string; value: string }>;
 };
 
+const HERO_VIDEO_MOBILE_PAGES = new Set(["home", "about", "textures", "process", "contact"]);
+
+function isDirectMp4Url(value: string) {
+  return /\.mp4(?:[?#].*)?$/i.test(value);
+}
+
+function isCloudflareWatchUrl(value: string) {
+  return /watch\.cloudflarestream\.com/i.test(value);
+}
+
 const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
   home: [
     {
@@ -998,7 +1008,13 @@ export default function EditPage() {
         body: JSON.stringify(data)
       });
       if (res.ok) {
-        setMessage("Saved successfully!");
+        const payload = await res.json().catch(() => ({}));
+        const serverWarnings = Array.isArray(payload?.warnings) ? payload.warnings : [];
+        if (serverWarnings.length > 0) {
+          setMessage(`Saved with warnings: ${serverWarnings[0]}`);
+        } else {
+          setMessage("Saved successfully!");
+        }
         setInitialData(JSON.parse(JSON.stringify(data)));
         setTimeout(() => setMessage(""), 3000);
       } else {
@@ -1155,6 +1171,24 @@ export default function EditPage() {
         ) {
           warnings.push(`${field.label} must be a direct .mp4 URL (YouTube/Vimeo not supported).`);
         }
+        if (
+          field.key.toLowerCase().includes("herovideo") &&
+          typeof value === "string" &&
+          isCloudflareWatchUrl(value)
+        ) {
+          warnings.push(
+            `${field.label} uses a Cloudflare watch URL. Use a direct media URL for background playback.`
+          );
+        }
+        if (
+          field.key.toLowerCase().includes("herovideo") &&
+          typeof value === "string" &&
+          isDirectMp4Url(value)
+        ) {
+          warnings.push(
+            `${field.label} is a direct MP4. Keep it short/compressed (desktop under ~12MB, mobile under ~8MB).`
+          );
+        }
       }
       if (field.type === "media" && !value) {
         warnings.push(`${field.label} is missing.`);
@@ -1167,6 +1201,17 @@ export default function EditPage() {
         });
       }
     });
+    if (HERO_VIDEO_MOBILE_PAGES.has(page)) {
+      const desktopHero = getNestedValue(data, "heroVideo");
+      const mobileHero = getNestedValue(data, "heroVideoMobile");
+      if (
+        typeof desktopHero === "string" &&
+        desktopHero.trim().length > 0 &&
+        (!mobileHero || String(mobileHero).trim().length === 0)
+      ) {
+        warnings.push("Hero Video URL (Mobile) is missing. Add a lighter mobile source for faster phone loads.");
+      }
+    }
     return warnings;
   }
 
@@ -1495,8 +1540,17 @@ export default function EditPage() {
             {field.type === "url" &&
             field.key.toLowerCase().includes("herovideo") ? (
               <p className="mt-2 text-xs text-alabaster/50">
-                Use a direct `.mp4` link (YouTube/Vimeo links will not play as a
-                background video).
+                Use a direct media URL (`.mp4` or `.m3u8`). Do not use YouTube/Vimeo
+                or `watch.cloudflarestream.com` page links.
+              </p>
+            ) : null}
+            {field.type === "url" &&
+            field.key.toLowerCase().includes("herovideo") &&
+            typeof value === "string" &&
+            isDirectMp4Url(value) ? (
+              <p className="mt-2 text-xs text-amber-300/90">
+                Direct MP4 detected. For fast hero load, keep desktop around 8-12MB and
+                mobile around 4-8MB.
               </p>
             ) : null}
             {field.type === "url" && value ? (

@@ -26,6 +26,58 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 export const fetchCache = "force-no-store";
 
+const PAGES_WITH_HERO_VIDEO = new Set([
+  "home",
+  "about",
+  "textures",
+  "process",
+  "contact"
+]);
+
+function collectHeroVideoWarnings(page: string, payload: any) {
+  const warnings: string[] = [];
+  if (!PAGES_WITH_HERO_VIDEO.has(page) || !payload || typeof payload !== "object") {
+    return warnings;
+  }
+
+  const heroVideo =
+    typeof payload.heroVideo === "string" ? payload.heroVideo.trim() : "";
+  const heroVideoMobile =
+    typeof payload.heroVideoMobile === "string" ? payload.heroVideoMobile.trim() : "";
+
+  if (heroVideo && !heroVideoMobile) {
+    warnings.push(
+      "Hero Video URL (Mobile) is missing. Add a lighter mobile video to improve load time on phones."
+    );
+  }
+
+  if (heroVideo && /\.mp4(?:[?#].*)?$/i.test(heroVideo)) {
+    warnings.push(
+      "Desktop hero uses a direct MP4 URL. Keep it short and compressed (ideally under 12MB) for faster first play."
+    );
+  }
+
+  if (heroVideoMobile && /\.mp4(?:[?#].*)?$/i.test(heroVideoMobile)) {
+    warnings.push(
+      "Mobile hero uses a direct MP4 URL. Use a dedicated low-bitrate export (720/900p, ~1-2 Mbps)."
+    );
+  }
+
+  if (/watch\.cloudflarestream\.com/i.test(heroVideo)) {
+    warnings.push(
+      "Cloudflare watch-page URLs do not work as background video sources. Use a direct media URL."
+    );
+  }
+
+  if (/watch\.cloudflarestream\.com/i.test(heroVideoMobile)) {
+    warnings.push(
+      "Cloudflare watch-page URLs do not work for mobile hero videos. Use a direct media URL."
+    );
+  }
+
+  return warnings;
+}
+
 export async function GET(req: NextRequest) {
   if (!(await verifyAuth())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -90,6 +142,7 @@ export async function POST(req: NextRequest) {
   const data = await req.json();
 
   let success = false;
+  let warnings: string[] = [];
   try {
     switch (page) {
       case "home":
@@ -116,12 +169,13 @@ export async function POST(req: NextRequest) {
       default:
         return NextResponse.json({ error: "Invalid page" }, { status: 400 });
     }
+    warnings = collectHeroVideoWarnings(page, data);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
   if (success) {
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, warnings });
   }
   return NextResponse.json({ error: "Failed to save" }, { status: 500 });
 }
