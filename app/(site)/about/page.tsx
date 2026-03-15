@@ -5,6 +5,7 @@ import StudioValues from "@/components/sections/StudioValues";
 import CinematicDivider from "@/components/sections/CinematicDivider";
 import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
+import { hexToRgbChannels } from "@/lib/color";
 
 export async function generateMetadata() {
   const about = await getAboutPage();
@@ -13,9 +14,12 @@ export async function generateMetadata() {
 
 export default async function AboutPage() {
   const about = await getAboutPage();
+  const pageStyle = {
+    ["--color-ink" as any]: hexToRgbChannels(about.backgroundColor, "11 10 9")
+  };
 
   return (
-    <>
+    <div style={pageStyle}>
       <VideoHero
         headline="About Wallchemy"
         subheadline={about.intro}
@@ -47,7 +51,7 @@ export default async function AboutPage() {
         title={about.valuesHeading?.title}
         values={about.studioValues}
       />
-    </>
+    </div>
   );
 }
 

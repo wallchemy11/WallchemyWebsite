@@ -149,10 +149,10 @@ export default function HomeCinematicPanels({
               </div>
               <div className="mt-5">
                 <p className="text-[10px] uppercase tracking-[0.25em] text-brass">
-                  Curated Finish
+                  Top Finishes
                 </p>
                 <h2 className="font-display mt-2 text-[1.7rem]">{panel.title}</h2>
-                <p className="mt-2 text-[11px] uppercase tracking-[0.12em] text-alabaster/70">
+                <p className="mt-2 whitespace-pre-line text-[11px] uppercase tracking-[0.12em] text-alabaster/70">
                   {panel.shortDescription}
                 </p>
               </div>
@@ -265,12 +265,12 @@ export default function HomeCinematicPanels({
             <div className="absolute inset-0 flex items-end">
               <div className="mx-auto w-full max-w-6xl px-5 pb-12 sm:px-6 sm:pb-16 md:pb-20">
                 <p className="text-[10px] uppercase tracking-[0.25em] text-brass sm:text-xs sm:tracking-[0.4em]">
-                  Curated Finish
+                  Top Finishes
                 </p>
                 <h2 className="font-display mt-3 text-[1.8rem] sm:text-3xl md:text-5xl">
                   {panel.title}
                 </h2>
-                <p className="mt-2 max-w-2xl text-[11px] uppercase tracking-[0.12em] text-alabaster/70 sm:mt-3 sm:text-sm sm:tracking-[0.18em] md:tracking-[0.2em]">
+                <p className="mt-2 max-w-2xl whitespace-pre-line text-[11px] uppercase tracking-[0.12em] text-alabaster/70 sm:mt-3 sm:text-sm sm:tracking-[0.18em] md:tracking-[0.2em]">
                   {panel.shortDescription}
                 </p>
               </div>

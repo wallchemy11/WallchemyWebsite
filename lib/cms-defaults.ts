@@ -79,6 +79,7 @@ const defaultMaterialLibraryItems = [
 
 export const defaultHomePage = {
   title: "Wallchemy",
+  backgroundColor: "#0b0a09",
   heroHeadline: "Turning Walls into Experiences",
   heroSubheadline:
     "A luxury texture and surface studio crafting immersive environments.",
@@ -88,6 +89,8 @@ export const defaultHomePage = {
     "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=2000&q=80",
   introText:
     "Wallchemy is a luxury texture and surface studio that transforms walls and ceilings into immersive design experiences. Rooted in artisanal craft and precision-led execution, we treat surfaces as the emotional representation of a design philosophy.",
+  manifestoImage:
+    "https://images.unsplash.com/photo-1523419409543-0c1f7a2d3f67?auto=format&fit=crop&w=2000&q=80",
   manifesto: {
     eyebrow: "What makes us different",
     title: "What makes us different",
@@ -129,7 +132,7 @@ export const defaultHomePage = {
     "Ready to craft a surface story? Our team curates bespoke finishes for hospitality, retail, and private residences.",
   ribbonHeading: {
     eyebrow: "Material Library",
-    title: "A continuous ribbon of curated finishes."
+    title: "A continuous ribbon of top finishes."
   },
   selectedWorkDivider: {
     eyebrow: "Selected Work",
@@ -162,6 +165,7 @@ export const defaultHomePage = {
 
 export const defaultAboutPage = {
   title: "About Wallchemy",
+  backgroundColor: "#0b0a09",
   intro:
     "Wallchemy is a luxury texture and surface studio that transforms walls and ceilings into immersive design experiences.",
   heroVideo: "https://www.w3schools.com/html/mov_bbb.mp4",
@@ -206,6 +210,7 @@ export const defaultAboutPage = {
 
 export const defaultTexturesPage = {
   title: "Textures & Collections",
+  backgroundColor: "#0b0a09",
   intro:
     "We bring global textures, materials, and techniques to the Indian design landscape, translating artistic intent into flawlessly executed surfaces.",
   heroVideo: "https://media.w3.org/2010/05/bunny/trailer.mp4",
@@ -216,7 +221,7 @@ export const defaultTexturesPage = {
     "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=2000&q=80",
   divider: {
     eyebrow: "Material Library",
-    title: "Curated finishes with material depth.",
+    title: "Top finishes with material depth.",
     subtitle: "Macro textures and architectural visuals designed for immersive interiors."
   },
   craftsmanship: {
@@ -241,6 +246,7 @@ export const defaultTexturesPage = {
 
 export const defaultProcessPage = {
   title: "How We Work",
+  backgroundColor: "#0b0a09",
   intro:
     "A considered sequence of collaboration and craft, tailored to each project.",
   heroVideo:
@@ -298,6 +304,7 @@ export const defaultProcessPage = {
 
 export const defaultProjectsPage = {
   title: "Selected Projects",
+  backgroundColor: "#0b0a09",
   intro:
     "Large-scale environments where texture becomes memory, light, and ritual.",
   heroVideo: "https://media.w3.org/2010/05/video/movie_300.mp4",
@@ -330,6 +337,7 @@ export const defaultProjectsPage = {
 
 export const defaultContactPage = {
   title: "Contact",
+  backgroundColor: "#0b0a09",
   intro:
     "Start a conversation about bespoke surfaces and immersive finishes.",
   heroVideo: "https://media.w3.org/2010/05/sintel/trailer.mp4",
@@ -375,5 +383,14 @@ export const defaultSiteSettings = {
     brass: "#c9a66b",
     smoke: "#8c877f",
     ember: "#a5744f"
+  },
+  typography: {
+    displayFont: "playfair",
+    bodyFont: "inter",
+    textColor: "#f2ede4"
+  },
+  heroOverlay: {
+    color: "#0b0a09",
+    opacity: 0.55
   }
 };

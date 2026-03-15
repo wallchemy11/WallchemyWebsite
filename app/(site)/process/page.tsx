@@ -4,6 +4,7 @@ import ProcessNarrative from "@/components/sections/ProcessNarrative";
 import CinematicDivider from "@/components/sections/CinematicDivider";
 import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
+import { hexToRgbChannels } from "@/lib/color";
 
 export async function generateMetadata() {
   const processPage = await getProcessPage();
@@ -12,9 +13,15 @@ export async function generateMetadata() {
 
 export default async function ProcessPage() {
   const processPage = await getProcessPage();
+  const pageStyle = {
+    ["--color-ink" as any]: hexToRgbChannels(
+      processPage.backgroundColor,
+      "11 10 9"
+    )
+  };
 
   return (
-    <>
+    <div style={pageStyle}>
       <VideoHero
         headline="How We Work"
         subheadline={processPage.intro}
@@ -34,7 +41,7 @@ export default async function ProcessPage() {
         subtitle={processPage.narrativeHeading?.subtitle}
         steps={processPage.steps}
       />
-    </>
+    </div>
   );
 }
 

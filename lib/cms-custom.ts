@@ -301,6 +301,15 @@ export async function getSiteSettings() {
     smoke: "#8c877f",
     ember: "#a5744f"
   };
+  settings.typography = settings.typography || {
+    displayFont: "playfair",
+    bodyFont: "inter",
+    textColor: settings.palette.alabaster || "#f2ede4"
+  };
+  settings.heroOverlay = settings.heroOverlay || {
+    color: settings.palette.ink || "#0b0a09",
+    opacity: 0.55
+  };
   return settings;
 }
 

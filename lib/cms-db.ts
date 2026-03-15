@@ -350,7 +350,11 @@ export async function saveContactPage(data: any) {
 }
 
 export async function saveSiteSettings(data: any) {
-  await saveSiteSettingsToDb({ palette: data?.palette || {} });
+  await saveSiteSettingsToDb({
+    palette: data?.palette || {},
+    typography: data?.typography || {},
+    heroOverlay: data?.heroOverlay || {}
+  });
   return true;
 }
 

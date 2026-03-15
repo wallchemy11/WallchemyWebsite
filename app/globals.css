@@ -9,6 +9,10 @@
   --color-brass: 201 166 107;
   --color-smoke: 140 135 127;
   --color-ember: 165 116 79;
+  --font-display: var(--font-display-playfair);
+  --font-sans: var(--font-sans-inter);
+  --hero-overlay-rgb: 11 10 9;
+  --hero-overlay-opacity: 0.55;
 }
 
 html {

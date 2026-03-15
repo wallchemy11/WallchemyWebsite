@@ -86,7 +86,7 @@ export default function EditorialManifesto({
   }, [shouldAnimate]);
 
   return (
-    <section ref={containerRef} className="bg-ink py-16 sm:py-20 md:py-24">
+    <section ref={containerRef} className="bg-ink pt-6 pb-16 sm:pt-8 sm:pb-20 md:pt-10 md:pb-24">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 md:gap-12 md:grid-cols-[0.9fr_1.1fr]">
         <div ref={pinRef} className="space-y-6 self-start">
           <p className="text-[11px] uppercase tracking-[0.3em] text-brass sm:text-xs sm:tracking-[0.45em]">
@@ -95,7 +95,7 @@ export default function EditorialManifesto({
           <h2 className="font-display text-3xl font-medium leading-tight sm:text-4xl md:text-6xl">
             {safeTitle}
           </h2>
-          <p className="text-sm uppercase tracking-[0.12em] text-alabaster/80 sm:text-base sm:tracking-[0.18em]">
+          <p className="whitespace-pre-line text-sm uppercase tracking-[0.12em] text-alabaster/80 sm:text-base sm:tracking-[0.18em]">
             {safeSubtitle}
           </p>
         </div>

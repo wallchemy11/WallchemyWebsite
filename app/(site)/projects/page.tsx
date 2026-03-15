@@ -6,6 +6,7 @@ import SelectedWorkGallery from "@/components/sections/SelectedWorkGallery";
 import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
 import type { ProjectsPageData } from "@/lib/types/projects";
+import { hexToRgbChannels } from "@/lib/color";
 
 export async function generateMetadata() {
   const projects = await getProjectsPage();
@@ -19,9 +20,12 @@ export default async function ProjectsPage() {
     selectedWorkItems?.[0]?.heroImage || projects.projects?.[0]?.heroImage,
     projects.heroPoster
   );
+  const pageStyle = {
+    ["--color-ink" as any]: hexToRgbChannels(projects.backgroundColor, "11 10 9")
+  };
 
   return (
-    <>
+    <div style={pageStyle}>
       <VideoHero
         headline="Projects / Portfolio"
         subheadline={projects.intro}
@@ -44,7 +48,7 @@ export default async function ProjectsPage() {
       {projects.projects?.length ? (
         <ProjectsGallery title={projects.title} projects={projects.projects} />
       ) : null}
-    </>
+    </div>
   );
 }
 

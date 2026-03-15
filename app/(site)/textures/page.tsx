@@ -5,6 +5,7 @@ import CinematicDivider from "@/components/sections/CinematicDivider";
 import CraftsmanshipSection from "@/components/sections/CraftsmanshipSection";
 import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
+import { hexToRgbChannels } from "@/lib/color";
 
 export async function generateMetadata() {
   const textures = await getTexturesPage();
@@ -13,9 +14,12 @@ export async function generateMetadata() {
 
 export default async function TexturesPage() {
   const textures = await getTexturesPage();
+  const pageStyle = {
+    ["--color-ink" as any]: hexToRgbChannels(textures.backgroundColor, "11 10 9")
+  };
 
   return (
-    <>
+    <div style={pageStyle}>
       <VideoHero
         headline="Textures"
         subheadline={textures.intro}
@@ -40,7 +44,7 @@ export default async function TexturesPage() {
         supportText={textures.collectionsHeading?.supportText}
         collections={textures.collections}
       />
-    </>
+    </div>
   );
 }
 

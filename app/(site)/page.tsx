@@ -7,10 +7,12 @@ import SplitText from "@/components/ui/SplitText";
 import TextureRibbon from "@/components/sections/TextureRibbon";
 import CinematicDivider from "@/components/sections/CinematicDivider";
 import HomeCinematicPanels from "@/components/sections/HomeCinematicPanels";
+import DramaticImageReveal from "@/components/sections/DramaticImageReveal";
 import { getContactPage, getHomePage } from "@/lib/cms";
 import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
 import { toWhatsAppHref } from "@/lib/whatsapp";
+import { hexToRgbChannels } from "@/lib/color";
 
 export async function generateMetadata() {
   const home = await getHomePage();
@@ -36,6 +38,10 @@ export default async function HomePage() {
   const hasMaterialLibrary = (home.materialLibrary || []).length > 0;
   const studioCraftImage = resolveImage(
     home.studioDividerImage,
+    resolveImage(home.textureHighlights?.[0]?.heroImage, home.heroPoster)
+  );
+  const manifestoImage = resolveImage(
+    home.manifestoImage,
     resolveImage(home.textureHighlights?.[0]?.heroImage, home.heroPoster)
   );
   const selectedWorkImage = hasSelectedWork
@@ -64,9 +70,12 @@ export default async function HomePage() {
       href: isWhatsapp ? whatsappHref : href
     };
   });
+  const pageStyle = {
+    ["--color-ink" as any]: hexToRgbChannels(home.backgroundColor, "11 10 9")
+  };
 
   return (
-    <>
+    <div style={pageStyle}>
       <VideoHero
         headline={home.heroHeadline}
         subheadline={home.heroSubheadline}
@@ -74,7 +83,7 @@ export default async function HomePage() {
         mobileVideoSrc={home.heroVideoMobile}
         poster={home.heroPoster}
       />
-      <section className="bg-ink py-20">
+      <section className="bg-ink pt-14 pb-3 sm:pt-16 sm:pb-4 md:pt-20 md:pb-6">
         <div className="mx-auto max-w-6xl px-6">
           <SplitText
             text={home.introText}
@@ -82,6 +91,7 @@ export default async function HomePage() {
           />
         </div>
       </section>
+      <DramaticImageReveal image={manifestoImage} alt="Why Wallchemy" />
       <EditorialManifesto
         eyebrow={home.manifesto?.eyebrow}
         title={home.manifesto?.title}
@@ -125,6 +135,6 @@ export default async function HomePage() {
           subtitle={featuredProjectsHeading?.subtitle}
         />
       ) : null}
-    </>
+    </div>
   );
 }

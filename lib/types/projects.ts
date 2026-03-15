@@ -11,6 +11,7 @@ export type Project = {
 
 export type ProjectsPageData = {
   title: string;
+  backgroundColor?: string;
   intro?: string;
   heroVideo: string;
   heroVideoMobile?: string;

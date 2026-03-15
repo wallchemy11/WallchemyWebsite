@@ -9,9 +9,19 @@ type FieldConfig = {
   key: string;
   label: string;
   description: string;
-  type: "text" | "textarea" | "url" | "array" | "object" | "media" | "color";
+  type:
+    | "text"
+    | "textarea"
+    | "url"
+    | "array"
+    | "object"
+    | "media"
+    | "color"
+    | "number"
+    | "select";
   arrayItemType?: "project" | "collection" | "cta" | "step" | "value" | "manifesto";
   mediaKind?: "image" | "video";
+  options?: Array<{ label: string; value: string }>;
 };
 
 const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
@@ -48,10 +58,23 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       mediaKind: "image"
     },
     {
+      key: "backgroundColor",
+      label: "Page Background Color",
+      description: "Background color applied across the Home page sections",
+      type: "color"
+    },
+    {
       key: "introText",
       label: "Intro Statement",
       description: "Large split-text statement below the hero",
       type: "textarea"
+    },
+    {
+      key: "manifestoImage",
+      label: "Why Wallchemy Feature Image",
+      description: "Large dramatic image shown right above the Why Wallchemy section",
+      type: "media",
+      mediaKind: "image"
     },
     {
       key: "manifesto.eyebrow",
@@ -69,7 +92,7 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       key: "manifesto.subtitle",
       label: "Manifesto Subtitle",
       description: "Short subtitle under the manifesto title",
-      type: "text"
+      type: "textarea"
     },
     {
       key: "manifesto.items",
@@ -101,7 +124,7 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       key: "studioDivider.subtitle",
       label: "Studio Divider Subtitle",
       description: "Studio divider subtitle",
-      type: "text"
+      type: "textarea"
     },
     {
       key: "ctaIntro",
@@ -216,6 +239,12 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       mediaKind: "image"
     },
     {
+      key: "backgroundColor",
+      label: "Page Background Color",
+      description: "Background color applied across the About page sections",
+      type: "color"
+    },
+    {
       key: "studioDividerImage",
       label: "Studio Divider Image",
       description: "Image used in the Studio Ethos divider",
@@ -238,7 +267,7 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       key: "studioDivider.subtitle",
       label: "Studio Divider Subtitle",
       description: "Subtitle text for Studio Ethos divider",
-      type: "text"
+      type: "textarea"
     },
     {
       key: "narrative",
@@ -348,6 +377,12 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       description: "Fallback image shown before video loads"
     },
     {
+      key: "backgroundColor",
+      label: "Page Background Color",
+      type: "color",
+      description: "Background color applied across the Textures page sections"
+    },
+    {
       key: "heroVideoMobile",
       label: "Hero Video URL (Mobile)",
       type: "url",
@@ -359,6 +394,12 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       type: "media",
       mediaKind: "image",
       description: "Fallback image shown before video loads"
+    },
+    {
+      key: "backgroundColor",
+      label: "Page Background Color",
+      type: "color",
+      description: "Background color applied across the Process page sections"
     },
     {
       key: "dividerImage",
@@ -533,6 +574,12 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       description: "Fallback image if a project has no image"
     },
     {
+      key: "backgroundColor",
+      label: "Page Background Color",
+      type: "color",
+      description: "Background color applied across the Projects page sections"
+    },
+    {
       key: "selectedDivider.eyebrow",
       label: "Selected Work Divider Eyebrow",
       description: "Label above Selected Work divider",
@@ -601,6 +648,12 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       type: "media",
       mediaKind: "image",
       description: "Fallback image"
+    },
+    {
+      key: "backgroundColor",
+      label: "Page Background Color",
+      type: "color",
+      description: "Background color applied across the Contact page sections"
     },
     {
       key: "divider.eyebrow",
@@ -743,6 +796,52 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       type: "color",
       description: "Warm accent color"
     },
+    {
+      key: "typography.displayFont",
+      label: "Display Font",
+      type: "select",
+      description: "Used for headings and large editorial titles",
+      options: [
+        { label: "Playfair Display", value: "playfair" },
+        { label: "Cormorant Garamond", value: "cormorant" },
+        { label: "DM Serif Display", value: "dmserif" },
+        { label: "Lora", value: "lora" },
+        { label: "Cinzel", value: "cinzel" }
+      ]
+    },
+    {
+      key: "typography.bodyFont",
+      label: "Body Font",
+      type: "select",
+      description: "Used for all paragraph and interface text",
+      options: [
+        { label: "Inter", value: "inter" },
+        { label: "Manrope", value: "manrope" },
+        { label: "Montserrat", value: "montserrat" },
+        { label: "Poppins", value: "poppins" },
+        { label: "Source Sans 3", value: "sourcesans" },
+        { label: "Work Sans", value: "worksans" },
+        { label: "Nunito", value: "nunito" }
+      ]
+    },
+    {
+      key: "typography.textColor",
+      label: "Global Text Color",
+      type: "color",
+      description: "Primary text color used site-wide"
+    },
+    {
+      key: "heroOverlay.color",
+      label: "Hero Overlay Color",
+      type: "color",
+      description: "Color for the tint layer above all hero videos"
+    },
+    {
+      key: "heroOverlay.opacity",
+      label: "Hero Overlay Opacity",
+      type: "number",
+      description: "Opacity from 0 to 1 for all hero video overlays"
+    }
   ]
 };
 
@@ -980,6 +1079,7 @@ export default function EditPage() {
 
   function groupForField(pageKey: string, field: FieldConfig) {
     const key = field.key;
+    if (key === "backgroundColor") return "Theme";
     if (pageKey === "home") {
       if (key.startsWith("hero")) return "Hero";
       if (key.startsWith("intro")) return "Intro";
@@ -1024,7 +1124,12 @@ export default function EditPage() {
       if (key.startsWith("whatsapp") || key.startsWith("social"))
         return "Social + WhatsApp";
     }
-    if (pageKey === "settings") return "Palette";
+    if (pageKey === "settings") {
+      if (key.startsWith("palette")) return "Palette";
+      if (key.startsWith("typography")) return "Typography";
+      if (key.startsWith("heroOverlay")) return "Hero Overlay";
+      return "Theme";
+    }
     return "General";
   }
 
@@ -1232,6 +1337,27 @@ export default function EditPage() {
       );
     }
 
+    async function readErrorPayload(res: Response) {
+      const contentType = res.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        try {
+          const json = await res.json();
+          return json?.error || "Request failed";
+        } catch {
+          return "Request failed";
+        }
+      }
+      try {
+        const text = await res.text();
+        if (!text) return "Request failed";
+        // Strip simple HTML tags if server responded with an HTML error page.
+        const plain = text.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+        return plain.slice(0, 220) || "Request failed";
+      } catch {
+        return "Request failed";
+      }
+    }
+
     async function handleUpload(file: File) {
       setUploadError("");
       setUploadingField(field.key);
@@ -1247,10 +1373,20 @@ export default function EditPage() {
           body: formData
         });
         if (!res.ok) {
-          const error = await res.json();
-          throw new Error(error?.error || "Upload failed");
+          const message = await readErrorPayload(res);
+          throw new Error(message || "Upload failed");
         }
-        const json = await res.json();
+        let json: any = null;
+        try {
+          json = await res.json();
+        } catch {
+          throw new Error(
+            "Upload endpoint returned an invalid response. Please re-login and try again."
+          );
+        }
+        if (!json?.url || typeof json.url !== "string") {
+          throw new Error("Upload succeeded but no file URL was returned.");
+        }
         updateField(path, json.url);
       } catch (error: any) {
         setUploadError(error?.message || "Upload failed");
@@ -1322,6 +1458,31 @@ export default function EditPage() {
             onChange={(e) => updateField(path, e.target.value)}
             className="h-10 w-24 rounded border border-alabaster/20 bg-ink p-1"
           />
+        ) : field.type === "number" ? (
+          <input
+            type="number"
+            min={0}
+            max={1}
+            step={0.05}
+            value={value ?? ""}
+            onChange={(e) => {
+              const raw = e.target.value;
+              updateField(path, raw === "" ? "" : Number(raw));
+            }}
+            className="w-full rounded border border-alabaster/20 bg-ink px-4 py-2 text-alabaster"
+          />
+        ) : field.type === "select" ? (
+          <select
+            value={value || field.options?.[0]?.value || ""}
+            onChange={(e) => updateField(path, e.target.value)}
+            className="w-full rounded border border-alabaster/20 bg-ink px-4 py-2 text-alabaster"
+          >
+            {(field.options || []).map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         ) : (
           <>
             <input
@@ -1477,6 +1638,9 @@ export default function EditPage() {
         )}
 
         <div className="space-y-6 rounded-lg border border-alabaster/10 bg-alabaster/5 p-5 sm:p-6">
+          <div className="rounded border border-alabaster/10 bg-ink/40 p-3 text-xs text-alabaster/65">
+            Line breaks: use the Enter key in any textarea field. They are rendered on the website.
+          </div>
           {Object.entries(groupedFields).map(([group, groupFields]) => (
             <details key={group} open className="rounded border border-alabaster/10 bg-ink/40 p-4">
               <summary className="cursor-pointer text-sm font-semibold uppercase tracking-[0.28em] text-brass">

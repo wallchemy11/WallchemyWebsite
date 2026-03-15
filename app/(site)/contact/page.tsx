@@ -4,6 +4,7 @@ import ContactPanel from "@/components/sections/ContactPanel";
 import CinematicDivider from "@/components/sections/CinematicDivider";
 import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
+import { hexToRgbChannels } from "@/lib/color";
 
 export async function generateMetadata() {
   const contact = await getContactPage();
@@ -14,9 +15,12 @@ export default async function ContactPage() {
   const contact = await getContactPage();
   const meetingLink = "/contact#enquiry";
   const dividerImage = resolveImage(contact.dividerImage, contact.heroPoster);
+  const pageStyle = {
+    ["--color-ink" as any]: hexToRgbChannels(contact.backgroundColor, "11 10 9")
+  };
 
   return (
-    <>
+    <div style={pageStyle}>
       <VideoHero
         headline="Contact"
         subheadline={contact.intro}
@@ -63,7 +67,7 @@ export default async function ContactPage() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 

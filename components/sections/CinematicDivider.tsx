@@ -95,11 +95,11 @@ export default function CinematicDivider({
             <p className="text-[10px] uppercase tracking-[0.36em] text-brass sm:text-xs sm:tracking-[0.45em]">
               {safeEyebrow}
             </p>
-            <h2 className="font-display mt-3 text-2xl sm:text-3xl md:text-5xl">
+            <h2 className="font-display mt-3 whitespace-pre-line text-2xl sm:text-3xl md:text-5xl">
               {safeTitle}
             </h2>
           </div>
-          <p className="text-xs uppercase tracking-[0.18em] text-alabaster/70 sm:text-sm md:tracking-[0.2em]">
+          <p className="whitespace-pre-line text-xs uppercase tracking-[0.18em] text-alabaster/70 sm:text-sm md:tracking-[0.2em]">
             {safeSubtitle}
           </p>
         </div>

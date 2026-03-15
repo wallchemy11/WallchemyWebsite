@@ -14,6 +14,7 @@ function jsonStringify(value: any) {
 }
 
 let collectionImageUrlsColumnReady = false;
+let siteSettingsColumnsReady = false;
 
 async function ensureCollectionImageUrlsColumn(db: any) {
   if (collectionImageUrlsColumnReady) return;
@@ -31,6 +32,21 @@ async function ensureCollectionImageUrlsColumn(db: any) {
     []
   );
   collectionImageUrlsColumnReady = true;
+}
+
+async function ensureSiteSettingsColumns(db: any) {
+  if (siteSettingsColumnsReady) return;
+  await db.query(
+    `ALTER TABLE site_settings
+     ADD COLUMN IF NOT EXISTS typography JSONB DEFAULT '{}'::jsonb`,
+    []
+  );
+  await db.query(
+    `ALTER TABLE site_settings
+     ADD COLUMN IF NOT EXISTS hero_overlay JSONB DEFAULT '{}'::jsonb`,
+    []
+  );
+  siteSettingsColumnsReady = true;
 }
 
 function normalizeImageUrls(raw: unknown): string[] {
@@ -408,10 +424,14 @@ export async function setFeaturedMaterialLibraryItems(ids: number[]) {
 
 // Site Settings
 export async function getSiteSettings() {
+  const db = getDb();
+  await ensureSiteSettingsColumns(db);
   const result = await queryRows("SELECT * FROM site_settings WHERE id = 1 LIMIT 1", []);
   if (result[0]) {
     return {
-      palette: result[0].palette || {}
+      palette: result[0].palette || {},
+      typography: result[0].typography || {},
+      heroOverlay: result[0].hero_overlay || {}
     };
   }
   return null;
@@ -425,17 +445,31 @@ export async function saveSiteSettings(data: {
     smoke?: string;
     ember?: string;
   };
+  typography?: {
+    displayFont?: string;
+    bodyFont?: string;
+    textColor?: string;
+  };
+  heroOverlay?: {
+    color?: string;
+    opacity?: number;
+  };
 }) {
   const db = getDb();
+  await ensureSiteSettingsColumns(db);
   await db.query(
-    `INSERT INTO site_settings (id, palette, updated_at)
-     VALUES (1, $1::jsonb, NOW())
+    `INSERT INTO site_settings (id, palette, typography, hero_overlay, updated_at)
+     VALUES (1, $1::jsonb, $2::jsonb, $3::jsonb, NOW())
      ON CONFLICT (id) 
      DO UPDATE SET 
       palette = EXCLUDED.palette,
+      typography = EXCLUDED.typography,
+      hero_overlay = EXCLUDED.hero_overlay,
        updated_at = NOW()`,
     [
-      JSON.stringify(data.palette || {})
+      JSON.stringify(data.palette || {}),
+      JSON.stringify(data.typography || {}),
+      JSON.stringify(data.heroOverlay || {})
     ]
   );
 }
