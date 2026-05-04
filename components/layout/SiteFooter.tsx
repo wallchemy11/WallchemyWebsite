@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import BrandIcon from "@/components/ui/BrandIcon";
 
@@ -32,9 +33,13 @@ export default function SiteFooter({
     <footer className="border-t border-alabaster/10 bg-ink">
       <div className="mx-auto grid max-w-6xl gap-9 px-6 py-12 md:grid-cols-3">
         <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-brass">
-            Wallchemy
-          </p>
+          <Image
+            src="/brand/wordmark-white-600.png"
+            alt="Wallchemy"
+            width={226}
+            height={24}
+            className="h-6 w-auto"
+          />
           <p className="mt-4 text-sm text-alabaster/70">
             Premium texture and surface studio crafting immersive walls for
             luxury residences, hospitality, and retail.

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const NAV_ITEMS = [
@@ -87,11 +88,17 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     <div className="admin-light min-h-screen bg-ink text-alabaster">
       <header className="sticky top-0 z-40 border-b border-alabaster/10 bg-ink/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.32em] text-brass">
-              Wallchemy CMS
-            </p>
-            <p className="text-sm text-alabaster/70">Content Studio</p>
+          <div className="flex items-center gap-3">
+            <Image
+              src="/brand/wordmark-black-600.png"
+              alt="Wallchemy"
+              width={150}
+              height={16}
+              className="h-4 w-auto"
+            />
+            <span className="hidden text-[10px] uppercase tracking-[0.32em] text-brass sm:inline">
+              · Studio
+            </span>
           </div>
           <button
             type="button"

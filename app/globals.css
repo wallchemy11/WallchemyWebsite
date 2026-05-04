@@ -4,14 +4,14 @@
 
 :root {
   color-scheme: light;
-  --color-ink: 11 10 9;
-  --color-alabaster: 242 237 228;
-  --color-brass: 201 166 107;
-  --color-smoke: 140 135 127;
-  --color-ember: 165 116 79;
-  --font-display: var(--font-display-playfair);
-  --font-sans: var(--font-sans-inter);
-  --hero-overlay-rgb: 11 10 9;
+  --color-ink: 62 54 48;
+  --color-alabaster: 236 224 217;
+  --color-brass: 193 180 160;
+  --color-smoke: 160 148 139;
+  --color-ember: 210 208 205;
+  --font-display: var(--font-display-lancea);
+  --font-sans: var(--font-sans-kindsans);
+  --hero-overlay-rgb: 62 54 48;
   --hero-overlay-opacity: 0.55;
 }
 

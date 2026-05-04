@@ -812,6 +812,7 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       type: "select",
       description: "Used for headings and large editorial titles",
       options: [
+        { label: "Lancea (brand)", value: "lancea" },
         { label: "Playfair Display", value: "playfair" },
         { label: "Cormorant Garamond", value: "cormorant" },
         { label: "DM Serif Display", value: "dmserif" },
@@ -825,6 +826,7 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       type: "select",
       description: "Used for all paragraph and interface text",
       options: [
+        { label: "Kind Sans (brand)", value: "kindsans" },
         { label: "Inter", value: "inter" },
         { label: "Manrope", value: "manrope" },
         { label: "Montserrat", value: "montserrat" },

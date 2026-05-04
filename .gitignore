@@ -9,3 +9,4 @@ node_modules
 data/
 !app/api/admin/data/
 !app/api/admin/data/route.ts
+.DS_Store

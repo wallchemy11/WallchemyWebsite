@@ -79,7 +79,7 @@ const defaultMaterialLibraryItems = [
 
 export const defaultHomePage = {
   title: "Wallchemy",
-  backgroundColor: "#0b0a09",
+  backgroundColor: "#3e3630",
   heroHeadline: "Turning Walls into Experiences",
   heroSubheadline:
     "A luxury texture and surface studio crafting immersive environments.",
@@ -165,7 +165,7 @@ export const defaultHomePage = {
 
 export const defaultAboutPage = {
   title: "About Wallchemy",
-  backgroundColor: "#0b0a09",
+  backgroundColor: "#3e3630",
   intro:
     "Wallchemy is a luxury texture and surface studio that transforms walls and ceilings into immersive design experiences.",
   heroVideo: "https://www.w3schools.com/html/mov_bbb.mp4",
@@ -210,7 +210,7 @@ export const defaultAboutPage = {
 
 export const defaultTexturesPage = {
   title: "Textures & Collections",
-  backgroundColor: "#0b0a09",
+  backgroundColor: "#3e3630",
   intro:
     "We bring global textures, materials, and techniques to the Indian design landscape, translating artistic intent into flawlessly executed surfaces.",
   heroVideo: "https://media.w3.org/2010/05/bunny/trailer.mp4",
@@ -246,7 +246,7 @@ export const defaultTexturesPage = {
 
 export const defaultProcessPage = {
   title: "How We Work",
-  backgroundColor: "#0b0a09",
+  backgroundColor: "#3e3630",
   intro:
     "A considered sequence of collaboration and craft, tailored to each project.",
   heroVideo:
@@ -304,7 +304,7 @@ export const defaultProcessPage = {
 
 export const defaultProjectsPage = {
   title: "Selected Projects",
-  backgroundColor: "#0b0a09",
+  backgroundColor: "#3e3630",
   intro:
     "Large-scale environments where texture becomes memory, light, and ritual.",
   heroVideo: "https://media.w3.org/2010/05/video/movie_300.mp4",
@@ -337,7 +337,7 @@ export const defaultProjectsPage = {
 
 export const defaultContactPage = {
   title: "Contact",
-  backgroundColor: "#0b0a09",
+  backgroundColor: "#3e3630",
   intro:
     "Start a conversation about bespoke surfaces and immersive finishes.",
   heroVideo: "https://media.w3.org/2010/05/sintel/trailer.mp4",
@@ -378,19 +378,19 @@ export const defaultContactPage = {
 
 export const defaultSiteSettings = {
   palette: {
-    ink: "#0b0a09",
-    alabaster: "#f2ede4",
-    brass: "#c9a66b",
-    smoke: "#8c877f",
-    ember: "#a5744f"
+    ink: "#3e3630",
+    alabaster: "#ece0d9",
+    brass: "#c1b4a0",
+    smoke: "#a0948b",
+    ember: "#d2d0cd"
   },
   typography: {
-    displayFont: "playfair",
-    bodyFont: "inter",
-    textColor: "#f2ede4"
+    displayFont: "lancea",
+    bodyFont: "kindsans",
+    textColor: "#ece0d9"
   },
   heroOverlay: {
-    color: "#0b0a09",
+    color: "#3e3630",
     opacity: 0.55
   }
 };

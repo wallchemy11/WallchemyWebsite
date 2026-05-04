@@ -13,6 +13,7 @@ import {
   Source_Sans_3,
   Work_Sans
 } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { getSiteSettings } from "@/lib/cms";
 import { hexToRgbChannels } from "@/lib/color";
@@ -89,6 +90,23 @@ const sansNunito = Nunito({
   variable: "--font-sans-nunito"
 });
 
+const displayLancea = localFont({
+  src: "../public/fonts/Lancea.otf",
+  weight: "400",
+  style: "normal",
+  display: "swap",
+  variable: "--font-display-lancea"
+});
+
+const sansKindSans = localFont({
+  src: [
+    { path: "../public/fonts/KindSans-Regular.otf", weight: "400", style: "normal" },
+    { path: "../public/fonts/KindSans-Medium.ttf", weight: "500", style: "normal" }
+  ],
+  display: "swap",
+  variable: "--font-sans-kindsans"
+});
+
 export const metadata: Metadata = {
   title: "Wallchemy — Turning Walls into Experiences",
   description:
@@ -106,6 +124,7 @@ export default async function RootLayout({
   const heroOverlay = settings?.heroOverlay || {};
 
   const displayFontMap: Record<string, string> = {
+    lancea: "var(--font-display-lancea)",
     playfair: "var(--font-display-playfair)",
     cormorant: "var(--font-display-cormorant)",
     dmserif: "var(--font-display-dmserif)",
@@ -113,6 +132,7 @@ export default async function RootLayout({
     cinzel: "var(--font-display-cinzel)"
   };
   const bodyFontMap: Record<string, string> = {
+    kindsans: "var(--font-sans-kindsans)",
     inter: "var(--font-sans-inter)",
     manrope: "var(--font-sans-manrope)",
     montserrat: "var(--font-sans-montserrat)",
@@ -137,10 +157,10 @@ export default async function RootLayout({
     "--color-ember": hexToRgbChannels(palette.ember, "165 116 79"),
     "--font-display":
       displayFontMap[String(typography.displayFont || "").toLowerCase()] ||
-      "var(--font-display-playfair)",
+      "var(--font-display-lancea)",
     "--font-sans":
       bodyFontMap[String(typography.bodyFont || "").toLowerCase()] ||
-      "var(--font-sans-inter)",
+      "var(--font-sans-kindsans)",
     "--hero-overlay-rgb": hexToRgbChannels(heroOverlay.color, "11 10 9"),
     "--hero-overlay-opacity": String(overlayOpacity)
   } as React.CSSProperties;
@@ -148,7 +168,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${displayPlayfair.variable} ${displayCormorant.variable} ${displayDmSerif.variable} ${displayLora.variable} ${displayCinzel.variable} ${sansInter.variable} ${sansManrope.variable} ${sansMontserrat.variable} ${sansPoppins.variable} ${sansSourceSans.variable} ${sansWorkSans.variable} ${sansNunito.variable}`}
+      className={`${displayLancea.variable} ${displayPlayfair.variable} ${displayCormorant.variable} ${displayDmSerif.variable} ${displayLora.variable} ${displayCinzel.variable} ${sansKindSans.variable} ${sansInter.variable} ${sansManrope.variable} ${sansMontserrat.variable} ${sansPoppins.variable} ${sansSourceSans.variable} ${sansWorkSans.variable} ${sansNunito.variable}`}
     >
       <body className="bg-ink text-alabaster antialiased" style={bodyStyle}>
         {children}

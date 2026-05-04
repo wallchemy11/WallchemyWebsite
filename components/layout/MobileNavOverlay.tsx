@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import BrandIcon from "@/components/ui/BrandIcon";
@@ -160,9 +161,13 @@ export default function MobileNavOverlay({
           >
             <Icon name="x" />
           </button>
-          <span className="font-display text-sm uppercase tracking-[0.32em] text-ink">
-            Wallchemy
-          </span>
+          <Image
+            src="/brand/wordmark-black-600.png"
+            alt="Wallchemy"
+            width={150}
+            height={16}
+            className="h-4 w-auto"
+          />
           <a
             href={whatsappHref}
             target="_blank"
