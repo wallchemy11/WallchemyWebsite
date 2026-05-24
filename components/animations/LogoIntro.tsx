@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { loadGsap } from "@/components/animations/loadGsap";
 
-function buildStarPoints(cx: number, cy: number, s: number): string {
-  const R  = 100 * s;
+// 4-pointed star polygon. irFactor controls how spiky it looks (0.09 = very spiky).
+// R_max must be large enough that ir_max = R_max * irFactor >= screen corner distance.
+function buildStarPoints(cx: number, cy: number, R: number): string {
   const ir = R * 0.09;
   const d  = ir * Math.SQRT2 / 2;
   return [
@@ -43,9 +44,16 @@ export default function LogoIntro() {
       const cx = window.innerWidth  / 2;
       const cy = window.innerHeight / 2;
 
-      poly.setAttribute("points", buildStarPoints(cx, cy, 0.01));
+      // Compute max R so inner corner (ir = R * 0.09) clears every screen corner.
+      // Inner corner distance from center = ir = R * 0.09
+      // Screen corner distance = hypot(cx, cy)
+      // So: R_max = hypot(cx, cy) / 0.09 * 1.3  (30% safety margin)
+      const screenCorner = Math.hypot(cx, cy);
+      const R_max = Math.ceil((screenCorner / 0.09) * 1.3);
 
-      const proxy = { s: 0.01 };
+      poly.setAttribute("points", buildStarPoints(cx, cy, 1));
+
+      const proxy = { R: 1 };
       const tl    = gsap.timeline();
 
       tl.to(logo, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" });
@@ -54,11 +62,11 @@ export default function LogoIntro() {
       tl.to(
         proxy,
         {
-          s: 42,
+          R: R_max,
           duration: 1.35,
           ease: "expo.in",
           onUpdate() {
-            poly.setAttribute("points", buildStarPoints(cx, cy, proxy.s));
+            poly.setAttribute("points", buildStarPoints(cx, cy, proxy.R));
           },
         },
         "-=0.05"
