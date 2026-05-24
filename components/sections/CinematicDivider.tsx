@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
@@ -27,7 +27,7 @@ export default function CinematicDivider({
   const safeTitle = resolveText(title);
   const safeSubtitle = resolveText(subtitle);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const section = sectionRef.current;
     const imageEl = imageRef.current;
     const textEl = textRef.current;
@@ -74,7 +74,7 @@ export default function CinematicDivider({
   }, [shouldAnimate]);
 
   return (
-    <section ref={sectionRef} className="bg-ink py-20 md:py-24">
+    <section ref={sectionRef} className="bg-transparent py-20 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div ref={imageRef} className="overflow-hidden">
           <Image

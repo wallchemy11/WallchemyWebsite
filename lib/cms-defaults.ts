@@ -378,16 +378,16 @@ export const defaultContactPage = {
 
 export const defaultSiteSettings = {
   palette: {
-    ink: "#3e3630",
-    alabaster: "#ece0d9",
-    brass: "#c1b4a0",
-    smoke: "#a0948b",
-    ember: "#d2d0cd"
+    ink:       "#3e3630", // Dune
+    alabaster: "#ece0d9", // Pearl Bush
+    brass:     "#c1b4a0", // Campagne
+    smoke:     "#a0948b", // Mountain Mist
+    ember:     "#d2d0cd"  // Soho Grey
   },
   typography: {
     displayFont: "lancea",
     bodyFont: "kindsans",
-    textColor: "#ece0d9"
+    textColor: "#ece0d9"  // Pearl Bush
   },
   heroOverlay: {
     color: "#3e3630",

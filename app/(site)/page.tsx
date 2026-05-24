@@ -84,7 +84,7 @@ export default async function HomePage() {
         poster={home.heroPoster}
         priorityVideo
       />
-      <section className="bg-ink pt-14 pb-3 sm:pt-16 sm:pb-4 md:pt-20 md:pb-6">
+      <section className="bg-transparent pt-14 pb-3 sm:pt-16 sm:pb-4 md:pt-20 md:pb-6">
         <div className="mx-auto max-w-6xl px-6">
           <SplitText
             text={home.introText}

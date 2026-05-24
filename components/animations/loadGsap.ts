@@ -1,13 +1,16 @@
-export async function loadGsap() {
-  const gsapModule = await import("gsap");
-  const gsap = gsapModule.default;
+let cached: Promise<{
+  gsap: typeof import("gsap").default;
+  ScrollTrigger: typeof import("gsap/ScrollTrigger").ScrollTrigger;
+}> | null = null;
 
-  // ScrollTrigger is only needed for scroll-based animations,
-  // but importing it here keeps callsites simple and still code-splits GSAP.
-  const stModule = await import("gsap/ScrollTrigger");
-  const ScrollTrigger = stModule.ScrollTrigger;
-  gsap.registerPlugin(ScrollTrigger);
-
-  return { gsap, ScrollTrigger };
+export function loadGsap() {
+  if (!cached) {
+    cached = (async () => {
+      const { default: gsap } = await import("gsap");
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      gsap.registerPlugin(ScrollTrigger);
+      return { gsap, ScrollTrigger };
+    })();
+  }
+  return cached;
 }
-

@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
@@ -31,7 +31,7 @@ export default function TextureRibbon({
   const safeEyebrow = resolveText(eyebrow);
   const safeTitle = resolveText(title);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const section = sectionRef.current;
     const pinEl = pinRef.current;
     const track = trackRef.current;
@@ -92,7 +92,7 @@ export default function TextureRibbon({
   }, [shouldAnimate]);
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-ink">
+    <section ref={sectionRef} className="relative overflow-hidden bg-transparent">
       <div className="mx-auto max-w-6xl px-6 pt-16 pb-8 md:pt-20 md:pb-10">
         <p className="text-xs uppercase tracking-[0.45em] text-brass">
           {safeEyebrow}

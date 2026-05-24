@@ -51,7 +51,7 @@ async function loadHlsLibrary() {
   return window.__hlsLibPromise;
 }
 
-function useInView<T extends HTMLElement>(options?: IntersectionObserverInit) {
+function useInView<T extends HTMLElement>(threshold: number = 0.05) {
   const ref = useRef<T | null>(null);
   const [inView, setInView] = useState(false);
 
@@ -60,10 +60,10 @@ function useInView<T extends HTMLElement>(options?: IntersectionObserverInit) {
     if (!el) return;
     const observer = new IntersectionObserver(([entry]) => {
       setInView(entry.isIntersecting);
-    }, options);
+    }, { threshold });
     observer.observe(el);
     return () => observer.disconnect();
-  }, [options]);
+  }, [threshold]);
 
   return { ref, inView };
 }
@@ -76,14 +76,18 @@ export default function SmartVideo({
   priority = false
 }: SmartVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { ref: containerRef, inView } = useInView<HTMLDivElement>({
-    threshold: 0.35
-  });
+  const { ref: containerRef, inView } = useInView<HTMLDivElement>(0.05);
   const [shouldLoad, setShouldLoad] = useState(false);
   const [selectedSrc, setSelectedSrc] = useState(src);
   const [canStreamVideo, setCanStreamVideo] = useState(true);
   const [isPageVisible, setIsPageVisible] = useState(true);
   const selectedSrcIsHls = isHlsManifest(selectedSrc);
+
+  // Refs so the canplay closure reads current values without restarting video.load()
+  const inViewRef = useRef(inView);
+  const isPageVisibleRef = useRef(isPageVisible);
+  useEffect(() => { inViewRef.current = inView; }, [inView]);
+  useEffect(() => { isPageVisibleRef.current = isPageVisible; }, [isPageVisible]);
 
   useEffect(() => {
     const onVisibilityChange = () => {
@@ -125,6 +129,24 @@ export default function SmartVideo({
       setShouldLoad(true);
     }
   }, [inView, canStreamVideo, priority]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !shouldLoad || !canStreamVideo || selectedSrcIsHls) return;
+
+    const tryPlay = () => {
+      if (inViewRef.current && isPageVisibleRef.current) {
+        video.play().catch(() => {});
+      }
+    };
+
+    video.addEventListener("canplay", tryPlay, { once: true });
+    video.load();
+
+    return () => {
+      video.removeEventListener("canplay", tryPlay);
+    };
+  }, [shouldLoad, canStreamVideo, selectedSrcIsHls, selectedSrc]);
 
   useEffect(() => {
     const video = videoRef.current;

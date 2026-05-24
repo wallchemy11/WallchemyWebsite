@@ -17,7 +17,7 @@ export default function CraftsmanshipSection({
   if (!safeTitle && !safeBody) return null;
 
   return (
-    <section className="bg-ink py-20 md:py-24">
+    <section className="bg-transparent py-20 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <ScrollReveal>
           <div className="grid gap-8 md:grid-cols-[1.2fr_1fr]">

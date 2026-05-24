@@ -30,7 +30,7 @@ export default function SiteFooter({
   const youtube = socialLinks?.youtube;
 
   return (
-    <footer className="border-t border-alabaster/10 bg-ink">
+    <footer className="border-t border-alabaster/10 bg-transparent">
       <div className="mx-auto grid max-w-6xl gap-9 px-6 py-12 md:grid-cols-3">
         <div>
           <Image
@@ -38,7 +38,7 @@ export default function SiteFooter({
             alt="Wallchemy"
             width={226}
             height={24}
-            className="h-6 w-auto"
+            className="logo-campagne h-6 w-auto"
           />
           <p className="mt-4 text-sm text-alabaster/70">
             Premium texture and surface studio crafting immersive walls for

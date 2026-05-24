@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useState } from "react";
 import Image from "next/image";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
@@ -30,7 +30,7 @@ export default function HomeCinematicPanels({
   const markFailed = (key: string) =>
     setFailedImages((prev) => ({ ...prev, [key]: true }));
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const section = sectionRef.current;
     if (!section || panelRefs.current.length === 0) return;
     if (!shouldAnimate) return;
@@ -106,7 +106,7 @@ export default function HomeCinematicPanels({
   if (items.length === 0) return null;
 
   return (
-    <section ref={sectionRef} className="relative bg-ink">
+    <section ref={sectionRef} className="relative bg-transparent">
       <div className="md:hidden">
         {items.map((panel, index) => {
           const source =

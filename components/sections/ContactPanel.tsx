@@ -120,7 +120,7 @@ export default function ContactPanel({
     }
   }
   return (
-    <section className="bg-ink py-16 sm:py-20 md:py-24">
+    <section className="bg-transparent py-16 sm:py-20 md:py-24">
       <ScrollReveal>
         <div className="mx-auto grid max-w-6xl gap-9 px-6 md:gap-12 md:grid-cols-[1fr_1.2fr]">
           <div>

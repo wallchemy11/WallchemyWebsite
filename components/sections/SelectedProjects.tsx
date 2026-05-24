@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
@@ -27,7 +27,7 @@ export default function SelectedProjects({
   const safeTitle = resolveText(title);
   const safeSubtitle = resolveText(subtitle);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
     if (!shouldAnimate) return;
@@ -106,7 +106,7 @@ export default function SelectedProjects({
   }, [shouldAnimate]);
 
   return (
-    <section className="bg-ink py-16 sm:py-20 md:py-24">
+    <section className="bg-transparent py-16 sm:py-20 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeading
         eyebrow={safeEyebrow}

@@ -22,11 +22,11 @@ export default function SectionHeading({
           {safeEyebrow}
         </p>
       ) : null}
-      <h2 className="font-display whitespace-pre-line break-words text-3xl font-medium leading-[1.1] [overflow-wrap:anywhere] sm:text-4xl md:text-6xl">
+      <h2 className="font-display whitespace-pre-line break-words text-4xl font-bold leading-[1.05] [overflow-wrap:anywhere] sm:text-5xl md:text-7xl">
         {safeTitle}
       </h2>
       {safeSubtitle ? (
-        <p className="max-w-2xl whitespace-pre-line text-xs uppercase tracking-[0.14em] text-alabaster/70 [overflow-wrap:anywhere] sm:text-sm sm:tracking-[0.2em] md:text-base md:tracking-[0.22em]">
+        <p className="max-w-2xl whitespace-pre-line text-[11px] uppercase tracking-[0.14em] text-alabaster/70 [overflow-wrap:anywhere] sm:text-xs sm:tracking-[0.2em] md:text-sm md:tracking-[0.22em]">
           {safeSubtitle}
         </p>
       ) : null}

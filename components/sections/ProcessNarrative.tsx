@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
 import { resolveText } from "@/lib/text";
@@ -141,7 +141,7 @@ export default function ProcessNarrative({
   const safeTitle = resolveText(title);
   const safeSubtitle = resolveText(subtitle);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const container = containerRef.current;
     const pinned = pinRef.current;
     if (!container || !pinned) return;
@@ -199,7 +199,7 @@ export default function ProcessNarrative({
   }, [shouldAnimate]);
 
   return (
-    <section ref={containerRef} className="bg-ink py-16 sm:py-20 md:py-28">
+    <section ref={containerRef} className="bg-transparent py-16 sm:py-20 md:py-28">
       <div className="mx-auto grid max-w-6xl gap-9 px-6 md:gap-12 md:grid-cols-[0.9fr_1.1fr]">
         <div ref={pinRef} className="self-start space-y-8">
           <p className="text-[10px] tracking-[0.2em] text-brass/90 sm:text-xs sm:tracking-[0.3em]">

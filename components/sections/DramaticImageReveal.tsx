@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
@@ -18,7 +18,7 @@ export default function DramaticImageReveal({
   const imageRef = useRef<HTMLDivElement>(null);
   const { shouldAnimate } = useMotionPrefs();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const section = sectionRef.current;
     const imageEl = imageRef.current;
     if (!section || !imageEl) return;
@@ -58,7 +58,7 @@ export default function DramaticImageReveal({
   }, [shouldAnimate]);
 
   return (
-    <section ref={sectionRef} className="bg-ink pt-0 pb-2 sm:pb-3 md:pb-4">
+    <section ref={sectionRef} className="bg-transparent pt-0 pb-2 sm:pb-3 md:pb-4">
       <div className="mx-auto max-w-6xl px-6">
         <div ref={imageRef} className="overflow-hidden border border-alabaster/10">
           <Image

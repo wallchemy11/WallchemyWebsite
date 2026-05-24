@@ -26,7 +26,7 @@ export default function SelectedWorkGallery({
   if (!items.length) return null;
 
   return (
-    <section className="bg-ink py-16 sm:py-20 md:py-24">
+    <section className="bg-transparent py-16 sm:py-20 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <ScrollReveal>
           <SectionHeading

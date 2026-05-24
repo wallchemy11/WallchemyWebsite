@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
 
@@ -23,7 +23,7 @@ export default function ParallaxImage({
   const imageRef = useRef<HTMLDivElement>(null);
   const { shouldAnimate } = useMotionPrefs();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const element = imageRef.current;
     if (!element) return;
     if (!shouldAnimate) return;

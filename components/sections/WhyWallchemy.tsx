@@ -6,7 +6,7 @@ type WhyWallchemyProps = {
 
 export default function WhyWallchemy({ text }: WhyWallchemyProps) {
   return (
-    <section className="bg-ink py-24">
+    <section className="bg-transparent py-24">
       <div className="mx-auto max-w-6xl px-6">
         <ScrollReveal>
           <div className="grid gap-10 md:grid-cols-[1.2fr_1fr]">

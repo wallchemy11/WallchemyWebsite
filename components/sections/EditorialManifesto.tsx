@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
 import { resolveText } from "@/lib/text";
@@ -24,56 +24,57 @@ export default function EditorialManifesto({
   items
 }: EditorialManifestoProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
   const { shouldAnimate } = useMotionPrefs();
-  const safeEyebrow = resolveText(eyebrow);
-  const safeTitle = resolveText(title);
+
+  const safeEyebrow  = resolveText(eyebrow);
+  const safeTitle    = resolveText(title);
   const safeSubtitle = resolveText(subtitle);
 
-  useLayoutEffect(() => {
+  // The big heading is whichever field has content — eyebrow is used as section label
+  // in many CMS setups, so fall back to it if title is empty
+  const heading = safeTitle || safeEyebrow;
+
+  useEffect(() => {
     const container = containerRef.current;
-    const pin = pinRef.current;
-    if (!container || !pin) return;
-    if (!shouldAnimate) return;
+    if (!container || !shouldAnimate) return;
 
     let mounted = true;
     let cleanup: (() => void) | undefined;
 
     (async () => {
-      const { gsap, ScrollTrigger } = await loadGsap();
+      const { gsap } = await loadGsap();
       if (!mounted) return;
 
       const ctx = gsap.context(() => {
-        ScrollTrigger.matchMedia({
-          "(min-width: 1024px) and (pointer: fine)": () => {
-            ScrollTrigger.create({
-              trigger: container,
-              start: "top top",
-              end: "bottom bottom",
-              pin,
-              pinSpacing: true
-            });
-          }
-        });
-
-        const items = gsap.utils.toArray<HTMLElement>(
-          container.querySelectorAll(".manifesto-item")
-        );
         gsap.fromTo(
-          items,
-          { y: 40, opacity: 0 },
+          container.querySelector(".manifesto-heading"),
+          { y: 50, opacity: 0 },
           {
             y: 0,
             opacity: 1,
-            duration: 1.2,
-            ease: "power3.out",
-            stagger: 0.18,
-            scrollTrigger: {
-              trigger: container,
-              start: "top 80%"
-            }
+            duration: 1.3,
+            ease: "expo.out",
+            scrollTrigger: { trigger: container, start: "top 80%" }
           }
         );
+
+        const rows = gsap.utils.toArray<HTMLElement>(
+          container.querySelectorAll(".manifesto-row")
+        );
+        rows.forEach((row, i) => {
+          gsap.fromTo(
+            row,
+            { y: 36, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 1,
+              ease: "power3.out",
+              delay: i * 0.08,
+              scrollTrigger: { trigger: row, start: "top 90%" }
+            }
+          );
+        });
       }, container);
 
       cleanup = () => ctx.revert();
@@ -86,29 +87,60 @@ export default function EditorialManifesto({
   }, [shouldAnimate]);
 
   return (
-    <section ref={containerRef} className="bg-ink pt-6 pb-16 sm:pt-8 sm:pb-20 md:pt-10 md:pb-24">
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 md:gap-12 md:grid-cols-[0.9fr_1.1fr]">
-        <div ref={pinRef} className="space-y-6 self-start">
-          <p className="text-[11px] uppercase tracking-[0.3em] text-brass sm:text-xs sm:tracking-[0.45em]">
-            {safeEyebrow}
-          </p>
-          <h2 className="font-display text-3xl font-medium leading-tight sm:text-4xl md:text-6xl">
-            {safeTitle}
+    <section ref={containerRef} className="bg-transparent py-20 sm:py-24 md:py-28">
+      <div className="mx-auto max-w-6xl px-6">
+
+        {/* ── Big heading ── */}
+        <div className="manifesto-heading mb-16 md:mb-20">
+          <h2
+            className="font-display text-5xl font-bold leading-[0.92] text-alabaster sm:text-6xl md:text-7xl lg:text-8xl"
+          >
+            {heading}
           </h2>
-          <p className="whitespace-pre-line text-sm uppercase tracking-[0.12em] text-alabaster/80 sm:text-base sm:tracking-[0.18em]">
-            {safeSubtitle}
-          </p>
+
+          {safeSubtitle ? (
+            <p className="mt-6 max-w-sm text-[11px] uppercase tracking-[0.26em] text-alabaster/45 sm:text-xs">
+              {safeSubtitle}
+            </p>
+          ) : null}
         </div>
-        <div className="space-y-9 sm:space-y-12">
-          {items.map((item) => (
-            <div key={item.eyebrow} className="manifesto-item border-l border-alabaster/10 pl-6">
-              <p className="text-[11px] uppercase tracking-[0.24em] text-brass sm:text-xs sm:tracking-[0.35em]">
-                {item.eyebrow}
-              </p>
-              <p className="mt-3 text-lg text-alabaster/85 sm:mt-4 sm:text-xl">{item.text}</p>
+
+        {/* ── Principle rows ── */}
+        <div className="border-t border-alabaster/[0.08]">
+          {items.map((item, i) => (
+            <div
+              key={item.eyebrow}
+              className="manifesto-row group relative overflow-hidden border-b border-alabaster/[0.08] py-6 md:py-8"
+            >
+              {/* Ghost watermark number */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute right-0 top-0 select-none font-display font-bold leading-none text-alabaster opacity-[0.05]"
+                style={{ fontSize: "clamp(5rem, 13vw, 9rem)" }}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
+
+              <div className="relative grid grid-cols-[2.5rem_1fr] gap-x-6 sm:grid-cols-[3rem_1fr] md:grid-cols-[3rem_1fr_1fr] md:gap-x-10">
+                {/* Number accent */}
+                <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.5em] text-brass/70 sm:text-[11px]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+
+                {/* Principle name */}
+                <h3 className="font-display text-xl font-bold leading-snug text-alabaster sm:text-2xl md:text-[1.75rem]">
+                  {item.eyebrow}
+                </h3>
+
+                {/* Body copy — below on mobile, right column on desktop */}
+                <p className="col-start-2 mt-3 text-sm leading-relaxed text-alabaster/55 sm:text-[15px] md:col-start-3 md:mt-0.5">
+                  {item.text}
+                </p>
+              </div>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );

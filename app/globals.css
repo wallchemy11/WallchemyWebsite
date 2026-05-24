@@ -21,11 +21,44 @@ html {
 }
 
 body {
-  background: rgb(var(--color-ink));
+  background-color: rgb(var(--color-ink));
   color: rgb(var(--color-alabaster));
   font-family: var(--font-sans);
   letter-spacing: 0.012em;
   overflow-x: clip;
+  position: relative;
+}
+
+/* Background texture — fixed pseudo-element avoids background-attachment:fixed repaint cost */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url('/images/mainbg.jpg');
+  background-size: cover;
+  background-position: center center;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Monogram watermark — star mark fixed at very low opacity */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url('/brand/mark-golden-200.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: clamp(280px, 42vmin, 560px);
+  opacity: 0.055;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure all direct children of body stack above the watermark */
+body > * {
+  position: relative;
+  z-index: 1;
 }
 
 .admin-light {
@@ -138,7 +171,7 @@ h4 {
 }
 
 [data-reveal] {
-  will-change: transform, opacity, clip-path;
+  will-change: transform, opacity;
 }
 
 .split-word {
@@ -150,6 +183,15 @@ img,
 video {
   backface-visibility: hidden;
   transform: translateZ(0);
+}
+
+@keyframes wallchemy-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Campagne-tinted logo — applied to white logo variants to match #c1b4a0 */
+.logo-campagne {
+  filter: brightness(0.67) sepia(0.35);
 }
 
 @media (max-width: 767px) {

@@ -82,7 +82,7 @@ export default function SiteHeader({
               width={20}
               height={20}
               priority
-              className="h-5 w-5 md:hidden"
+              className="logo-campagne h-5 w-5 md:hidden"
             />
             <Image
               src="/brand/wordmark-white-600.png"
@@ -90,7 +90,7 @@ export default function SiteHeader({
               width={132}
               height={14}
               priority
-              className="hidden h-3.5 w-auto md:block"
+              className="logo-campagne hidden h-3.5 w-auto md:block"
             />
           </Link>
 

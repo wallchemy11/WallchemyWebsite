@@ -2,7 +2,6 @@
 
 import {
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -75,7 +74,7 @@ export default function TextureCollections({
     .map((src, idx) => ({ src, key: imageKeys[idx] }))
     .filter((item) => !!item.src && !failedImages[item.key]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const stage = stageRef.current;
     if (!stage || !shouldAnimate) return;
 
@@ -161,7 +160,7 @@ export default function TextureCollections({
   }, [safeCollections.length, autoPaused, pageVisible, isMobileViewport]);
 
   return (
-    <section className="relative overflow-x-clip overflow-y-visible bg-ink py-14 sm:py-18 md:py-24">
+    <section className="relative overflow-x-clip overflow-y-visible bg-transparent py-14 sm:py-18 md:py-24">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_18%,rgba(201,166,107,0.16),transparent_36%),radial-gradient(circle_at_86%_78%,rgba(103,72,48,0.2),transparent_42%)]" />
       <div className="mx-auto w-full max-w-[1460px] px-4 sm:px-6 md:px-8">
         <ScrollReveal>
