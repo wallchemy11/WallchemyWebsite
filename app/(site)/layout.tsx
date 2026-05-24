@@ -12,6 +12,12 @@ export const fetchCache = "force-no-store";
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      {/* Fixed background texture */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 -z-10"
+        style={{ backgroundImage: "url('/images/mainbg.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}
+      />
       <LogoIntro />
       <SmoothScroll />
       <PageTransition />
