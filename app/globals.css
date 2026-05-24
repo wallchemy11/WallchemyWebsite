@@ -18,10 +18,10 @@
 html {
   scroll-behavior: smooth;
   overflow-x: clip;
+  background-color: rgb(var(--color-ink));
 }
 
 body {
-  background-color: rgb(var(--color-ink));
   color: rgb(var(--color-alabaster));
   font-family: var(--font-sans);
   letter-spacing: 0.012em;
