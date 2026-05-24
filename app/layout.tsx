@@ -170,7 +170,7 @@ export default async function RootLayout({
       lang="en"
       className={`${displayLancea.variable} ${displayPlayfair.variable} ${displayCormorant.variable} ${displayDmSerif.variable} ${displayLora.variable} ${displayCinzel.variable} ${sansKindSans.variable} ${sansInter.variable} ${sansManrope.variable} ${sansMontserrat.variable} ${sansPoppins.variable} ${sansSourceSans.variable} ${sansWorkSans.variable} ${sansNunito.variable}`}
     >
-      <body className="bg-ink text-alabaster antialiased" style={bodyStyle}>
+      <body className="text-alabaster antialiased" style={bodyStyle}>
         {children}
       </body>
     </html>
