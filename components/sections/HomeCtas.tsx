@@ -14,7 +14,7 @@ type HomeCtasProps = {
 
 export default function HomeCtas({ intro, ctas }: HomeCtasProps) {
   return (
-    <section className="bg-transparent py-24">
+    <section className="bg-transparent py-16">
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-col gap-6 border-y border-alabaster/10 py-10 md:flex-row md:items-center md:justify-between md:gap-8 md:py-12">
           <SplitText

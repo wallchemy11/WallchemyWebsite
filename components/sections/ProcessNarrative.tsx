@@ -199,7 +199,7 @@ export default function ProcessNarrative({
   }, [shouldAnimate]);
 
   return (
-    <section ref={containerRef} className="bg-transparent py-16 sm:py-20 md:py-28">
+    <section ref={containerRef} className="bg-transparent py-10 sm:py-14 md:py-20">
       <div className="mx-auto grid max-w-6xl gap-9 px-6 md:gap-12 md:grid-cols-[0.9fr_1.1fr]">
         <div ref={pinRef} className="self-start space-y-8">
           <p className="text-[10px] tracking-[0.2em] text-brass/90 sm:text-xs sm:tracking-[0.3em]">

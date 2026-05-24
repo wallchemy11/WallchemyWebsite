@@ -74,7 +74,7 @@ export default function CinematicDivider({
   }, [shouldAnimate]);
 
   return (
-    <section ref={sectionRef} className="bg-transparent py-20 md:py-24">
+    <section ref={sectionRef} className="bg-transparent py-14 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
         <div ref={imageRef} className="overflow-hidden">
           <Image

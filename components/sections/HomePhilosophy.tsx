@@ -7,7 +7,7 @@ type HomePhilosophyProps = {
 
 export default function HomePhilosophy({ philosophy }: HomePhilosophyProps) {
   return (
-    <section className="bg-transparent py-20">
+    <section className="bg-transparent py-14">
       <div className="mx-auto max-w-6xl px-6">
         <ScrollReveal>
           <SectionHeading

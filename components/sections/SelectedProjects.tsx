@@ -106,7 +106,7 @@ export default function SelectedProjects({
   }, [shouldAnimate]);
 
   return (
-    <section className="bg-transparent py-16 sm:py-20 md:py-24">
+    <section className="bg-transparent py-10 sm:py-14 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeading
         eyebrow={safeEyebrow}

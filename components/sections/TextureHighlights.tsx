@@ -16,7 +16,7 @@ type TextureHighlightsProps = {
 
 export default function TextureHighlights({ textures }: TextureHighlightsProps) {
   return (
-    <section className="bg-transparent py-24">
+    <section className="bg-transparent py-16">
       <div className="mx-auto max-w-6xl px-6">
         <ScrollReveal>
           <SectionHeading
