@@ -110,7 +110,7 @@ export default function EditorialManifesto({
           {items.map((item, i) => (
             <div
               key={item.eyebrow}
-              className="manifesto-row group relative overflow-hidden py-6 md:py-8"
+              className="manifesto-row group relative overflow-hidden py-4 md:py-5"
             >
               <div className="relative grid grid-cols-[2rem_1fr] gap-x-6 sm:grid-cols-[2.5rem_1fr] md:grid-cols-[2.5rem_1fr_1fr] md:gap-x-10">
                 {/* Number accent */}
@@ -119,12 +119,12 @@ export default function EditorialManifesto({
                 </span>
 
                 {/* Principle name */}
-                <h3 className="font-display text-xl font-bold leading-snug text-alabaster sm:text-2xl md:text-[1.75rem]">
+                <h3 className="font-display text-2xl font-bold leading-snug text-alabaster sm:text-3xl md:text-4xl">
                   {item.eyebrow}
                 </h3>
 
                 {/* Body copy — below on mobile, right column on desktop */}
-                <p className="col-start-2 mt-3 text-sm leading-relaxed text-alabaster/55 sm:text-[15px] md:col-start-3 md:mt-0.5">
+                <p className="col-start-2 mt-3 text-base leading-relaxed text-alabaster/65 sm:text-lg md:col-start-3 md:mt-1">
                   {item.text}
                 </p>
               </div>
