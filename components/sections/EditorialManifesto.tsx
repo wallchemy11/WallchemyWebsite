@@ -106,11 +106,11 @@ export default function EditorialManifesto({
         </div>
 
         {/* ── Principle rows ── */}
-        <div className="border-t border-alabaster/[0.08]">
+        <div>
           {items.map((item, i) => (
             <div
               key={item.eyebrow}
-              className="manifesto-row group relative overflow-hidden border-b border-alabaster/[0.08] py-6 md:py-8"
+              className="manifesto-row group relative overflow-hidden py-6 md:py-8"
             >
               <div className="relative grid grid-cols-[2rem_1fr] gap-x-6 sm:grid-cols-[2.5rem_1fr] md:grid-cols-[2.5rem_1fr_1fr] md:gap-x-10">
                 {/* Number accent */}

@@ -233,9 +233,6 @@ export default function ProcessNarrative({
                   <p className="mt-3 text-sm leading-relaxed text-alabaster/75 sm:text-base">
                     {step.body}
                   </p>
-                  {index < steps.length - 1 ? (
-                    <div className="mt-6 h-px w-full bg-gradient-to-r from-alabaster/20 to-transparent" />
-                  ) : null}
                 </div>
               </div>
             </div>

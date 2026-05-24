@@ -25,7 +25,7 @@ export default function StudioValues({
           />
           <div className="mt-8 grid gap-5 sm:mt-10 sm:gap-6 md:grid-cols-3">
             {values.map((value) => (
-              <div key={value} data-reveal className="border-t border-brass/30 pt-6">
+              <div key={value} data-reveal className="pt-1">
                 <p className="text-sm uppercase tracking-[0.14em] text-alabaster/70 sm:tracking-[0.22em]">
                   {value}
                 </p>
