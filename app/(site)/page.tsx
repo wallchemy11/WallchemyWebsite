@@ -92,6 +92,7 @@ export default async function HomePage() {
           />
         </div>
       </section>
+      <HomeCinematicPanels panels={home.textureHighlights || []} />
       <DramaticImageReveal image={manifestoImage} alt="Why Wallchemy" />
       <EditorialManifesto
         eyebrow={home.manifesto?.eyebrow}
@@ -105,7 +106,6 @@ export default async function HomePage() {
         title={home.studioDivider?.title}
         subtitle={home.studioDivider?.subtitle}
       />
-      <HomeCinematicPanels panels={home.textureHighlights || []} />
       <HomeCtas intro={home.ctaIntro} ctas={normalizedCtas} />
       {hasMaterialLibrary ? (
         <TextureRibbon

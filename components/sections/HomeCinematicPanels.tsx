@@ -17,9 +17,7 @@ type HomeCinematicPanelsProps = {
   panels: Panel[];
 };
 
-export default function HomeCinematicPanels({
-  panels
-}: HomeCinematicPanelsProps) {
+export default function HomeCinematicPanels({ panels }: HomeCinematicPanelsProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const panelRefs = useRef<HTMLDivElement[]>([]);
   const { shouldAnimate } = useMotionPrefs();
@@ -58,10 +56,13 @@ export default function HomeCinematicPanels({
             });
 
             panelRefs.current.forEach((panel, index) => {
+              const heroImg = panel.querySelector<HTMLElement>(".panel-hero-img");
               if (index === 0) {
                 gsap.set(panel, { autoAlpha: 1 });
+                if (heroImg) gsap.set(heroImg, { scale: 1 });
               } else {
                 gsap.set(panel, { autoAlpha: 0 });
+                if (heroImg) gsap.set(heroImg, { scale: 1.05 });
               }
             });
 
@@ -70,6 +71,8 @@ export default function HomeCinematicPanels({
                 timeline.addLabel(`panel-${index}`, 0);
                 return;
               }
+
+              const heroImg = panel.querySelector<HTMLElement>(".panel-hero-img");
 
               timeline
                 .addLabel(`panel-${index}`, index * segment)
@@ -84,6 +87,14 @@ export default function HomeCinematicPanels({
                   { autoAlpha: 1, duration: 1.1, ease: "power2.out" },
                   `panel-${index}+=0.2`
                 );
+
+              if (heroImg) {
+                timeline.to(
+                  heroImg,
+                  { scale: 1, duration: 1.4, ease: "power2.out" },
+                  `panel-${index}+=0.2`
+                );
+              }
             });
           },
           "(max-width: 1023px), (pointer: coarse)": () => {
@@ -105,179 +116,199 @@ export default function HomeCinematicPanels({
 
   if (items.length === 0) return null;
 
+  const total = String(items.length).padStart(2, "0");
+
   return (
     <section ref={sectionRef} className="relative bg-transparent">
+
+      {/* ── Mobile layout ── */}
       <div className="md:hidden">
         {items.map((panel, index) => {
-          const source =
-            panel.images && panel.images.length > 0
-              ? panel.images
-              : [panel.heroImage];
-          const frames = [...source].filter(Boolean).slice(0, 4);
+          const source = panel.images?.length ? panel.images : [panel.heroImage];
+          const frames = source.filter(Boolean);
+          const heroFrame = frames[0];
+          const secondaryFrames = frames.slice(1, 3);
+          const panelNum = String(index + 1).padStart(2, "0");
+
           return (
             <article
               key={`${panel.title}-mobile-${index}`}
-              className="border-b border-alabaster/10 bg-gradient-to-b from-[#15110f] via-[#0f0d0c] to-ink px-5 py-8 last:border-b-0"
+              className="border-b border-alabaster/10 last:border-b-0"
             >
-              <div className="overflow-x-auto pb-2">
-                <div className="flex w-max items-center gap-4">
-                  {frames.map((src, frameIndex) => {
-                    const imageKey = `${panel.title}-m-${index}-${frameIndex}-${src}`;
-                    if (!isVisible(imageKey)) return null;
+              {/* Hero image — full bleed portrait */}
+              {heroFrame && isVisible(`${panel.title}-mh-${index}`) && (
+                <div className="relative h-[58svh] overflow-hidden">
+                  <Image
+                    src={heroFrame}
+                    alt={panel.title}
+                    fill
+                    sizes="100vw"
+                    quality={75}
+                    className="object-cover"
+                    priority={index === 0}
+                    onError={() => markFailed(`${panel.title}-mh-${index}`)}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-ink/30 via-transparent to-ink/70" />
+                </div>
+              )}
+
+              {/* Text block */}
+              <div className="px-5 py-6">
+                <div className="flex items-center gap-3">
+                  <span className="h-px w-6 flex-shrink-0 bg-brass" />
+                  <p className="text-[10px] uppercase tracking-[0.3em] text-brass">Top Finishes</p>
+                  <span className="ml-auto font-mono text-[11px] text-alabaster/25">{panelNum}</span>
+                </div>
+                <h2 className="font-display mt-3 text-[2rem] leading-none">{panel.title}</h2>
+                <p className="mt-3 text-sm uppercase tracking-[0.15em] leading-relaxed text-alabaster/55 whitespace-pre-line">
+                  {panel.shortDescription}
+                </p>
+              </div>
+
+              {/* Secondary images — 2-col grid */}
+              {secondaryFrames.length > 0 && (
+                <div className="grid grid-cols-2 gap-1 px-5 pb-8">
+                  {secondaryFrames.map((src, fi) => {
+                    const key = `${panel.title}-ms-${index}-${fi}`;
+                    if (!isVisible(key)) return null;
                     return (
                       <div
-                        key={imageKey}
-                        className="h-[42svh] w-[46vw] min-w-[154px] max-w-[210px] rounded-sm border border-alabaster/20 bg-alabaster/[0.04] p-2"
+                        key={key}
+                        className="relative h-[28svh] overflow-hidden rounded-sm border border-alabaster/15"
                       >
-                        <div className="h-full w-full overflow-hidden bg-[#151210]">
-                          <Image
-                            src={src}
-                            alt={`${panel.title} ${frameIndex + 1}`}
-                            width={420}
-                            height={560}
-                            sizes="46vw"
-                            quality={68}
-                            className="h-full w-full object-contain"
-                            priority={index === 0 && frameIndex === 0}
-                            onError={() => markFailed(imageKey)}
-                          />
-                        </div>
+                        <Image
+                          src={src}
+                          alt={`${panel.title} detail`}
+                          fill
+                          sizes="45vw"
+                          quality={65}
+                          className="object-cover"
+                          onError={() => markFailed(key)}
+                        />
                       </div>
                     );
                   })}
                 </div>
-              </div>
-              <div className="mt-5">
-                <p className="text-[10px] uppercase tracking-[0.25em] text-brass">
-                  Top Finishes
-                </p>
-                <h2 className="font-display mt-2 text-[1.7rem]">{panel.title}</h2>
-                <p className="mt-2 whitespace-pre-line text-[11px] uppercase tracking-[0.12em] text-alabaster/70">
-                  {panel.shortDescription}
-                </p>
-              </div>
+              )}
             </article>
           );
         })}
       </div>
-      <div className="relative hidden h-auto overflow-visible md:block md:h-[82vh] lg:h-[90vh] md:overflow-hidden">
-        {items.map((panel, index) => (
-          <div
-            key={panel.title}
-            ref={(el) => {
-              if (el) panelRefs.current[index] = el;
-            }}
-            className="relative min-h-[60vh] will-change-[opacity] md:absolute md:inset-0 md:min-h-0"
-          >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(201,166,107,0.14),transparent_45%),radial-gradient(circle_at_80%_85%,rgba(120,93,66,0.18),transparent_50%)]" />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#15110f] via-[#0f0d0c] to-ink" />
-            <div className="absolute inset-0 mx-auto hidden max-w-6xl px-6 py-10 md:block">
-              <div className="grid h-full grid-cols-12 grid-rows-6 gap-4 lg:gap-6">
-                {(() => {
-                  const source =
-                    panel.images && panel.images.length > 0
-                      ? panel.images
-                      : [panel.heroImage];
-                  const frames = [...source].filter(Boolean).slice(0, 4);
-                  const frameClasses = [
-                    "col-span-4 row-span-4",
-                    "col-span-5 row-span-3",
-                    "col-span-4 row-span-4",
-                    "col-span-5 row-span-3"
-                  ];
-                  const frameStarts = [
-                    "col-start-1 row-start-1",
-                    "col-start-4 row-start-1",
-                    "col-start-9 row-start-2",
-                    "col-start-3 row-start-4"
-                  ];
-                  return frames.map((src, frameIndex) => {
-                    const imageKey = `${panel.title}-${index}-${frameIndex}-${src}`;
-                    if (!isVisible(imageKey)) return null;
-                    return (
-                      <div
-                        key={imageKey}
-                        className={`rounded-sm border border-alabaster/20 bg-alabaster/[0.04] p-2 shadow-[0_18px_40px_rgba(0,0,0,0.35)] ${frameClasses[frameIndex]} ${frameStarts[frameIndex]}`}
-                      >
-                        <div
-                          className={`h-full w-full overflow-hidden bg-[#151210] ${
-                            frameIndex % 2 === 0 ? "aspect-[3/4]" : "aspect-[4/3]"
-                          }`}
-                        >
-                          <Image
-                            src={src}
-                            alt={`${panel.title} ${frameIndex + 1}`}
-                            width={900}
-                            height={1200}
-                            sizes="(max-width: 1200px) 30vw, 24vw"
-                            quality={72}
-                            className="h-full w-full object-contain"
-                            priority={index === 0 && frameIndex === 0}
-                            onError={() => markFailed(imageKey)}
-                          />
-                        </div>
+
+      {/* ── Desktop layout — pinned scroll crossfade ── */}
+      <div className="relative hidden md:block md:h-[82vh] lg:h-[90vh] overflow-hidden">
+        {items.map((panel, index) => {
+          const source = panel.images?.length ? panel.images : [panel.heroImage];
+          const frames = source.filter(Boolean);
+          const heroFrame = frames[0];
+          const subFrame1 = frames[1];
+          const subFrame2 = frames[2];
+          const panelNum = String(index + 1).padStart(2, "0");
+
+          return (
+            <div
+              key={panel.title}
+              ref={(el) => { if (el) panelRefs.current[index] = el; }}
+              className="absolute inset-0 will-change-[opacity]"
+            >
+              {/* Warm ambient background */}
+              <div className="absolute inset-0 bg-[#0d0b0a]" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_58%_50%,rgba(201,166,107,0.09),transparent_70%)]" />
+
+              {/* Editorial diptych */}
+              <div className="absolute inset-0 flex">
+
+                {/* Left — dominant portrait hero */}
+                <div className="relative w-1/2 overflow-hidden">
+                  {heroFrame && isVisible(`${panel.title}-${index}-hero`) ? (
+                    <>
+                      <Image
+                        src={heroFrame}
+                        alt={panel.title}
+                        fill
+                        sizes="50vw"
+                        quality={80}
+                        className="panel-hero-img object-cover"
+                        priority={index === 0}
+                        onError={() => markFailed(`${panel.title}-${index}-hero`)}
+                      />
+                      {/* 1 px inner frame */}
+                      <div className="pointer-events-none absolute inset-[10px] border border-alabaster/10" />
+                      {/* Right-edge fade into panel bg */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0d0b0a]/65" />
+                      {/* Top vignette */}
+                      <div className="absolute inset-0 bg-gradient-to-b from-[#0d0b0a]/30 via-transparent to-transparent" />
+                    </>
+                  ) : null}
+                </div>
+
+                {/* Right — sub-images + text */}
+                <div className="relative flex w-1/2 flex-col">
+
+                  {/* Top zone: staggered sub-image pair */}
+                  <div className="flex flex-1 items-start gap-4 px-8 pt-10 pb-4 lg:px-10 lg:pt-12">
+                    {subFrame1 && isVisible(`${panel.title}-${index}-sub1`) ? (
+                      <div className="relative h-[28vh] flex-[1.5] overflow-hidden rounded-sm border border-alabaster/15 lg:h-[32vh]">
+                        <Image
+                          src={subFrame1}
+                          alt={`${panel.title} secondary`}
+                          fill
+                          sizes="25vw"
+                          quality={72}
+                          className="object-cover"
+                          onError={() => markFailed(`${panel.title}-${index}-sub1`)}
+                        />
                       </div>
-                    );
-                  });
-                })()}
-              </div>
-            </div>
-            <div className="absolute inset-0 block md:hidden">
-              {(() => {
-                const source =
-                  panel.images && panel.images.length > 0
-                    ? panel.images
-                    : [panel.heroImage];
-                const frames = [...source].filter(Boolean).slice(0, 4);
-                return (
-                  <div className="h-full overflow-x-auto px-5 py-7 sm:px-6 sm:py-8">
-                    <div className="flex h-full w-max items-center gap-4">
-                      {frames.map((src, frameIndex) => {
-                        const imageKey = `${panel.title}-m-${index}-${frameIndex}-${src}`;
-                        if (!isVisible(imageKey)) return null;
-                        return (
-                          <div
-                            key={imageKey}
-                            className="h-[44svh] w-[46vw] min-w-[156px] max-w-[214px] rounded-sm border border-alabaster/20 bg-alabaster/[0.04] p-2 sm:h-[50svh] sm:w-[42vw]"
-                          >
-                            <div className="h-full w-full overflow-hidden bg-[#151210]">
-                              <Image
-                                src={src}
-                                alt={`${panel.title} ${frameIndex + 1}`}
-                                width={420}
-                                height={560}
-                                sizes="42vw"
-                                quality={68}
-                                className="h-full w-full object-contain"
-                                priority={index === 0 && frameIndex === 0}
-                                onError={() => markFailed(imageKey)}
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                    ) : null}
+                    {subFrame2 && isVisible(`${panel.title}-${index}-sub2`) ? (
+                      <div className="relative mt-12 h-[20vh] flex-1 overflow-hidden rounded-sm border border-alabaster/15 lg:mt-14 lg:h-[22vh]">
+                        <Image
+                          src={subFrame2}
+                          alt={`${panel.title} detail`}
+                          fill
+                          sizes="20vw"
+                          quality={70}
+                          className="object-cover"
+                          onError={() => markFailed(`${panel.title}-${index}-sub2`)}
+                        />
+                      </div>
+                    ) : null}
                   </div>
-                );
-              })()}
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-ink/90" />
-            <div className="absolute inset-0 flex items-end">
-              <div className="mx-auto w-full max-w-6xl px-5 pb-12 sm:px-6 sm:pb-16 md:pb-20">
-                <p className="text-[10px] uppercase tracking-[0.25em] text-brass sm:text-xs sm:tracking-[0.4em]">
-                  Top Finishes
-                </p>
-                <h2 className="font-display mt-3 text-[1.8rem] sm:text-3xl md:text-5xl">
-                  {panel.title}
-                </h2>
-                <p className="mt-2 max-w-2xl whitespace-pre-line text-[11px] uppercase tracking-[0.12em] text-alabaster/70 sm:mt-3 sm:text-sm sm:tracking-[0.18em] md:tracking-[0.2em]">
-                  {panel.shortDescription}
-                </p>
+
+                  {/* Bottom zone: text block */}
+                  <div className="relative px-8 pb-12 lg:px-10 lg:pb-16">
+                    {/* Ghost numeral behind text */}
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute right-8 bottom-10 select-none font-mono text-[9rem] font-bold leading-none text-brass/[0.05] lg:right-10 lg:bottom-12 lg:text-[11rem]"
+                    >
+                      {panelNum}
+                    </span>
+
+                    {/* Eyebrow + counter */}
+                    <div className="mb-4 flex items-center gap-3">
+                      <span className="h-px w-6 flex-shrink-0 bg-brass" />
+                      <p className="text-[10px] uppercase tracking-[0.35em] text-brass">Top Finishes</p>
+                      <span className="ml-auto font-mono text-xs text-alabaster/30">{panelNum} / {total}</span>
+                    </div>
+
+                    {/* Finish name */}
+                    <h2 className="font-display text-4xl leading-[0.95] lg:text-5xl xl:text-[3.5rem]">
+                      {panel.title}
+                    </h2>
+
+                    {/* Description */}
+                    <p className="mt-4 max-w-xs text-sm uppercase tracking-[0.16em] leading-relaxed text-alabaster/55 whitespace-pre-line lg:mt-5">
+                      {panel.shortDescription}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
     </section>
   );
 }
