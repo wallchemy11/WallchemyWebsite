@@ -112,18 +112,9 @@ export default function EditorialManifesto({
               key={item.eyebrow}
               className="manifesto-row group relative overflow-hidden border-b border-alabaster/[0.08] py-6 md:py-8"
             >
-              {/* Ghost watermark number */}
-              <span
-                aria-hidden
-                className="pointer-events-none absolute right-0 top-0 select-none font-display font-bold leading-none text-alabaster opacity-[0.05]"
-                style={{ fontSize: "clamp(5rem, 13vw, 9rem)" }}
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-
-              <div className="relative grid grid-cols-[2.5rem_1fr] gap-x-6 sm:grid-cols-[3rem_1fr] md:grid-cols-[3rem_1fr_1fr] md:gap-x-10">
+              <div className="relative grid grid-cols-[2rem_1fr] gap-x-6 sm:grid-cols-[2.5rem_1fr] md:grid-cols-[2.5rem_1fr_1fr] md:gap-x-10">
                 {/* Number accent */}
-                <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.5em] text-brass/70 sm:text-[11px]">
+                <span className="mt-1 text-xs font-semibold tabular-nums text-brass/60">
                   {String(i + 1).padStart(2, "0")}
                 </span>
 
