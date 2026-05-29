@@ -11,3 +11,4 @@ data/
 !app/api/admin/data/route.ts
 .DS_Store
 CONTEXT.md
+tsconfig.tsbuildinfo
