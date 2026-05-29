@@ -16,28 +16,32 @@ export default function LogoIntro() {
 
     let cancelled = false;
 
+    const dismiss = () => {
+      if (cancelled) return;
+      cancelled = true;
+      setVisible(false);
+      window.dispatchEvent(new CustomEvent("wc:intro-done"));
+    };
+
+    // Hard cap — if GSAP stalls for any reason the overlay must not hang
+    const fallback = setTimeout(dismiss, 5500);
+
     (async () => {
       const { gsap } = await loadGsap();
       if (cancelled) return;
 
       const overlay = overlayRef.current;
       const logo    = logoRef.current;
-      if (!overlay || !logo) return;
+      if (!overlay || !logo) { dismiss(); return; }
 
-      const tl = gsap.timeline();
+      const tl = gsap.timeline({ onComplete: () => { clearTimeout(fallback); dismiss(); } });
 
       tl.to(logo, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" });
       tl.to({}, { duration: 1.8 });
       tl.to(overlay, { opacity: 0, duration: 0.8, ease: "power2.inOut" });
-      tl.call(() => {
-        if (!cancelled) {
-          setVisible(false);
-          window.dispatchEvent(new CustomEvent("wc:intro-done"));
-        }
-      });
     })();
 
-    return () => { cancelled = true; };
+    return () => { cancelled = true; clearTimeout(fallback); };
   }, [visible]);
 
   if (!visible) return null;

@@ -36,6 +36,8 @@ export default function PageTransition() {
     };
   }, [pathname, shouldAnimate]);
 
+  if (!shouldAnimate) return null;
+
   return (
     <div
       ref={overlayRef}
