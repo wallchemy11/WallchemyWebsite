@@ -196,7 +196,7 @@ export default function HomeCinematicPanels({ panels }: HomeCinematicPanelsProps
       </div>
 
       {/* ── Desktop layout — pinned scroll crossfade ── */}
-      <div className="relative hidden md:block md:h-[82vh] lg:h-[90vh] overflow-hidden">
+      <div className="relative hidden md:block md:h-screen overflow-hidden">
         {items.map((panel, index) => {
           const source = panel.images?.length ? panel.images : [panel.heroImage];
           const frames = source.filter(Boolean);
