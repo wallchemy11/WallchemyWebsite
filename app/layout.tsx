@@ -22,7 +22,7 @@ const sansKindSans = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Wallchemy — Turning Walls into Experiences",
+  title: "Wallchemy: Turning Walls into Experiences",
   description:
     "Luxury texture and surface studio crafting immersive, tactile environments."
 };

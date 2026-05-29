@@ -18,7 +18,7 @@ export async function generateMetadata() {
   const home = await getHomePage();
   if (!home || !home.seo) {
     return {
-      title: "Wallchemy — Turning Walls into Experiences",
+  title: "Wallchemy: Turning Walls into Experiences",
       description: "Luxury texture and surface studio crafting immersive, tactile environments."
     };
   }
