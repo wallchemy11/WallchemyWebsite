@@ -14,7 +14,7 @@ export function buildMetadata(seo?: SeoInput): Metadata {
     : undefined;
 
   return {
-    title: seo.title,
+    title: seo.title?.replace(/\s*—\s*/g, ": "),
     description: seo.description,
     openGraph: images ? { images } : undefined
   };
