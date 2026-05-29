@@ -38,7 +38,7 @@ export default function VideoHero({
         <HeroReveal>
           <h1
             data-hero
-            className="font-display whitespace-pre-line text-[2rem] font-bold uppercase tracking-[0.13em] sm:text-5xl sm:tracking-[0.18em] md:text-8xl md:tracking-[0.2em]"
+            className="font-display whitespace-pre-line text-[clamp(1.75rem,_5.5vw,_6rem)] font-bold uppercase tracking-[0.1em] sm:tracking-[0.15em] lg:tracking-[0.2em]"
           >
             {headline}
           </h1>

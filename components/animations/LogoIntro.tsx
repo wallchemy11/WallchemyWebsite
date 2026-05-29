@@ -9,7 +9,19 @@ export default function LogoIntro() {
   const overlayRef = useRef<HTMLDivElement>(null);
   const logoRef    = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { setVisible(true); }, []);
+  useEffect(() => {
+    const isMobile =
+      window.matchMedia("(max-width: 767px)").matches ||
+      window.matchMedia("(pointer: coarse)").matches;
+
+    if (isMobile) {
+      // Skip the overlay on mobile — dispatch done immediately so dependent animations don't stall
+      window.dispatchEvent(new CustomEvent("wc:intro-done"));
+      return;
+    }
+
+    setVisible(true);
+  }, []);
 
   useEffect(() => {
     if (!visible) return;

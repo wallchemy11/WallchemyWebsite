@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
@@ -9,6 +9,9 @@ export default function PageTransition() {
   const overlayRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { shouldAnimate } = useMotionPrefs();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     const overlay = overlayRef.current;
@@ -36,7 +39,9 @@ export default function PageTransition() {
     };
   }, [pathname, shouldAnimate]);
 
-  if (!shouldAnimate) return null;
+  // Never render during SSR or on mobile — avoids a server-rendered ink overlay
+  // that would flash before React hydration can remove it.
+  if (!mounted || !shouldAnimate) return null;
 
   return (
     <div
