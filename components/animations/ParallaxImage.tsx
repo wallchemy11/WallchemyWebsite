@@ -21,12 +21,12 @@ export default function ParallaxImage({
   quality = 70
 }: ParallaxImageProps) {
   const imageRef = useRef<HTMLDivElement>(null);
-  const { shouldAnimate } = useMotionPrefs();
+  const { shouldAnimate, isMobile } = useMotionPrefs();
 
   useEffect(() => {
     const element = imageRef.current;
     if (!element) return;
-    if (!shouldAnimate) return;
+    if (!shouldAnimate || isMobile) return;
 
     let mounted = true;
     let cleanup: (() => void) | undefined;
@@ -59,7 +59,7 @@ export default function ParallaxImage({
       mounted = false;
       cleanup?.();
     };
-  }, [shouldAnimate]);
+  }, [shouldAnimate, isMobile]);
 
   return (
     <div ref={imageRef} className={className}>

@@ -36,6 +36,6 @@ export function useMotionPrefs() {
   return {
     prefersReducedMotion,
     isMobile,
-    shouldAnimate: !prefersReducedMotion && !isMobile
+    shouldAnimate: !prefersReducedMotion
   };
 }
