@@ -26,17 +26,6 @@ async function loadHls() {
   return hlsPromise;
 }
 
-function getInitialSrc(src: string, mobileSrc: string | undefined): string {
-  if (
-    typeof window !== "undefined" &&
-    mobileSrc &&
-    window.matchMedia("(max-width: 767px)").matches
-  ) {
-    return mobileSrc;
-  }
-  return src;
-}
-
 function useInView<T extends HTMLElement>(threshold = 0.05) {
   const ref = useRef<T | null>(null);
   const [inView, setInView] = useState(false);
@@ -65,11 +54,14 @@ export default function SmartVideo({
   const videoRef = useRef<HTMLVideoElement>(null);
   const { ref: containerRef, inView } = useInView<HTMLDivElement>(0.05);
 
-  // Initialise with the correct src immediately — avoids the mobile double-load race
-  const [selectedSrc, setSelectedSrc] = useState(() => getInitialSrc(src, mobileSrc));
+  const [selectedSrc, setSelectedSrc] = useState(src);
   const [shouldLoad, setShouldLoad] = useState(false);
   const [canStreamVideo, setCanStreamVideo] = useState(true);
   const [isPageVisible, setIsPageVisible] = useState(true);
+  // Gates HLS setup until Effect 2 has confirmed the correct src.
+  // Prevents the double-load race where SSR hydration restores the desktop
+  // URL and the HLS effect fires once before Effect 2 switches to mobile.
+  const [srcReady, setSrcReady] = useState(false);
 
   const selectedSrcIsHls = isHlsManifest(selectedSrc);
 
@@ -87,7 +79,9 @@ export default function SmartVideo({
     return () => document.removeEventListener("visibilitychange", onChange);
   }, []);
 
-  // Source selection — re-runs on resize and network changes
+  // Source selection — runs once on mount and on resize / network changes.
+  // setSrcReady(true) is always called here, so the HLS effect only fires
+  // after this effect has confirmed the correct selectedSrc.
   useEffect(() => {
     const mobile = window.matchMedia("(max-width: 767px)");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -100,8 +94,11 @@ export default function SmartVideo({
         /(2g|slow-2g|3g)/i.test(connection.effectiveType);
       const nextSrc = mobile.matches && mobileSrc ? mobileSrc : src;
       const nextCanStream = !reducedMotion.matches && !saveData && !lowBandwidth;
+      // Batch all three updates — React 18 flushes them in one re-render,
+      // so the HLS effect sees the correct selectedSrc the first time it runs.
       setSelectedSrc(nextSrc);
       setCanStreamVideo(nextCanStream);
+      setSrcReady(true);
       if (priority && nextCanStream) setShouldLoad(true);
     };
 
@@ -135,10 +132,10 @@ export default function SmartVideo({
     return () => video.removeEventListener("canplay", tryPlay);
   }, [shouldLoad, canStreamVideo, selectedSrcIsHls, selectedSrc]);
 
-  // HLS playback — uses the installed hls.js npm package, not a CDN script tag
+  // HLS playback — gated on srcReady so it never fires with the wrong src
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !shouldLoad || !canStreamVideo || !selectedSrcIsHls) return;
+    if (!video || !shouldLoad || !canStreamVideo || !selectedSrcIsHls || !srcReady) return;
 
     let cancelled = false;
     let teardown = () => {};
@@ -167,7 +164,10 @@ export default function SmartVideo({
       .then((HlsCtor) => {
         if (cancelled || !video) return;
         if (HlsCtor?.isSupported?.()) {
-          const hls = new HlsCtor({ enableWorker: true, lowLatencyMode: false });
+          const hls = new HlsCtor({
+            enableWorker: false,
+            lowLatencyMode: false
+          });
           hls.loadSource(selectedSrc);
           hls.attachMedia(video);
           // Play as soon as the manifest is parsed and we're in view
@@ -189,7 +189,7 @@ export default function SmartVideo({
       cancelled = true;
       teardown();
     };
-  }, [selectedSrc, shouldLoad, canStreamVideo, selectedSrcIsHls]);
+  }, [selectedSrc, shouldLoad, canStreamVideo, selectedSrcIsHls, srcReady]);
 
   // Play / pause — selectedSrc intentionally omitted from deps (not used in body)
   useEffect(() => {
