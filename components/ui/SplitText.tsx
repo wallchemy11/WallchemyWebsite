@@ -11,8 +11,8 @@ type SplitTextProps = {
 
 export default function SplitText({ text, className }: SplitTextProps) {
   const textRef = useRef<HTMLParagraphElement>(null);
-  const { shouldAnimate, isMobile } = useMotionPrefs();
-  const lines = text.split("\n");
+  const { shouldAnimate } = useMotionPrefs();
+  const lines = text.trim().split("\n");
 
   useEffect(() => {
     const element = textRef.current;
@@ -57,21 +57,19 @@ export default function SplitText({ text, className }: SplitTextProps) {
 
   return (
     <p ref={textRef} className={`whitespace-pre-line ${className || ""}`}>
-      {isMobile
-        ? text
-        : lines.map((line, lineIndex) => (
-            <span key={`line-${lineIndex}`}>
-              {line
-                .split(" ")
-                .filter(Boolean)
-                .map((word, wordIndex) => (
-                  <span key={`${lineIndex}-${word}-${wordIndex}`} className="split-word">
-                    {word}&nbsp;
-                  </span>
-                ))}
-              {lineIndex < lines.length - 1 ? <br /> : null}
-            </span>
-          ))}
+      {lines.map((line, lineIndex) => (
+        <span key={`line-${lineIndex}`}>
+          {line
+            .split(" ")
+            .filter(Boolean)
+            .map((word, wordIndex) => (
+              <span key={`${lineIndex}-${word}-${wordIndex}`} className="split-word">
+                {word}&nbsp;
+              </span>
+            ))}
+          {lineIndex < lines.length - 1 ? <br /> : null}
+        </span>
+      ))}
     </p>
   );
 }
