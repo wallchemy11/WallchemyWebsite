@@ -10,57 +10,44 @@ type SmartVideoProps = {
   priority?: boolean;
 };
 
-declare global {
-  interface Window {
-    Hls?: any;
-    __hlsLibPromise?: Promise<any>;
-  }
-}
-
 function isHlsManifest(url: string) {
   return /\.m3u8(?:[?#].*)?$/i.test(url);
 }
 
-async function loadHlsLibrary() {
-  if (typeof window === "undefined") return null;
-  if (window.Hls) return window.Hls;
-  if (!window.__hlsLibPromise) {
-    window.__hlsLibPromise = new Promise((resolve, reject) => {
-      const existingScript = document.querySelector(
-        'script[data-hls-lib="true"]'
-      ) as HTMLScriptElement | null;
-      if (existingScript) {
-        existingScript.addEventListener("load", () => resolve(window.Hls || null), {
-          once: true
-        });
-        existingScript.addEventListener("error", () => reject(new Error("Failed to load hls.js")), {
-          once: true
-        });
-        return;
-      }
+// Module-level singleton — hls.js is loaded once and reused across all instances
+let hlsPromise: Promise<typeof import("hls.js")["default"] | null> | null = null;
 
-      const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js";
-      script.async = true;
-      script.dataset.hlsLib = "true";
-      script.onload = () => resolve(window.Hls || null);
-      script.onerror = () => reject(new Error("Failed to load hls.js"));
-      document.head.appendChild(script);
-    });
+async function loadHls() {
+  if (!hlsPromise) {
+    hlsPromise = import("hls.js")
+      .then((m) => m.default)
+      .catch(() => null);
   }
-  return window.__hlsLibPromise;
+  return hlsPromise;
 }
 
-function useInView<T extends HTMLElement>(threshold: number = 0.05) {
+function getInitialSrc(src: string, mobileSrc: string | undefined): string {
+  if (
+    typeof window !== "undefined" &&
+    mobileSrc &&
+    window.matchMedia("(max-width: 767px)").matches
+  ) {
+    return mobileSrc;
+  }
+  return src;
+}
+
+function useInView<T extends HTMLElement>(threshold = 0.05) {
   const ref = useRef<T | null>(null);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      setInView(entry.isIntersecting);
-    }, { threshold });
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold }
+    );
     observer.observe(el);
     return () => observer.disconnect();
   }, [threshold]);
@@ -77,30 +64,34 @@ export default function SmartVideo({
 }: SmartVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { ref: containerRef, inView } = useInView<HTMLDivElement>(0.05);
+
+  // Initialise with the correct src immediately — avoids the mobile double-load race
+  const [selectedSrc, setSelectedSrc] = useState(() => getInitialSrc(src, mobileSrc));
   const [shouldLoad, setShouldLoad] = useState(false);
-  const [selectedSrc, setSelectedSrc] = useState(src);
   const [canStreamVideo, setCanStreamVideo] = useState(true);
   const [isPageVisible, setIsPageVisible] = useState(true);
+
   const selectedSrcIsHls = isHlsManifest(selectedSrc);
 
-  // Refs so the canplay closure reads current values without restarting video.load()
+  // Refs so closures read current values without re-triggering effects
   const inViewRef = useRef(inView);
   const isPageVisibleRef = useRef(isPageVisible);
   useEffect(() => { inViewRef.current = inView; }, [inView]);
   useEffect(() => { isPageVisibleRef.current = isPageVisible; }, [isPageVisible]);
 
+  // Page visibility
   useEffect(() => {
-    const onVisibilityChange = () => {
-      setIsPageVisible(document.visibilityState === "visible");
-    };
-    onVisibilityChange();
-    document.addEventListener("visibilitychange", onVisibilityChange);
-    return () => document.removeEventListener("visibilitychange", onVisibilityChange);
+    const onChange = () => setIsPageVisible(document.visibilityState === "visible");
+    onChange();
+    document.addEventListener("visibilitychange", onChange);
+    return () => document.removeEventListener("visibilitychange", onChange);
   }, []);
 
+  // Source selection — re-runs on resize and network changes
   useEffect(() => {
     const mobile = window.matchMedia("(max-width: 767px)");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
     const update = () => {
       const connection = (navigator as any).connection;
       const saveData = Boolean(connection?.saveData);
@@ -111,10 +102,9 @@ export default function SmartVideo({
       const nextCanStream = !reducedMotion.matches && !saveData && !lowBandwidth;
       setSelectedSrc(nextSrc);
       setCanStreamVideo(nextCanStream);
-      if (priority && nextCanStream) {
-        setShouldLoad(true);
-      }
+      if (priority && nextCanStream) setShouldLoad(true);
     };
+
     update();
     mobile.addEventListener("change", update);
     reducedMotion.addEventListener("change", update);
@@ -124,12 +114,12 @@ export default function SmartVideo({
     };
   }, [src, mobileSrc, priority]);
 
+  // Trigger load when in view
   useEffect(() => {
-    if (canStreamVideo && (priority || inView)) {
-      setShouldLoad(true);
-    }
+    if (canStreamVideo && (priority || inView)) setShouldLoad(true);
   }, [inView, canStreamVideo, priority]);
 
+  // Plain .mp4 playback
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !shouldLoad || !canStreamVideo || selectedSrcIsHls) return;
@@ -142,16 +132,13 @@ export default function SmartVideo({
 
     video.addEventListener("canplay", tryPlay, { once: true });
     video.load();
-
-    return () => {
-      video.removeEventListener("canplay", tryPlay);
-    };
+    return () => video.removeEventListener("canplay", tryPlay);
   }, [shouldLoad, canStreamVideo, selectedSrcIsHls, selectedSrc]);
 
+  // HLS playback — uses the installed hls.js npm package, not a CDN script tag
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
-    if (!shouldLoad || !canStreamVideo || !selectedSrcIsHls) return;
+    if (!video || !shouldLoad || !canStreamVideo || !selectedSrcIsHls) return;
 
     let cancelled = false;
     let teardown = () => {};
@@ -176,19 +163,20 @@ export default function SmartVideo({
       return () => teardown();
     }
 
-    loadHlsLibrary()
+    loadHls()
       .then((HlsCtor) => {
         if (cancelled || !video) return;
         if (HlsCtor?.isSupported?.()) {
-          const hls = new HlsCtor({
-            enableWorker: true,
-            lowLatencyMode: true
-          });
+          const hls = new HlsCtor({ enableWorker: true, lowLatencyMode: false });
           hls.loadSource(selectedSrc);
           hls.attachMedia(video);
-          teardown = () => {
-            hls.destroy();
-          };
+          // Play as soon as the manifest is parsed and we're in view
+          hls.on(HlsCtor.Events.MANIFEST_PARSED, () => {
+            if (!cancelled && inViewRef.current && isPageVisibleRef.current) {
+              video.play().catch(() => {});
+            }
+          });
+          teardown = () => hls.destroy();
         } else {
           attachNativeHls();
         }
@@ -203,27 +191,18 @@ export default function SmartVideo({
     };
   }, [selectedSrc, shouldLoad, canStreamVideo, selectedSrcIsHls]);
 
+  // Play / pause — selectedSrc intentionally omitted from deps (not used in body)
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !shouldLoad || !canStreamVideo) return;
 
-    if (!inView) {
+    if (!inView || !isPageVisible) {
       video.pause();
       return;
     }
 
-    if (!isPageVisible) {
-      video.pause();
-      return;
-    }
-
-    const playPromise = video.play();
-    if (playPromise && typeof playPromise.catch === "function") {
-      playPromise.catch(() => {
-        // Autoplay can be blocked; we silently ignore and keep poster visible.
-      });
-    }
-  }, [inView, shouldLoad, selectedSrc, canStreamVideo, isPageVisible]);
+    video.play().catch(() => {});
+  }, [inView, shouldLoad, canStreamVideo, isPageVisible]);
 
   return (
     <div ref={containerRef} className={className}>
@@ -244,4 +223,3 @@ export default function SmartVideo({
     </div>
   );
 }
-
