@@ -11,9 +11,9 @@ export default function SmoothScroll() {
   const lenisRef   = useRef<Lenis | null>(null);
   const stRef      = useRef<any>(null);      // ScrollTrigger ref
 
-  // ── Scroll to top + refresh triggers on every route change ───────────────
+  // ── Scroll to top on every route change ──────────────────────────────────
   useEffect(() => {
-    // rAF waits for Next.js to finish painting the new page before we move scroll
+    // rAF waits for Next.js to finish painting the new page before moving scroll
     const raf = requestAnimationFrame(() => {
       const lenis = lenisRef.current;
       if (lenis) {
@@ -21,10 +21,18 @@ export default function SmoothScroll() {
       } else {
         window.scrollTo(0, 0);
       }
-      // Give layout a beat to settle, then recalculate all ScrollTrigger positions
-      setTimeout(() => stRef.current?.refresh(), 120);
     });
-    return () => cancelAnimationFrame(raf);
+
+    // Refresh ScrollTrigger AFTER the page-transition overlay fully lifts.
+    // Refreshing earlier causes scroll animations to fire mid-overlay-lift,
+    // making elements visibly jump from their hidden (y-offset) positions.
+    const onPageReady = () => stRef.current?.refresh();
+    window.addEventListener("wc:page-ready", onPageReady, { once: true });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("wc:page-ready", onPageReady);
+    };
   }, [pathnameV]);
 
   // ── Lenis setup (desktop / fine-pointer only) ─────────────────────────────

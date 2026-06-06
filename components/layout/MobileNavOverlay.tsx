@@ -186,7 +186,9 @@ export default function MobileNavOverlay({
               <Link
                 key={item.href}
                 href={item.href}
-                className="block py-1.5 font-sans text-4xl font-extrabold leading-[0.92] tracking-[-0.03em] text-ink sm:text-5xl sm:leading-[0.9]"
+                className={`block py-1.5 font-sans text-4xl font-extrabold leading-[0.92] tracking-[-0.03em] transition-colors sm:text-5xl sm:leading-[0.9] ${
+                  pathname === item.href ? "text-ink" : "text-ink/35"
+                }`}
                 onClick={() => {
                   onClose(false);
                   if (item.href.split("#")[0] !== pathname) {

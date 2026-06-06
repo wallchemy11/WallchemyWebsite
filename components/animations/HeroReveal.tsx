@@ -31,16 +31,16 @@ export default function HeroReveal({ children }: HeroRevealProps) {
         );
         if (!headline) return;
 
-        gsap.set(headline, { opacity: 0, y: 20 });
-        if (rest.length) gsap.set(rest, { opacity: 0, y: 12 });
+        gsap.set(headline, { opacity: 0, y: 18 });
+        if (rest.length) gsap.set(rest, { opacity: 0, y: 10 });
       }, container);
 
       cleanup1 = () => ctx.revert();
     });
 
-    // ── Phase 2: animate in ───────────────────────────────────────────────
+    // ── Phase 2: animate in after overlay is fully gone ───────────────────
     const startAnim = async () => {
-      const { gsap, ScrollTrigger } = await loadGsap();
+      const { gsap } = await loadGsap();
       if (!mounted) return;
 
       const ctx = gsap.context(() => {
@@ -49,21 +49,18 @@ export default function HeroReveal({ children }: HeroRevealProps) {
         );
         if (!headline) return;
 
-        gsap.to(headline, {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: "power3.out"
-        });
+        // Fast, clean reveal — the overlay lift is the cinematic moment;
+        // text just needs to appear crisply once it's visible.
+        gsap.to(headline, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" });
 
         if (rest.length) {
           gsap.to(rest, {
             opacity: 1,
             y: 0,
-            duration: 0.6,
+            duration: 0.45,
             ease: "power3.out",
-            delay: 0.15,
-            stagger: 0.09
+            delay: 0.1,
+            stagger: 0.07
           });
         }
 
@@ -96,9 +93,10 @@ export default function HeroReveal({ children }: HeroRevealProps) {
 
     const introAlreadyDone = !!(window as any).__wcIntroDone;
     if (introAlreadyDone) {
-      // Subsequent navigation: start immediately — text animates behind the
-      // PageTransition overlay (500ms) so it's already mid-reveal when overlay lifts
-      fallbackTimer = setTimeout(onIntroDone, 80);
+      // Subsequent navigation: wait for the overlay to fully lift, THEN reveal.
+      // Starting earlier caused mid-animation elements to show through the lifting overlay.
+      window.addEventListener("wc:page-ready", onIntroDone, { once: true });
+      fallbackTimer = setTimeout(onIntroDone, 1200); // safety net if event misfires
     } else {
       // First load: wait for LogoIntro to complete
       window.addEventListener("wc:intro-done", onIntroDone, { once: true });
@@ -109,6 +107,7 @@ export default function HeroReveal({ children }: HeroRevealProps) {
       mounted = false;
       clearTimeout(fallbackTimer);
       window.removeEventListener("wc:intro-done", onIntroDone);
+      window.removeEventListener("wc:page-ready", onIntroDone);
       cleanup1?.();
       cleanup2?.();
     };

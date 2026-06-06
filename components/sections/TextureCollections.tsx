@@ -69,12 +69,17 @@ export default function TextureCollections({
     return () => window.clearInterval(t);
   }, [safeCollections.length, autoPaused, pageVisible]);
 
-  // ── Scroll active tab into view ───────────────────────────────────────────
+  // ── Scroll active tab into view (horizontal only) ────────────────────────
   useEffect(() => {
     const list = tabListRef.current;
     if (!list) return;
-    const btn = list.querySelectorAll("button")[idx] as HTMLButtonElement | undefined;
-    btn?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    const btn = list.querySelectorAll<HTMLButtonElement>("button")[idx];
+    if (!btn) return;
+    const listRect = list.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    const targetLeft =
+      list.scrollLeft + (btnRect.left - listRect.left) - listRect.width / 2 + btnRect.width / 2;
+    list.scrollTo({ left: targetLeft, behavior: "smooth" });
   }, [idx]);
 
   // ── GSAP crossfade between panels ────────────────────────────────────────

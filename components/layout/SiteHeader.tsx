@@ -121,7 +121,11 @@ export default function SiteHeader({
             <Link
               key={item.href}
               href={item.href}
-              className="text-alabaster/85 transition-colors hover:text-alabaster"
+              className={`transition-colors ${
+                pathname === item.href
+                  ? "text-brass"
+                  : "text-alabaster/70 hover:text-alabaster"
+              }`}
               onClick={() => fireNavStart(item.href, pathname)}
             >
               {item.label}
