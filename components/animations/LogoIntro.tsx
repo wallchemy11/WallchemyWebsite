@@ -10,12 +10,7 @@ export default function LogoIntro() {
   const logoRef    = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const isMobile =
-      window.matchMedia("(max-width: 767px)").matches ||
-      window.matchMedia("(pointer: coarse)").matches;
-
-    if (isMobile) {
-      // Skip the overlay on mobile — dispatch done immediately so dependent animations don't stall
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       (window as any).__wcIntroDone = true;
       window.dispatchEvent(new CustomEvent("wc:intro-done"));
       return;

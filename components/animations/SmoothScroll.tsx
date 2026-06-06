@@ -1,10 +1,31 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import { loadGsap } from "@/components/animations/loadGsap";
 
 export default function SmoothScroll() {
+  const pathname = usePathname();
+  const lenisRef = useRef<Lenis | null>(null);
+
+  // ── Scroll to top on every route change (and on first mount) ─────────────
+  useEffect(() => {
+    // Prevent the browser from restoring the previous scroll position itself;
+    // we handle it manually so Lenis and native scroll stay in sync.
+    if (typeof window !== "undefined") {
+      history.scrollRestoration = "manual";
+    }
+
+    const lenis = lenisRef.current;
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname]);
+
+  // ── Lenis setup (desktop / fine-pointer only) ─────────────────────────────
   useEffect(() => {
     const hasCoarsePointer =
       typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
@@ -17,9 +38,10 @@ export default function SmoothScroll() {
       return;
     }
 
+    history.scrollRestoration = "manual";
+
     let mounted = true;
     let gsapRef: any;
-    let scrollTriggerRef: any;
     let update: ((time: number) => void) | null = null;
     let scrollUpdate: (() => void) | null = null;
 
@@ -28,11 +50,12 @@ export default function SmoothScroll() {
       smoothWheel: true
     });
 
+    lenisRef.current = lenis;
+
     (async () => {
       const { gsap, ScrollTrigger } = await loadGsap();
       if (!mounted) return;
       gsapRef = gsap;
-      scrollTriggerRef = ScrollTrigger;
 
       scrollUpdate = ScrollTrigger.update;
       lenis.on("scroll", scrollUpdate);
@@ -46,12 +69,8 @@ export default function SmoothScroll() {
 
     return () => {
       mounted = false;
-      // Defensive: only run if GSAP loaded
-      if (
-        update &&
-        gsapRef?.ticker &&
-        typeof gsapRef.ticker.remove === "function"
-      ) {
+      lenisRef.current = null;
+      if (update && gsapRef?.ticker && typeof gsapRef.ticker.remove === "function") {
         gsapRef.ticker.remove(update);
       }
       if (scrollUpdate) {
