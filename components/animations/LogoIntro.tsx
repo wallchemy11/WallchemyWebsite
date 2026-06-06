@@ -33,7 +33,7 @@ export default function LogoIntro() {
     };
 
     // Hard cap — if GSAP stalls for any reason the overlay must not hang
-    const fallback = setTimeout(dismiss, 5500);
+    const fallback = setTimeout(dismiss, 3500);
 
     (async () => {
       const { gsap } = await loadGsap();
@@ -45,9 +45,9 @@ export default function LogoIntro() {
 
       const tl = gsap.timeline({ onComplete: () => { clearTimeout(fallback); dismiss(); } });
 
-      tl.to(logo, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" });
-      tl.to({}, { duration: 1.8 });
-      tl.to(overlay, { opacity: 0, duration: 0.8, ease: "power2.inOut" });
+      tl.to(logo, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" });
+      tl.to({}, { duration: 0.9 });
+      tl.to(overlay, { opacity: 0, duration: 0.7, ease: "power2.inOut" });
     })();
 
     return () => { cancelled = true; clearTimeout(fallback); };

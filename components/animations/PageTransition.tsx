@@ -10,12 +10,31 @@ export default function PageTransition() {
   const pathname = usePathname();
   const { shouldAnimate } = useMotionPrefs();
 
+  // ── Snap overlay to full coverage the moment a nav click fires ────────────
+  // This gives instant visual feedback before Next.js resolves the new page.
+  useEffect(() => {
+    const cover = async () => {
+      const overlay = overlayRef.current;
+      if (!overlay) return;
+      if (!shouldAnimate) {
+        overlay.style.transform = "scaleY(1)";
+        return;
+      }
+      const { gsap } = await loadGsap();
+      gsap.killTweensOf(overlay);
+      gsap.set(overlay, { scaleY: 1 });
+    };
+
+    window.addEventListener("wc:nav-start", cover);
+    return () => window.removeEventListener("wc:nav-start", cover);
+  }, [shouldAnimate]);
+
+  // ── Lift overlay once the new page is ready ───────────────────────────────
   useEffect(() => {
     const overlay = overlayRef.current;
     if (!overlay) return;
 
     if (!shouldAnimate) {
-      // Collapse instantly on mobile / reduced-motion — no GSAP needed
       overlay.style.transform = "scaleY(0)";
       return;
     }
@@ -37,9 +56,7 @@ export default function PageTransition() {
       );
     })();
 
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, [pathname, shouldAnimate]);
 
   return (

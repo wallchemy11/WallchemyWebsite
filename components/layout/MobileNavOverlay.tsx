@@ -187,7 +187,12 @@ export default function MobileNavOverlay({
                 key={item.href}
                 href={item.href}
                 className="block py-1.5 font-sans text-4xl font-extrabold leading-[0.92] tracking-[-0.03em] text-ink sm:text-5xl sm:leading-[0.9]"
-                onClick={() => onClose(false)}
+                onClick={() => {
+                  onClose(false);
+                  if (item.href.split("#")[0] !== pathname) {
+                    window.dispatchEvent(new CustomEvent("wc:nav-start"));
+                  }
+                }}
               >
                 {item.label}
               </Link>
@@ -197,7 +202,11 @@ export default function MobileNavOverlay({
             <Link
               href={meetingHref || "/contact#enquiry"}
               className="inline-flex min-h-11 items-center rounded-full border border-ink/20 px-6 py-3 text-xs uppercase tracking-[0.24em] text-ink sm:tracking-[0.32em]"
-              onClick={() => onClose(false)}
+              onClick={() => {
+                onClose(false);
+                const target = (meetingHref || "/contact").split("#")[0];
+                if (target !== pathname) window.dispatchEvent(new CustomEvent("wc:nav-start"));
+              }}
             >
               {meetingLabel || "Book a Meeting"}
             </Link>

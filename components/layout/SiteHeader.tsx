@@ -1,10 +1,19 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import MobileNavOverlay from "./MobileNavOverlay";
 import BrandIcon from "@/components/ui/BrandIcon";
+
+function fireNavStart(href: string, currentPath: string | null) {
+  // Only cover for cross-page navigations; anchors / same-page clicks don't need it
+  const target = href.split("#")[0] || "/";
+  if (target !== currentPath) {
+    window.dispatchEvent(new CustomEvent("wc:nav-start"));
+  }
+}
 
 const navItems = [
   { label: "About", href: "/about" },
@@ -34,6 +43,7 @@ export default function SiteHeader({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname();
 
   const closeMenu = useCallback((restoreFocus: boolean = true) => {
     setIsOpen(false);
@@ -75,6 +85,7 @@ export default function SiteHeader({
             href="/"
             aria-label="Wallchemy — home"
             className="col-start-2 inline-flex items-center justify-center md:col-auto md:justify-start"
+            onClick={() => fireNavStart("/", pathname)}
           >
             <Image
               src="/brand/mark-white-200.png"
@@ -111,6 +122,7 @@ export default function SiteHeader({
               key={item.href}
               href={item.href}
               className="text-alabaster/85 transition-colors hover:text-alabaster"
+              onClick={() => fireNavStart(item.href, pathname)}
             >
               {item.label}
             </Link>
@@ -120,6 +132,7 @@ export default function SiteHeader({
           <Link
             href={meetingHref || "/contact#enquiry"}
             className="rounded-full border border-alabaster/35 bg-alabaster/5 px-4 py-2 text-xs uppercase tracking-[0.32em] text-alabaster transition-colors hover:bg-alabaster/15"
+            onClick={() => fireNavStart(meetingHref || "/contact", pathname)}
           >
             {meetingLabel || "Book a Meeting"}
           </Link>
