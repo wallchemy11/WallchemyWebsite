@@ -94,6 +94,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               alt="Wallchemy"
               width={150}
               height={16}
+              priority
               className="h-4 w-auto"
             />
             <span className="hidden text-[10px] uppercase tracking-[0.32em] text-brass sm:inline">

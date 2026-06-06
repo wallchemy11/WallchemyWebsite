@@ -16,6 +16,7 @@ export default function LogoIntro() {
 
     if (isMobile) {
       // Skip the overlay on mobile — dispatch done immediately so dependent animations don't stall
+      (window as any).__wcIntroDone = true;
       window.dispatchEvent(new CustomEvent("wc:intro-done"));
       return;
     }
@@ -32,6 +33,7 @@ export default function LogoIntro() {
       if (cancelled) return;
       cancelled = true;
       setVisible(false);
+      (window as any).__wcIntroDone = true;
       window.dispatchEvent(new CustomEvent("wc:intro-done"));
     };
 

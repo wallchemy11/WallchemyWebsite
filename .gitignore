@@ -12,3 +12,7 @@ data/
 .DS_Store
 CONTEXT.md
 tsconfig.tsbuildinfo
+
+# Local video source files
+newintro.mp4
+newintro-web.mp4

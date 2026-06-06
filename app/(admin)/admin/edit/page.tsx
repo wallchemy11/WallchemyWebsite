@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import VideoCompressUpload from "@/components/admin/VideoCompressUpload";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ type FieldConfig = {
   options?: Array<{ label: string; value: string }>;
 };
 
-const HERO_VIDEO_MOBILE_PAGES = new Set(["home", "about", "textures", "process", "contact"]);
+const HERO_VIDEO_MOBILE_PAGES = new Set(["home", "about", "textures", "process", "contact", "projects"]);
 
 function isDirectMp4Url(value: string) {
   return /\.mp4(?:[?#].*)?$/i.test(value);
@@ -572,9 +573,15 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
     },
     {
       key: "heroVideo",
-      label: "Hero Video URL",
+      label: "Hero Video URL (Desktop)",
       type: "url",
       description: "R2 video URL for the hero background"
+    },
+    {
+      key: "heroVideoMobile",
+      label: "Hero Video URL (Mobile)",
+      type: "url",
+      description: "R2 video URL for mobile hero — smaller file for faster mobile loads"
     },
     {
       key: "defaultProjectImage",
@@ -828,12 +835,19 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       options: [
         { label: "Kind Sans (brand)", value: "kindsans" },
         { label: "Inter", value: "inter" },
-        { label: "Manrope", value: "manrope" },
-        { label: "Montserrat", value: "montserrat" },
-        { label: "Poppins", value: "poppins" },
-        { label: "Source Sans 3", value: "sourcesans" },
-        { label: "Work Sans", value: "worksans" },
-        { label: "Nunito", value: "nunito" }
+        { label: "Manrope", value: "manrope" }
+      ]
+    },
+    {
+      key: "typography.baseFontSize",
+      label: "Base Font Size",
+      type: "select",
+      description: "Overall text scale — headings and body text scale together",
+      options: [
+        { label: "Small (14px)", value: "14" },
+        { label: "Regular (17px)", value: "17" },
+        { label: "Large (19px)", value: "19" },
+        { label: "X-Large (21px)", value: "21" }
       ]
     },
     {
@@ -1546,6 +1560,23 @@ export default function EditPage() {
                 or `watch.cloudflarestream.com` page links.
               </p>
             ) : null}
+            {/* ── Video upload + compress ── */}
+            {field.type === "url" && /herovideo/i.test(field.key) && !/mobile/i.test(field.key) && (
+              <VideoCompressUpload
+                label="Upload & Compress video"
+                onDesktopUrl={(url) => updateField(path, url)}
+                onMobileUrl={(url) => {
+                  const mobilePath = [...path.slice(0, -1), path[path.length - 1] + "Mobile"];
+                  updateField(mobilePath, url);
+                }}
+              />
+            )}
+            {field.type === "url" && /heroVideoMobile/i.test(field.key) && (
+              <VideoCompressUpload
+                label="Upload & Compress mobile video"
+                onMobileUrl={(url) => updateField(path, url)}
+              />
+            )}
             {field.type === "url" &&
             field.key.toLowerCase().includes("herovideo") &&
             typeof value === "string" &&

@@ -449,6 +449,7 @@ export async function saveSiteSettings(data: {
     displayFont?: string;
     bodyFont?: string;
     textColor?: string;
+    baseFontSize?: string;
   };
   heroOverlay?: {
     color?: string;

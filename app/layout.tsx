@@ -1,5 +1,14 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import {
+  Playfair_Display,
+  Cormorant_Garamond,
+  DM_Serif_Display,
+  Lora,
+  Cinzel,
+  Inter,
+  Manrope,
+} from "next/font/google";
 import "./globals.css";
 import { getSiteSettings } from "@/lib/cms";
 import { hexToRgbChannels } from "@/lib/color";
@@ -20,6 +29,62 @@ const sansKindSans = localFont({
   display: "swap",
   variable: "--font-sans-kindsans"
 });
+
+// Brand display fonts
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-display-playfair"
+});
+const cormorantGaramond = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+  variable: "--font-display-cormorant"
+});
+const dmSerifDisplay = DM_Serif_Display({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  variable: "--font-display-dmserif"
+});
+const lora = Lora({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-display-lora"
+});
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-display-cinzel"
+});
+
+// Brand body fonts
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans-inter"
+});
+const manrope = Manrope({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans-manrope"
+});
+
+const DISPLAY_FONT_VAR: Record<string, string> = {
+  lancea: "var(--font-display-lancea)",
+  playfair: "var(--font-display-playfair)",
+  cormorant: "var(--font-display-cormorant)",
+  dmserif: "var(--font-display-dmserif)",
+  lora: "var(--font-display-lora)",
+  cinzel: "var(--font-display-cinzel)"
+};
+
+const BODY_FONT_VAR: Record<string, string> = {
+  kindsans: "var(--font-sans-kindsans)",
+  inter: "var(--font-sans-inter)",
+  manrope: "var(--font-sans-manrope)"
+};
 
 export const metadata: Metadata = {
   title: "Wallchemy: Turning Walls into Experiences",
@@ -42,6 +107,12 @@ export default async function RootLayout({
     ? Math.min(Math.max(overlayOpacityRaw, 0), 1)
     : 0.55;
 
+  const baseFontSize = typography.baseFontSize ? Number(typography.baseFontSize) : null;
+
+  const htmlStyle = baseFontSize && Number.isFinite(baseFontSize)
+    ? ({ fontSize: `${baseFontSize}px` } as React.CSSProperties)
+    : undefined;
+
   const bodyStyle = {
     "--color-ink": hexToRgbChannels(palette.ink, "11 10 9"),
     "--color-alabaster": hexToRgbChannels(
@@ -52,14 +123,25 @@ export default async function RootLayout({
     "--color-smoke": hexToRgbChannels(palette.smoke, "140 135 127"),
     "--color-ember": hexToRgbChannels(palette.ember, "165 116 79"),
     "--hero-overlay-rgb": hexToRgbChannels(heroOverlay.color, "11 10 9"),
-    "--hero-overlay-opacity": String(overlayOpacity)
+    "--hero-overlay-opacity": String(overlayOpacity),
+    "--font-display": DISPLAY_FONT_VAR[typography.displayFont || ""] || "var(--font-display-lancea)",
+    "--font-sans": BODY_FONT_VAR[typography.bodyFont || ""] || "var(--font-sans-kindsans)"
   } as React.CSSProperties;
 
+  const fontClasses = [
+    displayLancea.variable,
+    sansKindSans.variable,
+    playfairDisplay.variable,
+    cormorantGaramond.variable,
+    dmSerifDisplay.variable,
+    lora.variable,
+    cinzel.variable,
+    inter.variable,
+    manrope.variable
+  ].join(" ");
+
   return (
-    <html
-      lang="en"
-      className={`${displayLancea.variable} ${sansKindSans.variable}`}
-    >
+    <html lang="en" style={htmlStyle} className={fontClasses}>
       <body className="text-alabaster antialiased" style={bodyStyle}>
         {children}
       </body>

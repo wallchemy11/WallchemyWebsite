@@ -27,7 +27,13 @@ export default function PageTransition() {
       gsap.fromTo(
         overlay,
         { scaleY: 1 },
-        { scaleY: 0, transformOrigin: "top", duration: 1, ease: "power3.out" }
+        {
+          scaleY: 0,
+          transformOrigin: "top",
+          duration: 0.5,
+          ease: "power3.out",
+          onComplete: () => { window.dispatchEvent(new CustomEvent("wc:page-ready")); }
+        }
       );
     })();
 

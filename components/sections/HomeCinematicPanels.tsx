@@ -47,9 +47,9 @@ export default function HomeCinematicPanels({ panels }: HomeCinematicPanelsProps
             const timeline = gsap.timeline({
               scrollTrigger: {
                 trigger: section,
-                start: "center center",
-                end: () => `+=${items.length * 900}`,
-                scrub: 0.8,
+                start: "top top",
+                end: () => `+=${items.length * window.innerHeight * 0.55}`,
+                scrub: true,
                 pin: true,
                 anticipatePin: 1
               }

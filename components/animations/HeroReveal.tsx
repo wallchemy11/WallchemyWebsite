@@ -20,9 +20,7 @@ export default function HeroReveal({ children }: HeroRevealProps) {
     let cleanup: (() => void) | undefined;
     let fallbackTimer: ReturnType<typeof setTimeout>;
 
-    // ── Phase 1: load GSAP and hide elements immediately ──────────────────
-    // Runs ASAP so elements are already at opacity:0 when the LogoIntro
-    // overlay fades out, preventing the visible→hidden flash.
+    // ── Phase 1: hide elements immediately before first paint ─────────────
     loadGsap().then(({ gsap }) => {
       if (!mounted) return;
 
@@ -32,21 +30,16 @@ export default function HeroReveal({ children }: HeroRevealProps) {
         );
         if (!headline) return;
 
-        gsap.set(headline, {
-          scale: 1.55,
-          opacity: 0,
-          filter: "blur(18px)",
-          transformOrigin: "left bottom"
-        });
-        if (rest.length) gsap.set(rest, { scale: 1.18, opacity: 0, y: 16 });
+        gsap.set(headline, { opacity: 0, y: 20 });
+        if (rest.length) gsap.set(rest, { opacity: 0, y: 12 });
       }, container);
 
       cleanup = () => ctx.revert();
     });
 
-    // ── Phase 2: animate in after intro is done ───────────────────────────
+    // ── Phase 2: animate in ───────────────────────────────────────────────
     const startAnim = async () => {
-      const { gsap, ScrollTrigger } = await loadGsap(); // already cached
+      const { gsap, ScrollTrigger } = await loadGsap();
       if (!mounted) return;
 
       const ctx = gsap.context(() => {
@@ -56,23 +49,20 @@ export default function HeroReveal({ children }: HeroRevealProps) {
         if (!headline) return;
 
         gsap.to(headline, {
-          scale: 1,
           opacity: 1,
-          filter: "blur(0px)",
-          duration: 2.0,
-          ease: "expo.out",
-          delay: 0.05
+          y: 0,
+          duration: 0.7,
+          ease: "power3.out"
         });
 
         if (rest.length) {
           gsap.to(rest, {
-            scale: 1,
             opacity: 1,
             y: 0,
-            duration: 1.6,
-            ease: "expo.out",
-            delay: 0.6,
-            stagger: 0.12
+            duration: 0.6,
+            ease: "power3.out",
+            delay: 0.15,
+            stagger: 0.09
           });
         }
 
@@ -80,15 +70,15 @@ export default function HeroReveal({ children }: HeroRevealProps) {
         if (heroSection) {
           gsap.fromTo(
             headline,
-            { scale: 1, transformOrigin: "left bottom" },
+            { y: 0 },
             {
-              scale: 1.28,
+              y: -40,
               ease: "none",
               scrollTrigger: {
                 trigger: heroSection,
                 start: "top top",
                 end: "bottom top",
-                scrub: 1.5
+                scrub: true
               }
             }
           );
@@ -103,8 +93,16 @@ export default function HeroReveal({ children }: HeroRevealProps) {
       if (mounted) startAnim();
     };
 
-    window.addEventListener("wc:intro-done", onIntroDone, { once: true });
-    fallbackTimer = setTimeout(onIntroDone, 4500);
+    const introAlreadyDone = !!(window as any).__wcIntroDone;
+    if (introAlreadyDone) {
+      // Subsequent navigation: start immediately — text animates behind the
+      // PageTransition overlay (500ms) so it's already mid-reveal when overlay lifts
+      fallbackTimer = setTimeout(onIntroDone, 80);
+    } else {
+      // First load: wait for LogoIntro to complete
+      window.addEventListener("wc:intro-done", onIntroDone, { once: true });
+      fallbackTimer = setTimeout(onIntroDone, 4500);
+    }
 
     return () => {
       mounted = false;
