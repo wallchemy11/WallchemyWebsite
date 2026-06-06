@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type WheelEvent
-} from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Image from "next/image";
@@ -35,342 +29,309 @@ export default function TextureCollections({
   title,
   intro,
   supportText,
-  collections
+  collections,
 }: TextureCollectionsProps) {
-  const safeEyebrow = resolveText(eyebrow);
-  const safeTitle = resolveText(title);
-  const safeIntro = resolveText(intro);
-  const safeSupportText = resolveText(supportText);
+  const safeEyebrow   = resolveText(eyebrow);
+  const safeTitle     = resolveText(title);
+  const safeIntro     = resolveText(intro);
   const safeCollections = useMemo(() => collections || [], [collections]);
-  const [activeIndex, setActiveIndex] = useState(0);
+
+  const [activeIndex, setActiveIndex]   = useState(0);
+  const [autoPaused,  setAutoPaused]    = useState(false);
+  const [pageVisible, setPageVisible]   = useState(true);
   const [failedImages, setFailedImages] = useState<Record<string, true>>({});
-  const [autoPaused, setAutoPaused] = useState(false);
-  const [pageVisible, setPageVisible] = useState(true);
-  const [isMobileViewport, setIsMobileViewport] = useState(false);
-  const stageRef = useRef<HTMLDivElement>(null);
-  const directoryScrollRef = useRef<HTMLDivElement>(null);
+
+  const panelRefs  = useRef<(HTMLDivElement | null)[]>([]);
+  const tabListRef = useRef<HTMLDivElement>(null);
   const { shouldAnimate } = useMotionPrefs();
 
   if (safeCollections.length === 0) return null;
 
-  const normalizedIndex = Math.min(activeIndex, safeCollections.length - 1);
-  const selected = safeCollections[normalizedIndex];
-  const imageSource =
-    selected.images && selected.images.length > 0
-      ? selected.images
-      : [selected.heroImage];
-  const images = Array.from(new Set(imageSource.filter(Boolean))).slice(0, 4);
+  const idx     = Math.min(activeIndex, safeCollections.length - 1);
+  const total   = String(safeCollections.length).padStart(2, "0");
+  const numeral = String(idx + 1).padStart(2, "0");
 
-  const key0 = `${selected.slug}-0-${images[0] || ""}`;
-  const key1 = `${selected.slug}-1-${images[1] || ""}`;
-  const key2 = `${selected.slug}-2-${images[2] || ""}`;
-  const key3 = `${selected.slug}-3-${images[3] || ""}`;
-  const show0 = !!images[0] && !failedImages[key0];
-  const show1 = !!images[1] && !failedImages[key1];
-  const show2 = !!images[2] && !failedImages[key2];
-  const show3 = !!images[3] && !failedImages[key3];
-  const imageKeys = [key0, key1, key2, key3];
-  const visibleImages = images
-    .map((src, idx) => ({ src, key: imageKeys[idx] }))
-    .filter((item) => !!item.src && !failedImages[item.key]);
-
+  // ── Page visibility ───────────────────────────────────────────────────────
   useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage || !shouldAnimate) return;
-
-    let mounted = true;
-    let cleanup: (() => void) | undefined;
-
-    (async () => {
-      const { gsap } = await loadGsap();
-      if (!mounted) return;
-
-      const ctx = gsap.context(() => {
-        gsap.fromTo(
-          stage.querySelectorAll(".texture-stage-title, .texture-stage-copy"),
-          { y: 26, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 1,
-            ease: "power3.out",
-            stagger: 0.12
-          }
-        );
-        gsap.fromTo(
-          stage.querySelectorAll(".texture-frame"),
-          { y: 30, opacity: 0, scale: 0.98 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 1.2,
-            ease: "power4.out",
-            stagger: 0.08
-          }
-        );
-      }, stage);
-
-      cleanup = () => ctx.revert();
-    })();
-
-    return () => {
-      mounted = false;
-      cleanup?.();
-    };
-  }, [normalizedIndex, shouldAnimate]);
-
-  const handleDirectoryWheel = (event: WheelEvent<HTMLDivElement>) => {
-    const el = directoryScrollRef.current;
-    if (!el) return;
-    const canScroll = el.scrollHeight > el.clientHeight;
-    if (!canScroll) return;
-    const nextTop = el.scrollTop + event.deltaY;
-    const maxTop = el.scrollHeight - el.clientHeight;
-    const willScroll = nextTop > 0 && nextTop < maxTop;
-    if (willScroll) {
-      event.preventDefault();
-      el.scrollTop = nextTop;
-    }
-  };
-
-  useEffect(() => {
-    const query = window.matchMedia("(max-width: 767px)");
-    const apply = () => setIsMobileViewport(query.matches);
-    apply();
-    query.addEventListener("change", apply);
-    return () => query.removeEventListener("change", apply);
+    const sync = () => setPageVisible(document.visibilityState === "visible");
+    sync();
+    document.addEventListener("visibilitychange", sync);
+    return () => document.removeEventListener("visibilitychange", sync);
   }, []);
 
+  // ── Auto-advance ──────────────────────────────────────────────────────────
   useEffect(() => {
-    const syncVisibility = () => {
-      setPageVisible(document.visibilityState === "visible");
-    };
-    syncVisibility();
-    document.addEventListener("visibilitychange", syncVisibility);
-    return () => document.removeEventListener("visibilitychange", syncVisibility);
-  }, []);
+    if (safeCollections.length <= 1 || autoPaused || !pageVisible) return;
+    const t = window.setInterval(
+      () => setActiveIndex((p) => (p + 1) % safeCollections.length),
+      4800
+    );
+    return () => window.clearInterval(t);
+  }, [safeCollections.length, autoPaused, pageVisible]);
 
+  // ── Scroll active tab into view ───────────────────────────────────────────
   useEffect(() => {
-    if (safeCollections.length <= 1 || autoPaused || !pageVisible || isMobileViewport) return;
-    const timer = window.setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % safeCollections.length);
-    }, 4200);
-    return () => window.clearInterval(timer);
-  }, [safeCollections.length, autoPaused, pageVisible, isMobileViewport]);
+    const list = tabListRef.current;
+    if (!list) return;
+    const btn = list.querySelectorAll("button")[idx] as HTMLButtonElement | undefined;
+    btn?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [idx]);
+
+  // ── GSAP crossfade between panels ────────────────────────────────────────
+  const prevIndexRef = useRef(idx);
+  useEffect(() => {
+    if (!shouldAnimate) return;
+    const prev    = prevIndexRef.current;
+    const current = idx;
+    prevIndexRef.current = current;
+    if (prev === current) return;
+
+    loadGsap().then(({ gsap }) => {
+      const prevPanel = panelRefs.current[prev];
+      const nextPanel = panelRefs.current[current];
+      if (!prevPanel || !nextPanel) return;
+
+      gsap.to(prevPanel, { opacity: 0, duration: 0.35, ease: "power2.out" });
+      gsap.fromTo(
+        nextPanel,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", delay: 0.1 }
+      );
+    });
+  }, [idx, shouldAnimate]);
+
+  function markFailed(key: string) {
+    setFailedImages((prev) => ({ ...prev, [key]: true }));
+  }
+
+  function getImages(c: Collection) {
+    const src = c.images?.length ? c.images : [c.heroImage];
+    return Array.from(new Set(src.filter(Boolean))).slice(0, 4);
+  }
 
   return (
-    <section className="relative overflow-x-clip overflow-y-visible bg-transparent py-10 sm:py-14 md:py-16">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_18%,rgba(201,166,107,0.16),transparent_36%),radial-gradient(circle_at_86%_78%,rgba(103,72,48,0.2),transparent_42%)]" />
+    <section
+      className="relative overflow-x-clip bg-transparent py-10 sm:py-14 md:py-20"
+      onMouseEnter={() => setAutoPaused(true)}
+      onMouseLeave={() => setAutoPaused(false)}
+    >
+      {/* Ambient glow */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_70%_60%,rgba(201,166,107,0.08),transparent_70%)]" />
+
       <div className="mx-auto w-full max-w-[1460px] px-4 sm:px-6 md:px-8">
         <ScrollReveal>
-          <SectionHeading
-            eyebrow={safeEyebrow}
-            title={safeTitle}
-            subtitle={safeIntro}
-          />
-          <div className="relative mt-10 grid w-full min-w-0 gap-7 border border-alabaster/12 bg-gradient-to-b from-[#130f0d] via-[#100d0b] to-[#0c0a09] p-4 sm:mt-12 sm:p-6 md:grid-cols-[0.78fr_1.22fr] md:gap-12 md:p-8 lg:p-10">
-            <aside
-              data-reveal
-              className="min-w-0 space-y-6 border-b border-alabaster/10 pb-7 md:space-y-6 md:border-b-0 md:border-r md:pb-0 md:pr-8 lg:sticky lg:top-10 lg:flex lg:max-h-[82vh] lg:min-h-0 lg:flex-col"
-            >
-              <p className="text-[10px] tracking-[0.24em] text-brass/90 sm:text-xs">
-                Texture Directory
-              </p>
-              <p className="max-w-lg text-sm leading-relaxed text-alabaster/76 [overflow-wrap:anywhere] sm:text-base md:text-lg">
-                {safeSupportText || safeIntro}
-              </p>
-              <div className="rounded border border-alabaster/12 bg-[#0f0c0a]/70 p-3 lg:flex lg:flex-1 lg:min-h-0 lg:flex-col">
-                <div
-                  ref={directoryScrollRef}
-                  onWheel={handleDirectoryWheel}
-                  onMouseEnter={() => setAutoPaused(true)}
-                  onMouseLeave={() => setAutoPaused(false)}
-                  onTouchStart={() => setAutoPaused(true)}
-                  onTouchEnd={() => setAutoPaused(false)}
-                  onFocus={() => setAutoPaused(true)}
-                  onBlur={() => setAutoPaused(false)}
-                  className="w-full min-w-0 space-y-3 pr-2 lg:h-full lg:flex-1 lg:max-h-none lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:touch-pan-y lg:[scrollbar-color:rgba(201,166,107,0.55)_rgba(255,255,255,0.06)] lg:[scrollbar-width:thin] lg:[&::-webkit-scrollbar-thumb]:rounded-full lg:[&::-webkit-scrollbar-thumb]:bg-brass/60 lg:[&::-webkit-scrollbar-track]:bg-alabaster/5 lg:[&::-webkit-scrollbar]:w-1.5"
-                >
-                  {safeCollections.map((collection, index) => {
-                    const isActive = index === normalizedIndex;
-                    return (
-                      <button
-                        key={collection.slug}
-                        type="button"
-                        onClick={() => setActiveIndex(index)}
-                        className={`group block w-full min-w-0 max-w-full rounded border px-3.5 py-3.5 text-left transition sm:px-4 sm:py-4 ${
-                          isActive
-                            ? "border-brass/70 bg-brass/[0.09] shadow-[0_12px_30px_rgba(0,0,0,0.25)]"
-                            : "border-alabaster/10 bg-alabaster/[0.02] hover:border-brass/40"
-                        }`}
-                      >
-                        <p className="text-[10px] tracking-[0.25em] text-brass/85 sm:text-xs">
-                          {String(index + 1).padStart(2, "0")}
-                        </p>
-                        <h3 className="mt-2 break-words font-display text-lg tracking-[0.03em] [overflow-wrap:anywhere] sm:text-xl md:text-2xl">
-                          {collection.title}
-                        </h3>
-                        <p className="mt-2 max-h-10 overflow-hidden text-xs leading-relaxed text-alabaster/62 [overflow-wrap:anywhere] sm:max-h-12 sm:text-sm">
-                          {collection.shortDescription}
-                        </p>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+          <SectionHeading eyebrow={safeEyebrow} title={safeTitle} subtitle={safeIntro} />
+        </ScrollReveal>
 
-              <div className="md:hidden">
-                <div className="w-full min-w-0 max-w-full rounded border border-alabaster/10 bg-[#0c0a09] p-3.5 sm:p-4">
-                  <p className="text-[10px] tracking-[0.26em] text-brass/90 sm:text-xs">
-                    {String(normalizedIndex + 1).padStart(2, "0")} / {String(safeCollections.length).padStart(2, "0")}
-                  </p>
-                  <h3 className="mt-3 break-words font-display text-[1.7rem] tracking-[0.04em] [overflow-wrap:anywhere] sm:text-3xl">
-                    {selected.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-alabaster/75 [overflow-wrap:anywhere]">
-                    {selected.shortDescription}
-                  </p>
-                  <div className="mt-4 flex w-full max-w-full snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
-                    {images.map((src, i) => {
-                      const key = `${selected.slug}-m-${i}-${src || ""}`;
-                      if (!src || failedImages[key]) return null;
-                      return (
-                        <div
-                          key={key}
-                          className="w-[78vw] max-w-[320px] flex-shrink-0 snap-start rounded border border-alabaster/15 bg-alabaster/[0.04] p-2 sm:w-[72vw] sm:max-w-[360px]"
-                        >
-                          <div className={`${i % 2 === 0 ? "aspect-[3/4]" : "aspect-[4/3]"} bg-[#151210]`}>
+        {/* ── Tab navigation ────────────────────────────────────────────── */}
+        <div
+          ref={tabListRef}
+          className="mt-8 flex gap-2 overflow-x-auto pb-2 sm:mt-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          role="tablist"
+        >
+          {safeCollections.map((c, i) => {
+            const active = i === idx;
+            return (
+              <button
+                key={c.slug}
+                role="tab"
+                aria-selected={active}
+                type="button"
+                onClick={() => { setActiveIndex(i); setAutoPaused(true); }}
+                className={`flex-shrink-0 rounded-full border px-4 py-2 text-[11px] uppercase tracking-[0.22em] transition-all duration-300 sm:px-5 sm:text-xs ${
+                  active
+                    ? "border-brass bg-brass/10 text-brass"
+                    : "border-alabaster/15 text-alabaster/45 hover:border-alabaster/35 hover:text-alabaster/70"
+                }`}
+              >
+                {c.title}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ── Panel stack ───────────────────────────────────────────────── */}
+        <div className="relative mt-6 sm:mt-8">
+          {safeCollections.map((c, i) => {
+            const images  = getImages(c);
+            const hero    = images[0];
+            const detail1 = images[1];
+            const detail2 = images[2];
+            const isActive = i === idx;
+            const hKey  = `${c.slug}-h`;
+            const d1Key = `${c.slug}-d1`;
+            const d2Key = `${c.slug}-d2`;
+
+            return (
+              <div
+                key={c.slug}
+                ref={(el) => { panelRefs.current[i] = el; }}
+                role="tabpanel"
+                aria-hidden={!isActive}
+                style={{ opacity: shouldAnimate ? (i === 0 ? 1 : 0) : (isActive ? 1 : 0) }}
+                className={`${i === 0 ? "" : "absolute inset-0"} ${!isActive && !shouldAnimate ? "pointer-events-none" : ""}`}
+              >
+                {/* ── Desktop layout ───────────────────────────────────── */}
+                <div className="hidden md:flex md:h-[72vh] md:max-h-[780px] md:min-h-[520px] md:gap-0 md:overflow-hidden md:rounded-sm md:border md:border-alabaster/10">
+
+                  {/* Left: dominant image */}
+                  <div className="relative w-[58%] flex-shrink-0 overflow-hidden bg-[#0d0b09]">
+                    {hero && !failedImages[hKey] ? (
+                      <>
+                        <Image
+                          src={hero}
+                          alt={c.title}
+                          fill
+                          sizes="58vw"
+                          quality={82}
+                          className="object-cover transition-transform duration-700"
+                          priority={i === 0}
+                          onError={() => markFailed(hKey)}
+                        />
+                        {/* Right-edge fade to panel bg */}
+                        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-r from-transparent to-[#0d0b09]" />
+                        {/* Bottom vignette */}
+                        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0d0b09]/70 to-transparent" />
+                      </>
+                    ) : (
+                      <div className="absolute inset-0 bg-[#141210]" />
+                    )}
+                  </div>
+
+                  {/* Right: info + detail images */}
+                  <div className="flex flex-1 flex-col justify-between bg-[#0d0b09] px-8 py-8 lg:px-10 lg:py-10">
+                    {/* Top: counter + name + description */}
+                    <div>
+                      <div className="flex items-center gap-3">
+                        <span className="h-px w-6 flex-shrink-0 bg-brass/60" />
+                        <p className="text-[10px] uppercase tracking-[0.35em] text-brass/80">
+                          Material
+                        </p>
+                        <span className="ml-auto font-mono text-xs text-alabaster/25">
+                          {numeral} / {total}
+                        </span>
+                      </div>
+                      <h2 className="font-display mt-5 text-[2.6rem] leading-[0.92] tracking-[0.02em] lg:text-[3.2rem] xl:text-[3.6rem]">
+                        {c.title}
+                      </h2>
+                      <p className="mt-5 max-w-xs text-sm uppercase tracking-[0.14em] leading-relaxed text-alabaster/55 lg:mt-6 lg:max-w-sm">
+                        {c.shortDescription}
+                      </p>
+                    </div>
+
+                    {/* Bottom: detail thumbnails */}
+                    <div className="flex gap-3 pt-6">
+                      {detail1 && !failedImages[d1Key] && (
+                        <div className="relative h-[18vh] flex-1 overflow-hidden rounded-sm border border-alabaster/12 bg-[#141210]">
+                          <Image
+                            src={detail1}
+                            alt={`${c.title} detail`}
+                            fill
+                            sizes="16vw"
+                            quality={70}
+                            className="object-cover"
+                            onError={() => markFailed(d1Key)}
+                          />
+                        </div>
+                      )}
+                      {detail2 && !failedImages[d2Key] && (
+                        <div className="relative h-[18vh] flex-1 overflow-hidden rounded-sm border border-alabaster/12 bg-[#141210]">
+                          <Image
+                            src={detail2}
+                            alt={`${c.title} detail`}
+                            fill
+                            sizes="16vw"
+                            quality={70}
+                            className="object-cover"
+                            onError={() => markFailed(d2Key)}
+                          />
+                        </div>
+                      )}
+                      {!detail1 && !detail2 && (
+                        <div className="h-[18vh] flex-1 rounded-sm border border-alabaster/8 bg-[#141210]" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── Mobile layout ─────────────────────────────────────── */}
+                <div className="md:hidden">
+                  {/* Full-bleed hero image */}
+                  <div className="relative h-[58svh] overflow-hidden rounded-sm bg-[#0d0b09]">
+                    {hero && !failedImages[hKey] ? (
+                      <>
+                        <Image
+                          src={hero}
+                          alt={c.title}
+                          fill
+                          sizes="100vw"
+                          quality={75}
+                          className="object-cover"
+                          priority={i === 0}
+                          onError={() => markFailed(hKey)}
+                        />
+                        <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#0d0b09] to-transparent" />
+                      </>
+                    ) : (
+                      <div className="absolute inset-0 bg-[#141210]" />
+                    )}
+
+                    {/* Overlaid counter */}
+                    <div className="absolute top-4 right-4 font-mono text-[11px] text-alabaster/40">
+                      {numeral} / {total}
+                    </div>
+                  </div>
+
+                  {/* Text block */}
+                  <div className="px-1 pt-5 pb-8">
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <span className="h-px w-5 flex-shrink-0 bg-brass/60" />
+                      <p className="text-[10px] uppercase tracking-[0.3em] text-brass/80">Material</p>
+                    </div>
+                    <h2 className="font-display text-[2rem] leading-none tracking-[0.02em]">
+                      {c.title}
+                    </h2>
+                    <p className="mt-3 text-sm uppercase tracking-[0.12em] leading-relaxed text-alabaster/55">
+                      {c.shortDescription}
+                    </p>
+
+                    {/* Detail thumbnails */}
+                    {(detail1 || detail2) && (
+                      <div className="mt-5 flex gap-3">
+                        {detail1 && !failedImages[d1Key] && (
+                          <div className="relative h-[22svh] flex-1 overflow-hidden rounded-sm border border-alabaster/12">
                             <Image
-                              src={src}
-                              alt={`${selected.title} ${i + 1}`}
-                              width={700}
-                              height={933}
-                              sizes="78vw"
-                              quality={70}
-                              className="h-full w-full object-contain"
-                              onError={() =>
-                                setFailedImages((prev) => ({
-                                  ...prev,
-                                  [key]: true
-                                }))
-                              }
+                              src={detail1}
+                              alt={`${c.title} detail`}
+                              fill
+                              sizes="45vw"
+                              quality={65}
+                              className="object-cover"
+                              onError={() => markFailed(d1Key)}
                             />
                           </div>
-                        </div>
-                      );
-                    })}
+                        )}
+                        {detail2 && !failedImages[d2Key] && (
+                          <div className="relative h-[22svh] flex-1 overflow-hidden rounded-sm border border-alabaster/12">
+                            <Image
+                              src={detail2}
+                              alt={`${c.title} detail`}
+                              fill
+                              sizes="45vw"
+                              quality={65}
+                              className="object-cover"
+                              onError={() => markFailed(d2Key)}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-            </aside>
-            <div
-              ref={stageRef}
-              data-reveal="image"
-              onMouseEnter={() => setAutoPaused(true)}
-              onMouseLeave={() => setAutoPaused(false)}
-              className="relative hidden min-w-0 rounded border border-alabaster/10 bg-[#0c0a09] p-6 md:block md:p-7 lg:p-8"
-            >
-              <div className="pointer-events-none absolute inset-0 rounded bg-[radial-gradient(circle_at_16%_14%,rgba(201,166,107,0.18),transparent_34%),radial-gradient(circle_at_84%_74%,rgba(120,90,62,0.24),transparent_40%)]" />
-              <div className="relative z-10">
-                <p className="texture-stage-copy text-[10px] tracking-[0.24em] text-brass/90 sm:text-xs">
-                  {String(normalizedIndex + 1).padStart(2, "0")} / {String(safeCollections.length).padStart(2, "0")}
-                </p>
-              </div>
-              <div className="relative z-10 mt-5 grid grid-cols-12 gap-4 lg:gap-5">
-                {show0 ? (
-                  <div className="texture-frame col-span-5 rounded border border-alabaster/18 bg-alabaster/[0.04] p-2 shadow-[0_20px_45px_rgba(0,0,0,0.45)]">
-                    <div className="aspect-[3/4] w-full bg-[#151210]">
-                      <Image
-                        src={images[0]}
-                        alt={`${selected.title} 1`}
-                        width={700}
-                        height={933}
-                        sizes="(max-width: 1280px) 35vw, 24vw"
-                        quality={72}
-                        className="h-full w-full object-contain"
-                        onError={() =>
-                          setFailedImages((prev) => ({
-                            ...prev,
-                            [key0]: true
-                          }))
-                        }
-                      />
-                    </div>
-                  </div>
-                ) : null}
-                {show1 ? (
-                  <div className="texture-frame col-span-7 rounded border border-alabaster/18 bg-alabaster/[0.04] p-2 shadow-[0_20px_45px_rgba(0,0,0,0.45)]">
-                    <div className="aspect-[4/3] w-full bg-[#151210]">
-                      <Image
-                        src={images[1]}
-                        alt={`${selected.title} 2`}
-                        width={960}
-                        height={720}
-                        sizes="(max-width: 1280px) 45vw, 30vw"
-                        quality={72}
-                        className="h-full w-full object-contain"
-                        onError={() =>
-                          setFailedImages((prev) => ({
-                            ...prev,
-                            [key1]: true
-                          }))
-                        }
-                      />
-                    </div>
-                  </div>
-                ) : null}
-                {show2 ? (
-                  <div className="texture-frame col-span-7 rounded border border-alabaster/18 bg-alabaster/[0.04] p-2 shadow-[0_20px_45px_rgba(0,0,0,0.45)]">
-                    <div className="aspect-[4/3] w-full bg-[#151210]">
-                      <Image
-                        src={images[2]}
-                        alt={`${selected.title} 3`}
-                        width={960}
-                        height={720}
-                        sizes="(max-width: 1280px) 45vw, 30vw"
-                        quality={72}
-                        className="h-full w-full object-contain"
-                        onError={() =>
-                          setFailedImages((prev) => ({
-                            ...prev,
-                            [key2]: true
-                          }))
-                        }
-                      />
-                    </div>
-                  </div>
-                ) : null}
-                {show3 ? (
-                  <div className="texture-frame col-span-5 rounded border border-alabaster/18 bg-alabaster/[0.04] p-2 shadow-[0_20px_45px_rgba(0,0,0,0.45)]">
-                    <div className="aspect-[3/4] w-full bg-[#151210]">
-                      <Image
-                        src={images[3]}
-                        alt={`${selected.title} 4`}
-                        width={700}
-                        height={933}
-                        sizes="(max-width: 1280px) 35vw, 24vw"
-                        quality={72}
-                        className="h-full w-full object-contain"
-                        onError={() =>
-                          setFailedImages((prev) => ({
-                            ...prev,
-                            [key3]: true
-                          }))
-                        }
-                      />
-                    </div>
-                  </div>
-                ) : null}
-                {visibleImages.length === 0 ? (
-                  <div className="col-span-12 rounded border border-alabaster/10 bg-[#14110f] px-6 py-14 text-center text-sm text-alabaster/70">
-                    Images for this texture are unavailable right now.
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          </div>
-        </ScrollReveal>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

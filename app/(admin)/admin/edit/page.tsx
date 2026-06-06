@@ -394,25 +394,6 @@ const PAGE_CONFIGS: Record<string, FieldConfig[]> = {
       description: "Background color applied across the Textures page sections"
     },
     {
-      key: "heroVideoMobile",
-      label: "Hero Video URL (Mobile)",
-      type: "url",
-      description: "R2 video URL for mobile hero background"
-    },
-    {
-      key: "heroPoster",
-      label: "Hero Poster Image",
-      type: "media",
-      mediaKind: "image",
-      description: "Fallback image shown before video loads"
-    },
-    {
-      key: "backgroundColor",
-      label: "Page Background Color",
-      type: "color",
-      description: "Background color applied across the Process page sections"
-    },
-    {
       key: "dividerImage",
       label: "Divider Image",
       type: "media",
@@ -913,24 +894,26 @@ export default function EditPage() {
         fetch("/api/admin/data?page=selected-work-list"),
         fetch("/api/admin/data?page=material-library-list")
       ]);
-      if (projRes.ok) {
-        const projData = await projRes.json();
-        setProjects(Array.isArray(projData) ? projData : []);
+
+      if ([projRes, collRes, workRes, materialRes].some((r) => r.status === 401)) {
+        router.push("/admin/login");
+        return;
       }
-      if (collRes.ok) {
-        const collData = await collRes.json();
-        setCollections(Array.isArray(collData) ? collData : []);
-      }
-      if (workRes.ok) {
-        const workData = await workRes.json();
-        setSelectedWorkItems(Array.isArray(workData) ? workData : []);
-      }
-      if (materialRes.ok) {
-        const materialData = await materialRes.json();
-        setMaterialLibraryItems(Array.isArray(materialData) ? materialData : []);
-      }
+
+      const [proj, coll, work, material] = await Promise.all([
+        projRes.ok     ? projRes.json()     : Promise.resolve([]),
+        collRes.ok     ? collRes.json()     : Promise.resolve([]),
+        workRes.ok     ? workRes.json()     : Promise.resolve([]),
+        materialRes.ok ? materialRes.json() : Promise.resolve([]),
+      ]);
+
+      setProjects(Array.isArray(proj) ? proj : []);
+      setCollections(Array.isArray(coll) ? coll : []);
+      setSelectedWorkItems(Array.isArray(work) ? work : []);
+      setMaterialLibraryItems(Array.isArray(material) ? material : []);
     } catch (error) {
       console.error("Error loading CMS lists:", error);
+      setMessage("Failed to load supporting data — try refreshing.");
     }
   }
 

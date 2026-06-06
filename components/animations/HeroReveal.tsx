@@ -17,7 +17,8 @@ export default function HeroReveal({ children }: HeroRevealProps) {
     if (!container || !shouldAnimate) return;
 
     let mounted = true;
-    let cleanup: (() => void) | undefined;
+    let cleanup1: (() => void) | undefined;
+    let cleanup2: (() => void) | undefined;
     let fallbackTimer: ReturnType<typeof setTimeout>;
 
     // ── Phase 1: hide elements immediately before first paint ─────────────
@@ -34,7 +35,7 @@ export default function HeroReveal({ children }: HeroRevealProps) {
         if (rest.length) gsap.set(rest, { opacity: 0, y: 12 });
       }, container);
 
-      cleanup = () => ctx.revert();
+      cleanup1 = () => ctx.revert();
     });
 
     // ── Phase 2: animate in ───────────────────────────────────────────────
@@ -85,7 +86,7 @@ export default function HeroReveal({ children }: HeroRevealProps) {
         }
       }, container);
 
-      cleanup = () => ctx.revert();
+      cleanup2 = () => ctx.revert();
     };
 
     const onIntroDone = () => {
@@ -108,7 +109,8 @@ export default function HeroReveal({ children }: HeroRevealProps) {
       mounted = false;
       clearTimeout(fallbackTimer);
       window.removeEventListener("wc:intro-done", onIntroDone);
-      cleanup?.();
+      cleanup1?.();
+      cleanup2?.();
     };
   }, [shouldAnimate]);
 

@@ -50,7 +50,7 @@ export default function ProjectsGallery({
                     </h3>
                   </div>
                   <p className="text-xs text-alabaster/70 sm:text-sm">
-                    {project.areaSqFt.toLocaleString()} sq. ft.
+                    {project.areaSqFt != null ? `${project.areaSqFt.toLocaleString()} sq. ft.` : null}
                   </p>
                 </div>
                 <p

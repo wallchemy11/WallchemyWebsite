@@ -116,10 +116,11 @@ export default function SmartVideo({
     if (canStreamVideo && (priority || inView)) setShouldLoad(true);
   }, [inView, canStreamVideo, priority]);
 
-  // Plain .mp4 playback
+  // Plain .mp4 playback — gated on srcReady so it never fires before the
+  // source-selection effect has confirmed the correct desktop/mobile src.
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !shouldLoad || !canStreamVideo || selectedSrcIsHls) return;
+    if (!video || !shouldLoad || !canStreamVideo || selectedSrcIsHls || !srcReady) return;
 
     const tryPlay = () => {
       if (inViewRef.current && isPageVisibleRef.current) {
@@ -130,7 +131,7 @@ export default function SmartVideo({
     video.addEventListener("canplay", tryPlay, { once: true });
     video.load();
     return () => video.removeEventListener("canplay", tryPlay);
-  }, [shouldLoad, canStreamVideo, selectedSrcIsHls, selectedSrc]);
+  }, [shouldLoad, canStreamVideo, selectedSrcIsHls, selectedSrc, srcReady]);
 
   // HLS playback — gated on srcReady so it never fires with the wrong src
   useEffect(() => {
@@ -176,7 +177,10 @@ export default function SmartVideo({
               video.play().catch(() => {});
             }
           });
-          teardown = () => hls.destroy();
+          teardown = () => {
+            hls.off(HlsCtor.Events.MANIFEST_PARSED);
+            hls.destroy();
+          };
         } else {
           attachNativeHls();
         }
