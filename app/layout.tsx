@@ -86,6 +86,13 @@ const BODY_FONT_VAR: Record<string, string> = {
   manrope: "var(--font-sans-manrope)"
 };
 
+// Must be force-dynamic so the root layout always re-fetches site_settings
+// (font family, palette, etc.) on every request. Without this, Next.js can
+// cache the layout and CMS font changes would never appear on the live site.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
 export const metadata: Metadata = {
   title: "Wallchemy: Turning Walls into Experiences",
   description:

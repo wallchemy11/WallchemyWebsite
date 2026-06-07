@@ -1517,28 +1517,7 @@ export default function EditPage() {
 
     return (
       <div key={field.key}>
-        <div className="mb-1 flex items-center justify-between gap-2">
-          <label className="font-semibold">{field.label}</label>
-          {isTextField && (
-            <button
-              type="button"
-              onClick={() =>
-                setTypographyOpen((prev) => ({ ...prev, [field.key]: !prev[field.key] }))
-              }
-              title="Per-field typography override"
-              className={`flex shrink-0 items-center gap-1 rounded px-2 py-0.5 text-xs transition-colors ${
-                hasOverride
-                  ? "bg-brass/20 text-brass"
-                  : typoOpen
-                  ? "bg-alabaster/10 text-alabaster/70"
-                  : "text-alabaster/35 hover:text-alabaster/60"
-              }`}
-            >
-              <span className="font-serif italic">Aa</span>
-              <span>{typoOpen ? "▲" : "▼"}</span>
-            </button>
-          )}
-        </div>
+        <label className="mb-1 block font-semibold">{field.label}</label>
         <p className="mb-2 text-sm text-alabaster/60">{field.description}</p>
         {field.type === "textarea" ? (
           <textarea
@@ -1637,55 +1616,75 @@ export default function EditPage() {
           </>
         )}
 
-        {/* ── Per-field typography drawer ─────────────────────────────── */}
-        {isTextField && typoOpen && (
-          <div className="mt-2 rounded border border-brass/25 bg-brass/5 p-3">
-            <p className="mb-2 text-[10px] uppercase tracking-[0.22em] text-brass/70">
-              Typography override — overrides the global font for this field only
-            </p>
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="flex flex-1 flex-col gap-1">
-                <label className="text-[10px] uppercase tracking-[0.18em] text-alabaster/50">
-                  Font family
-                </label>
-                <select
-                  value={data?._typography?.[field.key]?.fontFamily || ""}
-                  onChange={(e) => updateTypography(field.key, "fontFamily", e.target.value)}
-                  className="rounded border border-alabaster/20 bg-ink px-2 py-1.5 text-xs text-alabaster"
-                >
-                  {FONT_FAMILY_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+        {/* ── Per-field typography ────────────────────────────────────── */}
+        {isTextField && (
+          <div className="mt-2">
+            <button
+              type="button"
+              onClick={() =>
+                setTypographyOpen((prev) => ({ ...prev, [field.key]: !prev[field.key] }))
+              }
+              className={`flex w-full items-center justify-between rounded border px-3 py-2 text-xs transition-colors ${
+                hasOverride
+                  ? "border-brass/50 bg-brass/10 text-brass"
+                  : "border-alabaster/20 bg-alabaster/5 text-alabaster/60 hover:bg-alabaster/10"
+              }`}
+            >
+              <span>
+                {hasOverride ? "✦ Typography override active" : "Typography override"}
+              </span>
+              <span>{typoOpen ? "▲ Hide" : "▼ Customize font & size"}</span>
+            </button>
+
+            {typoOpen && (
+              <div className="mt-1 rounded border border-alabaster/15 bg-ink/60 p-3">
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <div className="flex flex-1 flex-col gap-1">
+                    <label className="text-[10px] uppercase tracking-widest text-alabaster/50">
+                      Font family
+                    </label>
+                    <select
+                      value={data?._typography?.[field.key]?.fontFamily || ""}
+                      onChange={(e) => updateTypography(field.key, "fontFamily", e.target.value)}
+                      className="rounded border border-alabaster/20 bg-ink px-3 py-2 text-sm text-alabaster"
+                    >
+                      {FONT_FAMILY_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-1 flex-col gap-1">
+                    <label className="text-[10px] uppercase tracking-widest text-alabaster/50">
+                      Font size
+                    </label>
+                    <select
+                      value={data?._typography?.[field.key]?.fontSize || ""}
+                      onChange={(e) => updateTypography(field.key, "fontSize", e.target.value)}
+                      className="rounded border border-alabaster/20 bg-ink px-3 py-2 text-sm text-alabaster"
+                    >
+                      {FONT_SIZE_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {hasOverride && (
+                    <div className="flex flex-col justify-end">
+                      <button
+                        type="button"
+                        onClick={() => clearTypography(field.key)}
+                        className="rounded border border-red-400/30 px-3 py-2 text-sm text-red-400/70 transition-colors hover:bg-red-400/10 hover:text-red-400"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex flex-1 flex-col gap-1">
-                <label className="text-[10px] uppercase tracking-[0.18em] text-alabaster/50">
-                  Font size
-                </label>
-                <select
-                  value={data?._typography?.[field.key]?.fontSize || ""}
-                  onChange={(e) => updateTypography(field.key, "fontSize", e.target.value)}
-                  className="rounded border border-alabaster/20 bg-ink px-2 py-1.5 text-xs text-alabaster"
-                >
-                  {FONT_SIZE_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {hasOverride && (
-                <button
-                  type="button"
-                  onClick={() => clearTypography(field.key)}
-                  className="self-end rounded border border-alabaster/20 px-3 py-1.5 text-xs text-alabaster/50 transition-colors hover:border-red-400/40 hover:text-red-400/80"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
+            )}
           </div>
         )}
       </div>
