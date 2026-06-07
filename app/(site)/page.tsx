@@ -105,6 +105,7 @@ export default async function HomePage() {
         title={home.manifesto?.title}
         subtitle={home.manifesto?.subtitle}
         items={manifestoItems}
+        eyebrowStyle={fs("manifesto.eyebrow")}
         titleStyle={fs("manifesto.title")}
         subtitleStyle={fs("manifesto.subtitle")}
       />

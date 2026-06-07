@@ -12,6 +12,8 @@ type AboutNarrativeProps = {
   eyebrowStyle?: CSSProperties;
   titleStyle?: CSSProperties;
   subtitleStyle?: CSSProperties;
+  narrativeStyle?: CSSProperties;
+  founderNoteStyle?: CSSProperties;
 };
 
 export default function AboutNarrative({
@@ -23,6 +25,8 @@ export default function AboutNarrative({
   eyebrowStyle,
   titleStyle,
   subtitleStyle,
+  narrativeStyle,
+  founderNoteStyle,
 }: AboutNarrativeProps) {
   const safeEyebrow    = resolveText(eyebrow);
   const safeTitle      = resolveText(title);
@@ -43,12 +47,14 @@ export default function AboutNarrative({
           />
           <p
             data-reveal
+            style={founderNoteStyle}
             className="mt-6 text-[11px] uppercase tracking-[0.12em] text-alabaster/60 sm:text-sm sm:tracking-[0.16em] md:tracking-[0.2em]"
           >
             {safeFounderNote}
           </p>
           <p
             data-reveal
+            style={narrativeStyle}
             className="mt-4 max-w-3xl whitespace-pre-line text-base leading-relaxed text-alabaster/75 sm:text-lg"
           >
             {safeNarrative}

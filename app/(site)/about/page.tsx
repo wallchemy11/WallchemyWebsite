@@ -48,6 +48,8 @@ export default async function AboutPage() {
         eyebrowStyle={fs("narrativeHeading.eyebrow")}
         titleStyle={fs("narrativeHeading.title")}
         subtitleStyle={fs("narrativeHeading.subtitle")}
+        narrativeStyle={fs("narrative")}
+        founderNoteStyle={fs("founderNote")}
       />
       <CinematicDivider
         image={resolveImage(about.valuesDividerImage, about.heroPoster)}

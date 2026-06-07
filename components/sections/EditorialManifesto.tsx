@@ -16,6 +16,7 @@ type EditorialManifestoProps = {
   title?: string;
   subtitle?: string;
   items: ManifestoItem[];
+  eyebrowStyle?: CSSProperties;
   titleStyle?: CSSProperties;
   subtitleStyle?: CSSProperties;
 };
@@ -25,6 +26,7 @@ export default function EditorialManifesto({
   title,
   subtitle,
   items,
+  eyebrowStyle,
   titleStyle,
   subtitleStyle,
 }: EditorialManifestoProps) {
@@ -98,7 +100,7 @@ export default function EditorialManifesto({
         {/* ── Big heading ── */}
         <div className="manifesto-heading mb-16 md:mb-20">
           <h2
-            style={titleStyle}
+            style={safeTitle ? titleStyle : eyebrowStyle}
             className="font-display text-5xl font-bold leading-[0.92] text-alabaster sm:text-6xl md:text-7xl lg:text-8xl"
           >
             {heading}
