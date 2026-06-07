@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import VideoCompressUpload from "@/components/admin/VideoCompressUpload";
+import { FONT_FAMILY_OPTIONS, FONT_SIZE_OPTIONS } from "@/lib/field-typography";
 
 export const dynamic = "force-dynamic";
 
@@ -867,6 +868,8 @@ export default function EditPage() {
   const [materialLibraryItems, setMaterialLibraryItems] = useState<any[]>([]);
   const [uploadingField, setUploadingField] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string>("");
+  // tracks which text/textarea fields have their typography drawer open
+  const [typographyOpen, setTypographyOpen] = useState<Record<string, boolean>>({});
   const [editingProject, setEditingProject] = useState<number | null>(null);
   const [projectForm, setProjectForm] = useState<any>({});
   const [projectUploading, setProjectUploading] = useState(false);
@@ -1037,6 +1040,28 @@ export default function EditPage() {
       }
       current[path[path.length - 1]] = value;
       return newData;
+    });
+  }
+
+  // Immutable update for a single typography property on a field
+  function updateTypography(fieldKey: string, prop: "fontFamily" | "fontSize", value: string) {
+    setData((prev: any) => ({
+      ...prev,
+      _typography: {
+        ...(prev?._typography || {}),
+        [fieldKey]: {
+          ...(prev?._typography?.[fieldKey] || {}),
+          [prop]: value,
+        },
+      },
+    }));
+  }
+
+  // Remove all typography overrides for a field
+  function clearTypography(fieldKey: string) {
+    setData((prev: any) => {
+      const { [fieldKey]: _removed, ...rest } = prev?._typography || {};
+      return { ...prev, _typography: rest };
     });
   }
 
@@ -1484,9 +1509,36 @@ export default function EditPage() {
       );
     }
 
+    const isTextField = field.type === "text" || field.type === "textarea";
+    const typoOpen = isTextField && typographyOpen[field.key];
+    const hasOverride =
+      isTextField &&
+      !!(data?._typography?.[field.key]?.fontFamily || data?._typography?.[field.key]?.fontSize);
+
     return (
       <div key={field.key}>
-        <label className="mb-2 block font-semibold">{field.label}</label>
+        <div className="mb-1 flex items-center justify-between gap-2">
+          <label className="font-semibold">{field.label}</label>
+          {isTextField && (
+            <button
+              type="button"
+              onClick={() =>
+                setTypographyOpen((prev) => ({ ...prev, [field.key]: !prev[field.key] }))
+              }
+              title="Per-field typography override"
+              className={`flex shrink-0 items-center gap-1 rounded px-2 py-0.5 text-xs transition-colors ${
+                hasOverride
+                  ? "bg-brass/20 text-brass"
+                  : typoOpen
+                  ? "bg-alabaster/10 text-alabaster/70"
+                  : "text-alabaster/35 hover:text-alabaster/60"
+              }`}
+            >
+              <span className="font-serif italic">Aa</span>
+              <span>{typoOpen ? "▲" : "▼"}</span>
+            </button>
+          )}
+        </div>
         <p className="mb-2 text-sm text-alabaster/60">{field.description}</p>
         {field.type === "textarea" ? (
           <textarea
@@ -1583,6 +1635,58 @@ export default function EditPage() {
               )
             ) : null}
           </>
+        )}
+
+        {/* ── Per-field typography drawer ─────────────────────────────── */}
+        {isTextField && typoOpen && (
+          <div className="mt-2 rounded border border-brass/25 bg-brass/5 p-3">
+            <p className="mb-2 text-[10px] uppercase tracking-[0.22em] text-brass/70">
+              Typography override — overrides the global font for this field only
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-1 flex-col gap-1">
+                <label className="text-[10px] uppercase tracking-[0.18em] text-alabaster/50">
+                  Font family
+                </label>
+                <select
+                  value={data?._typography?.[field.key]?.fontFamily || ""}
+                  onChange={(e) => updateTypography(field.key, "fontFamily", e.target.value)}
+                  className="rounded border border-alabaster/20 bg-ink px-2 py-1.5 text-xs text-alabaster"
+                >
+                  {FONT_FAMILY_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex flex-1 flex-col gap-1">
+                <label className="text-[10px] uppercase tracking-[0.18em] text-alabaster/50">
+                  Font size
+                </label>
+                <select
+                  value={data?._typography?.[field.key]?.fontSize || ""}
+                  onChange={(e) => updateTypography(field.key, "fontSize", e.target.value)}
+                  className="rounded border border-alabaster/20 bg-ink px-2 py-1.5 text-xs text-alabaster"
+                >
+                  {FONT_SIZE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {hasOverride && (
+                <button
+                  type="button"
+                  onClick={() => clearTypography(field.key)}
+                  className="self-end rounded border border-alabaster/20 px-3 py-1.5 text-xs text-alabaster/50 transition-colors hover:border-red-400/40 hover:text-red-400/80"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
         )}
       </div>
     );
