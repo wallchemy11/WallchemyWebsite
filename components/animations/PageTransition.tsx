@@ -8,9 +8,10 @@ import { loadGsap } from "@/components/animations/loadGsap";
 
 export default function PageTransition() {
   const overlayRef = useRef<HTMLDivElement>(null);
-  const loaderRef  = useRef<HTMLDivElement>(null); // spinning star wrapper — controls opacity
+  const loaderRef  = useRef<HTMLDivElement>(null);
   const pathname   = usePathname();
   const { shouldAnimate } = useMotionPrefs();
+  // true on first mount so the initial overlay lifts on the first page load
   const navStarted = useRef(true);
   const gsapRef    = useRef<any>(null);
 
@@ -18,7 +19,7 @@ export default function PageTransition() {
     loadGsap().then(({ gsap }) => { gsapRef.current = gsap; });
   }, []);
 
-  // ── Cover overlay + show star loader the instant a nav click fires ────────
+  // ── Cover: snap overlay opaque + reset star the instant nav fires ─────────
   useEffect(() => {
     const cover = () => {
       const overlay = overlayRef.current;
@@ -30,27 +31,29 @@ export default function PageTransition() {
       if (gsap) {
         gsap.killTweensOf(overlay);
         gsap.killTweensOf(loader);
-        gsap.set(overlay, { scaleY: 1 });
-        if (loader) gsap.set(loader, { opacity: 1 });
+        gsap.set(overlay, { opacity: 1, pointerEvents: "auto" });
+        // Reset star to its resting state before showing it
+        if (loader) gsap.set(loader, { opacity: 1, scale: 1 });
       } else {
-        overlay.style.transform = "scaleY(1)";
+        overlay.style.opacity = "1";
+        overlay.style.pointerEvents = "auto";
         if (loader) loader.style.opacity = "1";
       }
-      overlay.style.pointerEvents = "auto";
     };
 
     window.addEventListener("wc:nav-start", cover);
     return () => window.removeEventListener("wc:nav-start", cover);
   }, []);
 
-  // ── Lift overlay + fade star out when new page mounts ────────────────────
+  // ── Reveal: star expands outward while overlay dissolves ─────────────────
   useEffect(() => {
     const overlay = overlayRef.current;
     const loader  = loaderRef.current;
     if (!overlay) return;
 
+    // Back/forward navigation — no overlay was shown, just clear state
     if (!navStarted.current) {
-      overlay.style.transform = "scaleY(0)";
+      overlay.style.opacity = "0";
       overlay.style.pointerEvents = "none";
       if (loader) loader.style.opacity = "0";
       return;
@@ -58,7 +61,7 @@ export default function PageTransition() {
     navStarted.current = false;
 
     if (!shouldAnimate) {
-      overlay.style.transform = "scaleY(0)";
+      overlay.style.opacity = "0";
       overlay.style.pointerEvents = "none";
       if (loader) loader.style.opacity = "0";
       window.dispatchEvent(new CustomEvent("wc:page-ready"));
@@ -73,27 +76,28 @@ export default function PageTransition() {
       gsap.killTweensOf(overlay);
       if (loader) gsap.killTweensOf(loader);
 
-      // Fade the star out just before the overlay lifts
+      // Star scales up and fades — the "opening" motion
       if (loader) {
-        gsap.to(loader, { opacity: 0, duration: 0.2, ease: "power2.in" });
+        gsap.to(loader, {
+          scale: 2.2,
+          opacity: 0,
+          duration: 0.45,
+          ease: "power2.out",
+        });
       }
 
-      // Lift overlay — origin-bottom reveals page top-first
-      gsap.fromTo(
-        overlay,
-        { scaleY: 1 },
-        {
-          scaleY: 0,
-          transformOrigin: "bottom",
-          duration: 0.45,
-          ease: "power3.inOut",
-          onComplete: () => {
-            if (!active) return;
-            overlay.style.pointerEvents = "none";
-            window.dispatchEvent(new CustomEvent("wc:page-ready"));
-          }
-        }
-      );
+      // Overlay dissolves slightly slower so the star finishes first,
+      // then the page fully emerges from the ink
+      gsap.to(overlay, {
+        opacity: 0,
+        duration: 0.55,
+        ease: "power2.inOut",
+        onComplete: () => {
+          if (!active) return;
+          overlay.style.pointerEvents = "none";
+          window.dispatchEvent(new CustomEvent("wc:page-ready"));
+        },
+      });
     })();
 
     return () => {
@@ -108,17 +112,22 @@ export default function PageTransition() {
 
   return (
     <>
-      {/* Ink overlay — origin-bottom so scaleY 1→0 reveals the page top-first */}
+      {/*
+        Ink overlay — no scaleY, no origin class.
+        Starts opaque (CSS default opacity:1) so it covers the page on first
+        load; GSAP controls opacity from that point on via inline style.
+        React has no style prop here, so re-renders never fight GSAP.
+      */}
       <div
         ref={overlayRef}
-        className="fixed inset-0 z-[40] origin-bottom bg-ink"
-        style={{ pointerEvents: "none" }}
+        className="fixed inset-0 z-[40] bg-ink"
+        aria-hidden="true"
       />
 
       {/*
-        Star loader — centred above the overlay.
-        opacity-0 via class keeps it hidden; GSAP sets opacity inline (overrides
-        the class) only while a navigation is in progress.
+        Star loader — opacity-0 class keeps it hidden by default.
+        GSAP inline style (opacity:1) overrides the class while nav is active.
+        scale is also GSAP-only — no React prop — so re-renders don't reset it.
       */}
       <div
         ref={loaderRef}
