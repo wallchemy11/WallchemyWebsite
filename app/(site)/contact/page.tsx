@@ -5,6 +5,7 @@ import CinematicDivider from "@/components/sections/CinematicDivider";
 import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
 import { hexToRgbChannels } from "@/lib/color";
+import { getFieldStyle } from "@/lib/field-typography";
 
 export async function generateMetadata() {
   const contact = await getContactPage();
@@ -18,6 +19,7 @@ export default async function ContactPage() {
   const pageStyle = {
     ["--color-ink" as any]: hexToRgbChannels(contact.backgroundColor, "11 10 9")
   };
+  const fs = (key: string) => getFieldStyle(contact, key);
 
   return (
     <div style={pageStyle}>
@@ -27,12 +29,16 @@ export default async function ContactPage() {
         videoSrc={contact.heroVideo}
         mobileVideoSrc={contact.heroVideoMobile}
         poster={contact.heroPoster}
+        subheadlineStyle={fs("intro")}
       />
       <CinematicDivider
         image={dividerImage}
         eyebrow={contact.divider?.eyebrow}
         title={contact.divider?.title}
         subtitle={contact.divider?.subtitle}
+        eyebrowStyle={fs("divider.eyebrow")}
+        titleStyle={fs("divider.title")}
+        subtitleStyle={fs("divider.subtitle")}
       />
       <ContactPanel
         title={contact.title}
@@ -70,4 +76,3 @@ export default async function ContactPage() {
     </div>
   );
 }
-

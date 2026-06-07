@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
@@ -13,13 +14,19 @@ type SelectedProjectsProps = {
   eyebrow?: string;
   title?: string;
   subtitle?: string;
+  eyebrowStyle?: CSSProperties;
+  titleStyle?: CSSProperties;
+  subtitleStyle?: CSSProperties;
 };
 
 export default function SelectedProjects({
   projects,
   eyebrow,
   title,
-  subtitle
+  subtitle,
+  eyebrowStyle,
+  titleStyle,
+  subtitleStyle,
 }: SelectedProjectsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { shouldAnimate } = useMotionPrefs();
@@ -109,9 +116,12 @@ export default function SelectedProjects({
     <section className="bg-transparent py-10 sm:py-14 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeading
-        eyebrow={safeEyebrow}
-        title={safeTitle}
-        subtitle={safeSubtitle}
+          eyebrow={safeEyebrow}
+          title={safeTitle}
+          subtitle={safeSubtitle}
+          eyebrowStyle={eyebrowStyle}
+          titleStyle={titleStyle}
+          subtitleStyle={subtitleStyle}
         />
       </div>
       <div ref={containerRef} className="mt-12 space-y-16 sm:mt-14 sm:space-y-20 md:mt-16 md:space-y-24">

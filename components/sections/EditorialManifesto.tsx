@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { CSSProperties } from "react";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
 import { resolveText } from "@/lib/text";
@@ -15,13 +16,17 @@ type EditorialManifestoProps = {
   title?: string;
   subtitle?: string;
   items: ManifestoItem[];
+  titleStyle?: CSSProperties;
+  subtitleStyle?: CSSProperties;
 };
 
 export default function EditorialManifesto({
   eyebrow,
   title,
   subtitle,
-  items
+  items,
+  titleStyle,
+  subtitleStyle,
 }: EditorialManifestoProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { shouldAnimate } = useMotionPrefs();
@@ -93,13 +98,14 @@ export default function EditorialManifesto({
         {/* ── Big heading ── */}
         <div className="manifesto-heading mb-16 md:mb-20">
           <h2
+            style={titleStyle}
             className="font-display text-5xl font-bold leading-[0.92] text-alabaster sm:text-6xl md:text-7xl lg:text-8xl"
           >
             {heading}
           </h2>
 
           {safeSubtitle ? (
-            <p className="mt-6 max-w-sm text-[11px] uppercase tracking-[0.26em] text-alabaster/45 sm:text-xs">
+            <p style={subtitleStyle} className="mt-6 max-w-sm text-[11px] uppercase tracking-[0.26em] text-alabaster/45 sm:text-xs">
               {safeSubtitle}
             </p>
           ) : null}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Image from "next/image";
@@ -22,6 +23,9 @@ type TextureCollectionsProps = {
   intro?: string;
   supportText?: string;
   collections: Collection[];
+  eyebrowStyle?: CSSProperties;
+  titleStyle?: CSSProperties;
+  subtitleStyle?: CSSProperties;
 };
 
 export default function TextureCollections({
@@ -30,6 +34,9 @@ export default function TextureCollections({
   intro,
   supportText,
   collections,
+  eyebrowStyle,
+  titleStyle,
+  subtitleStyle,
 }: TextureCollectionsProps) {
   const safeEyebrow   = resolveText(eyebrow);
   const safeTitle     = resolveText(title);
@@ -125,7 +132,14 @@ export default function TextureCollections({
 
       <div className="mx-auto w-full max-w-[1460px] px-4 sm:px-6 md:px-8">
         <ScrollReveal>
-          <SectionHeading eyebrow={safeEyebrow} title={safeTitle} subtitle={safeIntro} />
+          <SectionHeading
+            eyebrow={safeEyebrow}
+            title={safeTitle}
+            subtitle={safeIntro}
+            eyebrowStyle={eyebrowStyle}
+            titleStyle={titleStyle}
+            subtitleStyle={subtitleStyle}
+          />
         </ScrollReveal>
 
         {/* ── Tab navigation ────────────────────────────────────────────── */}

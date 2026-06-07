@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
@@ -15,12 +16,16 @@ type TextureRibbonProps = {
   items: TextureRibbonItem[];
   eyebrow?: string;
   title?: string;
+  eyebrowStyle?: CSSProperties;
+  titleStyle?: CSSProperties;
 };
 
 export default function TextureRibbon({
   items,
   eyebrow,
-  title
+  title,
+  eyebrowStyle,
+  titleStyle,
 }: TextureRibbonProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
@@ -94,10 +99,10 @@ export default function TextureRibbon({
   return (
     <section ref={sectionRef} className="relative overflow-hidden bg-transparent">
       <div className="mx-auto max-w-6xl px-6 pt-16 pb-8 md:pt-20 md:pb-10">
-        <p className="text-xs uppercase tracking-[0.45em] text-brass">
+        <p style={eyebrowStyle} className="text-xs uppercase tracking-[0.45em] text-brass">
           {safeEyebrow}
         </p>
-        <h2 className="font-display mt-4 text-3xl md:text-5xl">
+        <h2 style={titleStyle} className="font-display mt-4 text-3xl md:text-5xl">
           {safeTitle}
         </h2>
       </div>

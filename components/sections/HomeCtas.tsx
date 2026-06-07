@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import PrimaryCta from "@/components/ui/PrimaryCta";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import SplitText from "@/components/ui/SplitText";
@@ -10,15 +11,17 @@ type Cta = {
 type HomeCtasProps = {
   intro: string;
   ctas: Cta[];
+  introStyle?: CSSProperties;
 };
 
-export default function HomeCtas({ intro, ctas }: HomeCtasProps) {
+export default function HomeCtas({ intro, ctas, introStyle }: HomeCtasProps) {
   return (
     <section className="bg-transparent py-16">
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-col gap-6 border-y border-alabaster/10 py-10 md:flex-row md:items-center md:justify-between md:gap-8 md:py-12">
           <SplitText
             text={intro}
+            style={introStyle}
             className="max-w-3xl text-base text-alabaster/80 sm:text-lg"
           />
           <ScrollReveal y={24} start="top 86%">

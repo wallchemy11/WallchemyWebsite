@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { CSSProperties } from "react";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
 
 type SplitTextProps = {
   text: string;
   className?: string;
+  style?: CSSProperties;
 };
 
-export default function SplitText({ text, className }: SplitTextProps) {
+export default function SplitText({ text, className, style }: SplitTextProps) {
   const textRef = useRef<HTMLParagraphElement>(null);
   const { shouldAnimate } = useMotionPrefs();
   const lines = text.trim().split("\n");
@@ -56,7 +58,7 @@ export default function SplitText({ text, className }: SplitTextProps) {
   }, [shouldAnimate]);
 
   return (
-    <p ref={textRef} className={`whitespace-pre-line ${className || ""}`}>
+    <p ref={textRef} style={style} className={`whitespace-pre-line ${className || ""}`}>
       {lines.map((line, lineIndex) => (
         <span key={`line-${lineIndex}`}>
           {line

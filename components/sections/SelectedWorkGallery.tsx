@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { resolveText } from "@/lib/text";
@@ -11,13 +12,19 @@ type SelectedWorkGalleryProps = {
   eyebrow?: string;
   title?: string;
   subtitle?: string;
+  eyebrowStyle?: CSSProperties;
+  titleStyle?: CSSProperties;
+  subtitleStyle?: CSSProperties;
 };
 
 export default function SelectedWorkGallery({
   items,
   eyebrow,
   title,
-  subtitle
+  subtitle,
+  eyebrowStyle,
+  titleStyle,
+  subtitleStyle,
 }: SelectedWorkGalleryProps) {
   const safeEyebrow = resolveText(eyebrow);
   const safeTitle = resolveText(title);
@@ -33,6 +40,9 @@ export default function SelectedWorkGallery({
             eyebrow={safeEyebrow}
             title={safeTitle}
             subtitle={safeSubtitle}
+            eyebrowStyle={eyebrowStyle}
+            titleStyle={titleStyle}
+            subtitleStyle={subtitleStyle}
           />
           <div className="mt-10 grid gap-9 sm:mt-12 sm:gap-10 md:gap-12">
             {items.map((item) => (

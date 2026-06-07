@@ -13,6 +13,7 @@ import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
 import { toWhatsAppHref } from "@/lib/whatsapp";
 import { hexToRgbChannels } from "@/lib/color";
+import { getFieldStyle } from "@/lib/field-typography";
 
 export async function generateMetadata() {
   const home = await getHomePage();
@@ -74,6 +75,8 @@ export default async function HomePage() {
     ["--color-ink" as any]: hexToRgbChannels(home.backgroundColor, "11 10 9")
   };
 
+  const fs = (key: string) => getFieldStyle(home, key);
+
   return (
     <div style={pageStyle}>
       <VideoHero
@@ -83,11 +86,14 @@ export default async function HomePage() {
         mobileVideoSrc={home.heroVideoMobile}
         poster={home.heroPoster}
         priorityVideo
+        headlineStyle={fs("heroHeadline")}
+        subheadlineStyle={fs("heroSubheadline")}
       />
       <section className="bg-transparent pt-14 pb-3 sm:pt-16 sm:pb-4 md:pt-20 md:pb-6">
         <div className="mx-auto max-w-6xl px-6">
           <SplitText
             text={home.introText}
+            style={fs("introText")}
             className="font-display max-w-4xl text-2xl leading-relaxed text-alabaster/90 sm:text-3xl md:text-5xl"
           />
         </div>
@@ -99,19 +105,30 @@ export default async function HomePage() {
         title={home.manifesto?.title}
         subtitle={home.manifesto?.subtitle}
         items={manifestoItems}
+        titleStyle={fs("manifesto.title")}
+        subtitleStyle={fs("manifesto.subtitle")}
       />
       <CinematicDivider
         image={studioCraftImage}
         eyebrow={home.studioDivider?.eyebrow}
         title={home.studioDivider?.title}
         subtitle={home.studioDivider?.subtitle}
+        eyebrowStyle={fs("studioDivider.eyebrow")}
+        titleStyle={fs("studioDivider.title")}
+        subtitleStyle={fs("studioDivider.subtitle")}
       />
-      <HomeCtas intro={home.ctaIntro} ctas={normalizedCtas} />
+      <HomeCtas
+        intro={home.ctaIntro}
+        ctas={normalizedCtas}
+        introStyle={fs("ctaIntro")}
+      />
       {hasMaterialLibrary ? (
         <TextureRibbon
           items={home.materialLibrary || []}
           eyebrow={home.ribbonHeading?.eyebrow}
           title={home.ribbonHeading?.title}
+          eyebrowStyle={fs("ribbonHeading.eyebrow")}
+          titleStyle={fs("ribbonHeading.title")}
         />
       ) : null}
       {selectedWorkImage ? (
@@ -120,6 +137,9 @@ export default async function HomePage() {
           eyebrow={selectedWorkDivider?.eyebrow}
           title={selectedWorkDivider?.title}
           subtitle={selectedWorkDivider?.subtitle}
+          eyebrowStyle={fs("selectedWorkDivider.eyebrow")}
+          titleStyle={fs("selectedWorkDivider.title")}
+          subtitleStyle={fs("selectedWorkDivider.subtitle")}
         />
       ) : null}
       <SelectedWorkGallery
@@ -127,6 +147,9 @@ export default async function HomePage() {
         eyebrow={selectedWorkHeading?.eyebrow}
         title={selectedWorkHeading?.title}
         subtitle={selectedWorkHeading?.subtitle}
+        eyebrowStyle={fs("selectedWorkHeading.eyebrow")}
+        titleStyle={fs("selectedWorkHeading.title")}
+        subtitleStyle={fs("selectedWorkHeading.subtitle")}
       />
       {hasFeaturedProjects ? (
         <SelectedProjects
@@ -134,6 +157,9 @@ export default async function HomePage() {
           eyebrow={featuredProjectsHeading?.eyebrow}
           title={featuredProjectsHeading?.title}
           subtitle={featuredProjectsHeading?.subtitle}
+          eyebrowStyle={fs("featuredProjectsHeading.eyebrow")}
+          titleStyle={fs("featuredProjectsHeading.title")}
+          subtitleStyle={fs("featuredProjectsHeading.subtitle")}
         />
       ) : null}
     </div>

@@ -1,16 +1,21 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import { resolveText } from "@/lib/text";
 
 type CraftsmanshipSectionProps = {
   title?: string;
   body?: string;
+  titleStyle?: CSSProperties;
+  bodyStyle?: CSSProperties;
 };
 
 export default function CraftsmanshipSection({
   title,
-  body
+  body,
+  titleStyle,
+  bodyStyle,
 }: CraftsmanshipSectionProps) {
   const safeTitle = resolveText(title);
   const safeBody = resolveText(body);
@@ -23,12 +28,14 @@ export default function CraftsmanshipSection({
           <div className="grid gap-8 md:grid-cols-[1.2fr_1fr]">
             <h2
               data-reveal
+              style={titleStyle}
               className="font-display text-2xl font-medium leading-tight sm:text-3xl md:text-4xl"
             >
               {safeTitle}
             </h2>
             <p
               data-reveal
+              style={bodyStyle}
               className="text-sm leading-relaxed text-alabaster/80 sm:text-base md:tracking-[0.02em]"
             >
               {safeBody}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
@@ -11,13 +12,19 @@ type CinematicDividerProps = {
   eyebrow?: string;
   title?: string;
   subtitle?: string;
+  eyebrowStyle?: CSSProperties;
+  titleStyle?: CSSProperties;
+  subtitleStyle?: CSSProperties;
 };
 
 export default function CinematicDivider({
   image,
   eyebrow,
   title,
-  subtitle
+  subtitle,
+  eyebrowStyle,
+  titleStyle,
+  subtitleStyle,
 }: CinematicDividerProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
@@ -92,14 +99,14 @@ export default function CinematicDivider({
           className="mt-8 grid gap-6 md:mt-10 md:grid-cols-[1.2fr_1fr]"
         >
           <div>
-            <p className="text-[10px] uppercase tracking-[0.36em] text-brass sm:text-xs sm:tracking-[0.45em]">
+            <p style={eyebrowStyle} className="text-[10px] uppercase tracking-[0.36em] text-brass sm:text-xs sm:tracking-[0.45em]">
               {safeEyebrow}
             </p>
-            <h2 className="font-display mt-3 whitespace-pre-line text-2xl sm:text-3xl md:text-5xl">
+            <h2 style={titleStyle} className="font-display mt-3 whitespace-pre-line text-2xl sm:text-3xl md:text-5xl">
               {safeTitle}
             </h2>
           </div>
-          <p className="whitespace-pre-line text-xs uppercase tracking-[0.18em] text-alabaster/70 sm:text-sm md:tracking-[0.2em]">
+          <p style={subtitleStyle} className="whitespace-pre-line text-xs uppercase tracking-[0.18em] text-alabaster/70 sm:text-sm md:tracking-[0.2em]">
             {safeSubtitle}
           </p>
         </div>

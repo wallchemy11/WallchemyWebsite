@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import HeroReveal from "@/components/animations/HeroReveal";
 import SmartVideo from "@/components/ui/SmartVideo";
 
@@ -8,6 +9,8 @@ type VideoHeroProps = {
   mobileVideoSrc?: string;
   poster?: string;
   priorityVideo?: boolean;
+  headlineStyle?: CSSProperties;
+  subheadlineStyle?: CSSProperties;
 };
 
 export default function VideoHero({
@@ -16,7 +19,9 @@ export default function VideoHero({
   videoSrc,
   mobileVideoSrc,
   poster,
-  priorityVideo = false
+  priorityVideo = false,
+  headlineStyle,
+  subheadlineStyle,
 }: VideoHeroProps) {
   return (
     <section className="relative min-h-[62svh] overflow-hidden sm:min-h-[68svh] md:min-h-[90vh]">
@@ -38,6 +43,7 @@ export default function VideoHero({
         <HeroReveal>
           <h1
             data-hero
+            style={headlineStyle}
             className="font-display whitespace-pre-line text-[clamp(1.75rem,_5.5vw,_6rem)] font-bold uppercase tracking-[0.1em] sm:tracking-[0.15em] lg:tracking-[0.2em]"
           >
             {headline}
@@ -45,6 +51,7 @@ export default function VideoHero({
           {subheadline ? (
             <p
               data-hero
+              style={subheadlineStyle}
               className="mt-4 max-w-3xl whitespace-pre-line text-[11px] uppercase tracking-[0.14em] text-alabaster/85 sm:mt-5 sm:text-sm sm:tracking-[0.2em] md:text-base md:tracking-[0.24em]"
             >
               {subheadline}

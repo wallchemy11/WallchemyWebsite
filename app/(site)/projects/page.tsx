@@ -7,6 +7,7 @@ import { resolveImage } from "@/lib/hero";
 import { buildMetadata } from "@/lib/seo";
 import type { ProjectsPageData } from "@/lib/types/projects";
 import { hexToRgbChannels } from "@/lib/color";
+import { getFieldStyle } from "@/lib/field-typography";
 
 export async function generateMetadata() {
   const projects = await getProjectsPage();
@@ -23,6 +24,7 @@ export default async function ProjectsPage() {
   const pageStyle = {
     ["--color-ink" as any]: hexToRgbChannels(projects.backgroundColor, "11 10 9")
   };
+  const fs = (key: string) => getFieldStyle(projects, key);
 
   return (
     <div style={pageStyle}>
@@ -32,18 +34,25 @@ export default async function ProjectsPage() {
         videoSrc={projects.heroVideo}
         mobileVideoSrc={projects.heroVideoMobile}
         poster={projects.heroPoster}
+        subheadlineStyle={fs("intro")}
       />
       <CinematicDivider
         image={dividerImage}
         eyebrow={projects.selectedDivider?.eyebrow}
         title={projects.selectedDivider?.title}
         subtitle={projects.selectedDivider?.subtitle}
+        eyebrowStyle={fs("selectedDivider.eyebrow")}
+        titleStyle={fs("selectedDivider.title")}
+        subtitleStyle={fs("selectedDivider.subtitle")}
       />
       <SelectedWorkGallery
         items={selectedWorkItems}
         eyebrow={projects.selectedHeading?.eyebrow}
         title={projects.selectedHeading?.title}
         subtitle={projects.selectedHeading?.subtitle}
+        eyebrowStyle={fs("selectedHeading.eyebrow")}
+        titleStyle={fs("selectedHeading.title")}
+        subtitleStyle={fs("selectedHeading.subtitle")}
       />
       {projects.projects?.length ? (
         <ProjectsGallery title={projects.title} projects={projects.projects} />
@@ -51,4 +60,3 @@ export default async function ProjectsPage() {
     </div>
   );
 }
-

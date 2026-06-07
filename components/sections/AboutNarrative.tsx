@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { resolveText } from "@/lib/text";
@@ -8,6 +9,9 @@ type AboutNarrativeProps = {
   subtitle?: string;
   narrative?: string;
   founderNote?: string;
+  eyebrowStyle?: CSSProperties;
+  titleStyle?: CSSProperties;
+  subtitleStyle?: CSSProperties;
 };
 
 export default function AboutNarrative({
@@ -15,12 +19,15 @@ export default function AboutNarrative({
   title,
   subtitle,
   narrative,
-  founderNote
+  founderNote,
+  eyebrowStyle,
+  titleStyle,
+  subtitleStyle,
 }: AboutNarrativeProps) {
-  const safeEyebrow = resolveText(eyebrow);
-  const safeTitle = resolveText(title);
-  const safeSubtitle = resolveText(subtitle);
-  const safeNarrative = resolveText(narrative);
+  const safeEyebrow    = resolveText(eyebrow);
+  const safeTitle      = resolveText(title);
+  const safeSubtitle   = resolveText(subtitle);
+  const safeNarrative  = resolveText(narrative);
   const safeFounderNote = resolveText(founderNote);
   return (
     <section className="bg-transparent py-10 sm:py-14 md:py-16">
@@ -30,6 +37,9 @@ export default function AboutNarrative({
             eyebrow={safeEyebrow}
             title={safeTitle}
             subtitle={safeSubtitle}
+            eyebrowStyle={eyebrowStyle}
+            titleStyle={titleStyle}
+            subtitleStyle={subtitleStyle}
           />
           <p
             data-reveal
@@ -39,7 +49,7 @@ export default function AboutNarrative({
           </p>
           <p
             data-reveal
-            className="mt-7 max-w-4xl text-[15px] text-alabaster/80 sm:text-lg md:text-xl"
+            className="mt-4 max-w-3xl whitespace-pre-line text-base leading-relaxed text-alabaster/75 sm:text-lg"
           >
             {safeNarrative}
           </p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { CSSProperties } from "react";
 import { useMotionPrefs } from "@/components/animations/useMotionPrefs";
 import { loadGsap } from "@/components/animations/loadGsap";
 import { resolveText } from "@/lib/text";
@@ -10,6 +11,9 @@ type ProcessNarrativeProps = {
   title?: string;
   subtitle?: string;
   steps: { title: string; body: string }[];
+  eyebrowStyle?: CSSProperties;
+  titleStyle?: CSSProperties;
+  subtitleStyle?: CSSProperties;
 };
 
 type StepKind =
@@ -132,7 +136,10 @@ export default function ProcessNarrative({
   eyebrow,
   title,
   subtitle,
-  steps
+  steps,
+  eyebrowStyle,
+  titleStyle,
+  subtitleStyle,
 }: ProcessNarrativeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
@@ -202,13 +209,13 @@ export default function ProcessNarrative({
     <section ref={containerRef} className="bg-transparent py-10 sm:py-14 md:py-20">
       <div className="mx-auto grid max-w-6xl gap-9 px-6 md:gap-12 md:grid-cols-[0.9fr_1.1fr]">
         <div ref={pinRef} className="self-start space-y-8">
-          <p className="text-[10px] tracking-[0.2em] text-brass/90 sm:text-xs sm:tracking-[0.3em]">
+          <p style={eyebrowStyle} className="text-[10px] tracking-[0.2em] text-brass/90 sm:text-xs sm:tracking-[0.3em]">
             {safeEyebrow}
           </p>
-          <h2 className="font-display text-3xl font-medium leading-tight sm:text-4xl md:text-6xl">
+          <h2 style={titleStyle} className="font-display text-3xl font-medium leading-tight sm:text-4xl md:text-6xl">
             {safeTitle}
           </h2>
-          <p className="text-xs tracking-[0.06em] text-alabaster/70 sm:text-sm md:tracking-[0.1em]">
+          <p style={subtitleStyle} className="text-xs tracking-[0.06em] text-alabaster/70 sm:text-sm md:tracking-[0.1em]">
             {safeSubtitle}
           </p>
         </div>
